@@ -1,0 +1,14 @@
+Сущности
+
+1. Товары = ProductsEntry
+_id - int
+guid - string
+name - string
+comments - string
+
+
+2. Задание на отгрузку
+_id - string
+date -
+client - string
+guid -
