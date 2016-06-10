@@ -48,35 +48,7 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.refresh:
-                getSupportLoaderManager().getLoader(0).forceLoad();
-                return true;
-            case R.id.load_entities:
-            {
-                Intent intent = new Intent(this, LoadEntitiesActivity.class);
-                startActivity(intent);
-                return true;}
-            case R.id.toPreferences: {
-                Intent intent = new Intent(this, MyPreferencesActivity.class);
 
-                startActivity(intent);}
-
-                case R.id.toStockCells:
-                {
-
-                    Intent intent = new Intent(this, StockCellsActivity.class);
-
-                    startActivity(intent);
-
-            }
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

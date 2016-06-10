@@ -17,7 +17,7 @@ import com.example.user.sample1.data.ProductsContract;
 public class ProductsDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 13;
 
     static final String DATABASE_NAME = "products.db";
 
@@ -54,7 +54,10 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
                     ProductsContract.ShipmentsItemEntry.COLUMN_ROWNUMBER +" integer, "+
                     ProductsContract.ShipmentsItemEntry.COLUMN_STOCKCELL +" text, "+
                     ProductsContract.ShipmentsItemEntry.COLUMN_COUNT +" integer, "+
-                    "FOREIGN KEY( "+ ProductsContract.ShipmentsItemEntry.COLUMN_PRODUCTID+") REFERENCES "+ ProductsContract.ProductsEntry.TABLE_NAME+" ("+COLUMN_ID+") ," +
+                    ProductsContract.ShipmentsItemEntry.COLUMN_STOCKCELL_FACT +" text, "+
+                    ProductsContract.ShipmentsItemEntry.COLUMN_COUNT_FACT +" integer, "+
+                    // специально удаляем внешний ключ по ProductId т.к. товары постоянно добавляются
+                  // "FOREIGN KEY( "+ ProductsContract.ShipmentsItemEntry.COLUMN_PRODUCTID+") REFERENCES "+ ProductsContract.ProductsEntry.TABLE_NAME+" ("+COLUMN_ID+") ," +
                     "FOREIGN KEY( "+ ProductsContract.ShipmentsItemEntry.COLUMN_SHIPMENTID+") REFERENCES "+ProductsContract.ShipmentsEntry.TABLE_NAME +" ("+COLUMN_ID+")" + ");";
 
 // _ID - текстовое название склада
@@ -83,17 +86,11 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
 
 
 
-
-
-
     @Override
     public void onCreate(SQLiteDatabase db) {
         // TODO Auto-generated method stub
 
-
-
         try {
-
 
             db.execSQL(SQL_CREATE_PRODUCTS_TABLE);
             db.execSQL(SQL_CREATE_SHIPMENTS_TABLE);
@@ -101,31 +98,14 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
             db.execSQL(SQL_CREATE_STORAGE_TABLE);
             db.execSQL(SQL_CREATE_STOCKCELLS_TABLE);
 
-            initializeData(db);
+        //    initializeData(db);
         } catch (Exception e)
         {
-
             Log.e("error",e.getMessage());
         }
     }
 
 
-
-    private  void initializeData(SQLiteDatabase db)
-    {
-        String[] queries= {"insert into products values (9129344,'NZ SH665 6.5x16/5x114.3 ET38 D67.1 BKF','',2,''); ",
-                "insert into products values (9129345,'NZ SH665 6.5x16/5x114.3 ET46 D67.1 BKF','',2,'');",
-                "insert into products values (9129346,'NZ SH665 6.5x16/5x114.3 ET46 D67.1 BKF','',2,''); ",
-                "insert into products values (9129347,'NZ SH665 6.5x16/5x115 ET41 D70.1 BKF','',2,''); ",
-                "insert into products values (9129348,'NZ SH665 7x17/5x105 ET42 D56.6 BKF','',2,'');"};
-
-        for(String query:queries) {
-            db.execSQL(query);
-        }
-
-
-
-    }
 
     @Override
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -154,7 +134,7 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         final String SQL_DROPTABLE_IFEXISTS ="drop table if exists ";
         if (newVersion>4) {
-
+            dropAllTables(db);
         /*    db.execSQL(SQL_DROPTABLE_IFEXISTS+ProductsContract.ShipmentsEntry.TABLE_NAME);
             db.execSQL(SQL_DROPTABLE_IFEXISTS+ProductsContract.ShipmentsItemEntry.TABLE_NAME);
             db.execSQL(SQL_CREATE_SHIPMENTS_TABLE);
@@ -162,7 +142,7 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
        //     db.execSQL("delete from "+ProductsContract.ShipmentsEntry.TABLE_NAME);
          //   db.execSQL("delete from "+ProductsContract.ShipmentsItemEntry.TABLE_NAME);
         //    dropAllTables(db);
-          // onCreate(db);
+           onCreate(db);
         }
 
     }
@@ -238,7 +218,9 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
 
             db.insert(ProductsContract.ShipmentsItemEntry.TABLE_NAME, null, cv);
         }
-        catch (Exception e) {return false;}
+        catch (Exception e) {
+            return false;
+        }
 
         return true;
 
@@ -246,12 +228,13 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
 
     public boolean addProduct ( int id, String name,String barcode,String comments,int productType )
     {
+
         try {
             SQLiteDatabase db = this.getWritableDatabase();
             ContentValues cv = new ContentValues();
             cv.put(ProductsContract.ProductsEntry._ID, id);
             cv.put(ProductsContract.ProductsEntry.COLUMN_NAME, name);
-            //cv.put(ProductsContract.ProductsEntry.COLUMN_GUID, guid);
+
             cv.put(ProductsContract.ProductsEntry.COLUMN_BARCODE, barcode);
             cv.put(ProductsContract.ProductsEntry.COLUMN_COMMENTS, comments);
             cv.put(ProductsContract.ProductsEntry.COLUMN_PRODUCTTYPE, productType);
@@ -316,6 +299,14 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
     }
 
 
+    public boolean checkIfProductExists(int id){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( "select * from " + ProductsContract.ProductsEntry.TABLE_NAME+ " where _id="+id, null );
+        if (res!=null && res.getCount()>0) return true;
+        else return false;
+
+    }
+
     public Product getProductById(int id){
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -325,12 +316,12 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
          }else throw new NullPointerException("No product found with id="+id);
 
     }
-
+/*
     public Cursor getAllProducts() {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.query(ProductsContract.ProductsEntry.TABLE_NAME, null, null, null, null, null, null);
     }
-
+*/
     public Cursor getProducts(String filter) {
 
         SQLiteDatabase db = this.getReadableDatabase();

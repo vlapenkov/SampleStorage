@@ -36,9 +36,10 @@ public class OneShipmentActivity extends AppCompatActivity implements LoaderMana
         setContentView(R.layout.activity_shipment_items);
 
 
+
         Intent intent = getIntent();
          mShipmentId = intent.getStringExtra(ShipmentsActivity.SHIPMENT_ID_MESSAGE);
-
+        setTitle("Задание №"+String.valueOf(mShipmentId));
 
         mDbHelper = new ProductsDbHelper(this);
         lvData = (ListView) findViewById(R.id.lvData);

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Sample1</string>
+    <string name="app_name">ТСД Яршинторг</string>
     <string name="createproduct">Create product</string>
     <string name="toPreferences">To Preferences</string>
     <string name="title_activity_settings">Settings</string>
@@ -66,4 +66,5 @@
     <string name="multiselectStorages">storages</string>
     <string name="hint_search">Search</string>
     <string name="importShipments">Import shipments</string>
+    <string name="shipments">Задания</string>
 </resources>

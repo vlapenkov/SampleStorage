@@ -95,11 +95,49 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
         return false;
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.refresh:
+                getSupportLoaderManager().getLoader(0).forceLoad();
+                return true;
+            case R.id.load_entities:
+            {
+                Intent intent = new Intent(this, LoadEntitiesActivity.class);
+                startActivity(intent);
+                return true;}
+            case R.id.toPreferences: {
+                Intent intent = new Intent(this, MyPreferencesActivity.class);
 
+                startActivity(intent);
+                return true;}
+
+            case R.id.toStockCells:
+            {
+
+                Intent intent = new Intent(this, StockCellsActivity.class);
+
+                startActivity(intent);
+                return true;
+            }
+            case R.id.toProducts:
+            {
+
+                Intent intent = new Intent(this, ProductsActivity.class);
+
+                startActivity(intent);
+                return true;
+            }
+            /*default:
+                return super.onOptionsItemSelected(item); */
+
+        }
+        return true;
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.stockcellmenu, menu);
+        getMenuInflater().inflate(R.menu.shipments_menu, menu);
         MenuItem searchItem = menu.findItem(R.id.search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setOnQueryTextListener(this);

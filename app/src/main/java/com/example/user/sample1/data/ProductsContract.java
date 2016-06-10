@@ -102,6 +102,8 @@ public class ProductsContract {
         public static final String COLUMN_PRODUCTID = "productid";
         public static final String COLUMN_ROWNUMBER = "rownumber";
         public static final String COLUMN_STOCKCELL = "stockcell";
+        public static final String COLUMN_STOCKCELL_FACT = "stockcellfact";
+        public static final String COLUMN_COUNT_FACT = "quantityfact";
         public static final String COLUMN_COUNT = "quantity";
         public static final String COLUMN_ISPROCESSED = "isprocessed";
 

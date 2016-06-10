@@ -145,7 +145,12 @@ public class LoadEntitiesActivity extends AppCompatActivity {
                     publishProgress((int) ((counter / (float) lines.length) * 100));
                 String[] arr=line.split(";");
 
+                Log.d("TAGIMPORT",arr[0]);
                 int id  = Integer.parseInt(arr[0]);
+
+               /* if (dbHelper.checkIfProductExists(id))
+
+                    continue; */
                 String name = arr[1];
                 String barcode = arr[2];
                 int productType = Integer.parseInt(arr[3]);

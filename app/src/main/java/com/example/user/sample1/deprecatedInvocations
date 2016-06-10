@@ -1,0 +1,17 @@
+/*
+    private  void initializeData(SQLiteDatabase db)
+    {
+        String[] queries= {"insert into products values (9129344,'NZ SH665 6.5x16/5x114.3 ET38 D67.1 BKF','',2,''); ",
+                "insert into products values (9129345,'NZ SH665 6.5x16/5x114.3 ET46 D67.1 BKF','',2,'');",
+                "insert into products values (9129346,'NZ SH665 6.5x16/5x114.3 ET46 D67.1 BKF','',2,''); ",
+                "insert into products values (9129347,'NZ SH665 6.5x16/5x115 ET41 D70.1 BKF','',2,''); ",
+                "insert into products values (9129348,'NZ SH665 7x17/5x105 ET42 D56.6 BKF','',2,'');"};
+
+        for(String query:queries) {
+            db.execSQL(query);
+        }
+
+
+
+    }
+*/
