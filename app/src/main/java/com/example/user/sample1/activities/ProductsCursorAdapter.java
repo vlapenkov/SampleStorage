@@ -45,6 +45,7 @@ public class ProductsCursorAdapter extends CursorAdapter  {
     public void bindView(View view, Context context, Cursor cursor) {
         // Find fields to populate in inflated template
         ImageView tvImg = (ImageView) view.findViewById(R.id.ivImg);
+        TextView tvId = (TextView) view.findViewById(R.id.tvId);
         TextView tvText = (TextView) view.findViewById(R.id.tvText);
         // Extract properties from cursor
 
@@ -52,8 +53,17 @@ public class ProductsCursorAdapter extends CursorAdapter  {
         Product product = Product.fromCursor(cursor);
 
         // Populate fields with extracted properties
+        tvId.setText(String.valueOf(product.Id));
         tvText.setText(product.Name);
-        if (product.Id %2==0)    tvImg.setImageResource(R.drawable.winter); else     tvImg.setImageResource(R.drawable.sun);
+        int resourcePicture = R.drawable.wheel;
+        switch (product.ProductType) {
+            case 1: {resourcePicture=R.drawable.tire; break;}
+        case 2: {resourcePicture=R.drawable.wheel; break;}
+        case 3: {resourcePicture=R.drawable.battery; break;}
+        default:
+        }
+        tvImg.setImageResource(resourcePicture);
+
 
 
     }

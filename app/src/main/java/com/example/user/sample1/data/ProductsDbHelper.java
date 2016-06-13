@@ -7,6 +7,7 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.util.StringBuilderPrinter;
 
 import com.example.user.sample1.data.Product;
 import com.example.user.sample1.data.ProductsContract;
@@ -281,6 +282,13 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
     }
 
 
+    public boolean updateShipmentItem(int cellid , String cell, int quantity )
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("Update "+ ProductsContract.ShipmentsItemEntry.TABLE_NAME+ " set stockcellfact='"+cell+"', quantityfact="+quantity +" where _id="+cellid );
+return true;
+    }
+
 
 
     public int numberOfRows(String tablename){
@@ -347,11 +355,12 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
 
     public Cursor getShipments(String filter) {
 
-
+Cursor cursor =  null;
         SQLiteDatabase db = this.getReadableDatabase();
         if (filter!=null)
-            return db.query(ProductsContract.ShipmentsEntry.TABLE_NAME, null,"_id like ? or dateofshipment like ? or client like ?", new String[] { "%"+filter+"%","%"+filter+"%","%"+filter+"%"}, null, null, null);
-        return db.query(ProductsContract.ShipmentsEntry.TABLE_NAME, null, null, null, null, null, null);
+            cursor= db.query(ProductsContract.ShipmentsEntry.TABLE_NAME, null,"_id like ? or dateofshipment like ? or client like ?", new String[] { "%"+filter+"%","%"+filter+"%","%"+filter+"%"}, null, null, null);
+        cursor= db.query(ProductsContract.ShipmentsEntry.TABLE_NAME, null, null, null, null, null, null);
+        return  cursor;
         //Cursor res =  db.rawQuery( "select _id, name, storageid from " + ProductsContract.StockCellEntry.TABLE_NAME+ " inner join "+ProductsContract.StorageEntry.TABLE_NAME +" on stockcells.storageid= storages._id", null );
 
     }
@@ -361,7 +370,7 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String sql_select ="select shipmentitems._id, shipmentitems.rownumber, shipmentitems.productid,shipmentitems.stockcell, IFNULL(products.name,'---') as productname, IFNULL(stockcells.storageid,'---') storageid from shipmentitems  left outer join products on shipmentitems.productid=products._id" +
+        String sql_select ="select shipmentitems._id, shipmentitems.rownumber, shipmentitems.productid,shipmentitems.stockcell, shipmentitems.quantityfact, IFNULL(products.name,'---') as productname, IFNULL(stockcells.storageid,'---') storageid from shipmentitems  left outer join products on shipmentitems.productid=products._id" +
                 "  left join stockcells on shipmentitems.stockcell=stockcells._id  where shipmentitems.shipmentid="+shipmentId +" order by rownumber";
        //     Cursor cur = db.query(ProductsContract.ShipmentsItemEntry.TABLE_NAME, null,"shipmentid = ?", new String[] { shipmentId}, null, null, null);
 
@@ -370,6 +379,31 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
         return res;
 
     }
+
+    public ShipmentItem getShipmentItemById(long id){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor res =  db.rawQuery( "select * from " + ProductsContract.ShipmentsItemEntry.TABLE_NAME+ " where _id="+id, null );
+        if (res!=null && res.getCount()>0)
+        {   res.moveToFirst();     return ShipmentItem.fromCursor(res);
+        }else throw new NullPointerException("No shipment item found with id="+id);
+
+    }
+
+    public ShipmentItem getNextShipmentItem(String shipmentId, int id)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor res =  db.rawQuery( "select * from " + ProductsContract.ShipmentsItemEntry.TABLE_NAME+ " where _id>"+id+ " and shipmentid='"+shipmentId+"' order by _id", null );
+        if (res!=null && res.getCount()>0)
+        {   res.moveToFirst();     return ShipmentItem.fromCursor(res);
+        }
+         else
+          return null;
+
+
+    }
+
 
 
 }

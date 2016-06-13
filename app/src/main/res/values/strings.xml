@@ -1,8 +1,10 @@
 <resources>
+    <string name="products_sucсessfully_downloaded">Товары в количестве %1$s успешно загружены</string>
+    <string name="import_stockcells_message">При загрузке ячеек и складов задания будут очищены</string>
     <string name="app_name">ТСД Яршинторг</string>
     <string name="createproduct">Create product</string>
-    <string name="toPreferences">To Preferences</string>
-    <string name="title_activity_settings">Settings</string>
+    <string name="toPreferences">Настройки</string>
+    <string name="title_activity_settings">Настройки</string>
 
     <!-- Strings related to Settings -->
 
@@ -61,10 +63,19 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
-    <string name="generateStoragesAndCells">generate Storages And Cells</string>
-    <string name="generateProducts">Import products</string>
+    <string name="generateStoragesAndCells">Загрузить склады и ячейки</string>
+    <string name="generateProducts">Загрузить товары</string>
     <string name="multiselectStorages">storages</string>
-    <string name="hint_search">Search</string>
-    <string name="importShipments">Import shipments</string>
-    <string name="shipments">Задания</string>
+    <string name="hint_search">Поиск</string>
+    <string name="importShipments">Загрузить задания</string>
+    <string name="shipments">Задания на отгрузку</string>
+    <string name="btnScanBarCode">Scan</string>
+    <string name="doOKAndToNext">OK</string>
+    <string name="refresh">Обновить</string>
+    <string name="loadtodatabase">Загрузить</string>
+    <string name="stockcells">Склады и ячейки</string>
+    <string name="Products">Товары</string>
+    <string name="downloadcomplete">Загрузка завершена</string>
+    <string name="cell">Ячейка</string>
+    <string name="Quantity">Количество</string>
 </resources>

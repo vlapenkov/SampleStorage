@@ -1,7 +1,11 @@
 package com.example.user.sample1.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -19,13 +23,27 @@ import android.widget.ListView;
 
 import com.example.user.sample1.R;
 import com.example.user.sample1.data.ProductsDbHelper;
+import com.example.user.sample1.data.Shipment;
+import com.example.user.sample1.data.ShipmentItem;
+import com.example.user.sample1.services.SoapCallToWebService;
+import com.example.user.sample1.services.XMLDOMParser;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ShipmentsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, SearchView.OnQueryTextListener,AdapterView.OnItemClickListener {
 
    SimpleCursorAdapter mAdapter=null;
     ListView lvData =null;
 
+    private static final String TAG = "ShipmentsActivity";
     public static String SHIPMENT_ID_MESSAGE="shipmentID";
+    private static final String stringUrlShipments="http://37.1.84.50:8080/YST/ws/ServiceTransfer";
 
     ProductsDbHelper mDbHelper;
     String mCurFilter;
@@ -38,10 +56,13 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
 
 
-        mAdapter = new SimpleCursorAdapter(this,
-                R.layout.stockcell_item, null,
+       mAdapter = new SimpleCursorAdapter(this,
+                R.layout.stockcell_item, mDbHelper.getShipments(mCurFilter),
                 new String[] { "_id", "dateofshipment","client" },
                 new int[] { R.id.text1, R.id.text2,R.id.text3  }, 0);
+      /*  String[] from = new String[] {"client"};
+        int[] to = new int[] {android.R.id.text1};
+        mAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, mDbHelper.getShipments(mCurFilter), from, to); */
 
         lvData.setAdapter(mAdapter);
 
@@ -95,17 +116,36 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
         return false;
     }
+
+
+    private boolean checkConnectivity()
+    {
+   ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) return true;
+        return false;
+
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.shipments_menu, menu);
+        MenuItem searchItem = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+//        searchView.setOnQueryTextListener(this);
+        return true;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.refresh:
+                if (checkConnectivity())
+                    new DownloadAndImportShipments().execute(stringUrlShipments);
                 getSupportLoaderManager().getLoader(0).forceLoad();
                 return true;
-            case R.id.load_entities:
-            {
-                Intent intent = new Intent(this, LoadEntitiesActivity.class);
-                startActivity(intent);
-                return true;}
+
             case R.id.toPreferences: {
                 Intent intent = new Intent(this, MyPreferencesActivity.class);
 
@@ -134,23 +174,87 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
         }
         return true;
     }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.shipments_menu, menu);
-        MenuItem searchItem = menu.findItem(R.id.search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchView.setOnQueryTextListener(this);
-        return true;
-    }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Log.d("MYTAG", String.valueOf(id));
+        Log.d(TAG, String.valueOf(id));
         Intent intent = new Intent(this, OneShipmentActivity.class);
 
         intent.putExtra(SHIPMENT_ID_MESSAGE, Long.toString(id));
 
         startActivity(intent);
+    }
+
+    private class DownloadAndImportShipments extends AsyncTask<String, Integer, Long> {
+        @Override
+        protected Long doInBackground(String... params) {
+
+            InputStream stream = SoapCallToWebService.Call(stringUrlShipments);
+
+            XMLDOMParser parser = new XMLDOMParser();
+
+            List<Shipment> listOfShipments = new ArrayList<Shipment>();
+            List<ShipmentItem> listOfShipmentItems = new ArrayList<ShipmentItem>();
+
+            Document doc = parser.getDocument(stream);
+
+            NodeList nodeListOrders = doc.getElementsByTagName("Orders");
+
+            for(int j=0; j< nodeListOrders.getLength();j++) {
+                Element e = (Element) nodeListOrders.item(j);
+
+                String numberin1s = parser.getValue(e, "numberin1s");
+                String dateofshipment = parser.getValue(e, "dateofshipment");
+                String client = parser.getValue(e, "client");
+                String comment = parser.getValue(e, "comment");
+
+                String cleanId = Shipment.getCleanId(numberin1s);
+                Shipment shipmentToAdd =new Shipment(cleanId,dateofshipment,client,comment);
+                listOfShipments.add(shipmentToAdd);
+                Log.d("shipment added", shipmentToAdd.toString());
+
+
+                NodeList nodeListProducts =e.getElementsByTagName("Products");
+                for(int k=0; k< nodeListProducts.getLength();k++) {
+                    {
+                        Element p = (Element) nodeListProducts.item(k);
+                        Integer rownumber = Integer.parseInt(parser.getValue(p, "rownumber"));
+                        Integer productid = Integer.parseInt(parser.getValue(p, "productid"));
+                        String stockcell = parser.getValue(p, "stockcell");
+                        Integer quantity = Integer.parseInt(parser.getValue(p, "quantity"));
+                        ShipmentItem shipmentItemToAdd =new ShipmentItem(cleanId,rownumber,productid,stockcell,quantity);
+                        listOfShipmentItems.add(shipmentItemToAdd);
+                        Log.d(TAG +"/added", listOfShipmentItems.toString());
+
+                    }}
+
+            }
+
+            Log.d(TAG+"/shipmentsitems size", String.valueOf(listOfShipmentItems.size()));
+            Log.d(TAG+"/shipments size", String.valueOf(listOfShipments.size()));
+
+
+            ProductsDbHelper dbHelper = new ProductsDbHelper(getBaseContext());
+
+
+            for (Shipment shipment : listOfShipments)
+            {
+                if (!dbHelper.checkIfShipmentExists(shipment.Id))
+                    dbHelper.addShipment(shipment);
+
+            }
+
+            for (ShipmentItem shipmentItem : listOfShipmentItems)
+            {
+                if (dbHelper.checkIfShipmentExists(shipmentItem.ShipmentId) && !dbHelper.checkIfShipmentItemsExistByShipmentAndProduct(shipmentItem.ShipmentId,shipmentItem.ProductId))
+                    dbHelper.addShipmentItem(shipmentItem);
+
+            }
+
+
+            return null;
+
+
+        }
     }
 }

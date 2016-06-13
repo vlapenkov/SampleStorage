@@ -1,11 +1,17 @@
 package com.example.user.sample1.activities;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
@@ -16,20 +22,48 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.example.user.sample1.R;
+import com.example.user.sample1.data.ProductsContract;
 import com.example.user.sample1.data.ProductsDbHelper;
+import com.example.user.sample1.services.TextReaderFromHttp;
+
+import java.io.IOException;
 
 public class ProductsActivity extends AppCompatActivity   implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener ,SearchView.OnQueryTextListener{
 
+    private static final String TAG = "ProductsActivity";
     ProductsCursorAdapter mAdapter=null;
     ListView lvData =null;
+    private static final String stringUrlProducts="http://yst.ru/data/Products.txt";
 
     public static String PRODUCT_ID_MESSAGE="productID";
     ProductsDbHelper mDbHelper;
     String mCurFilter;
+    ProgressBar mProgressBar;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+
+        mDbHelper = new ProductsDbHelper(this);
+
+        mAdapter = new ProductsCursorAdapter(this,null,0);
 
 
+        lvData = (ListView) findViewById(R.id.lvData);
+        // lvData.setAdapter(scAdapter);
+        lvData.setAdapter(mAdapter);
+
+        lvData.setOnItemClickListener(this);
+
+        getSupportLoaderManager().initLoader(0, null, this);
+
+
+    }
 
     @Override
     protected void onDestroy() {
@@ -48,37 +82,19 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
         return true;
     }
 
-
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-
-        mDbHelper = new ProductsDbHelper(this);
-     //  SQLiteDatabase db= dbhelper.getReadableDatabase();
-
-        mAdapter = new ProductsCursorAdapter(this,null,0);
-       /* mAdapter.setFilterQueryProvider(new FilterQueryProvider() {
-            public Cursor runQuery(CharSequence constraint) {
-                // Search for states whose names begin with the specified letters.
-                Cursor cursor = mDbHelper.getProducts(constraint.toString());
-                return cursor;
-
-            }
-        }); */
-
-        lvData = (ListView) findViewById(R.id.lvData);
-       // lvData.setAdapter(scAdapter);
-        lvData.setAdapter(mAdapter);
-
-        lvData.setOnItemClickListener(this);
-
-        getSupportLoaderManager().initLoader(0, null, this);
-
-
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.refresh:
+                if (checkConnectivity())
+                    new DownloadAndImportProducts().execute(stringUrlProducts);
+                getSupportLoaderManager().getLoader(0).forceLoad();
+                return true;
+        }
+        return true;
     }
+
+
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -92,10 +108,7 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
             public Cursor loadInBackground()
             {
                 return mDbHelper.getProducts(mCurFilter);
-                // You better know how to get your database.
-                //SQLiteDatabase DB = dbhelper.getReadableDatabase();
-                // You can use any query that returns a cursor.
-                //return DB.query(ProductsContract.ProductsEntry.TABLE_NAME, getProjection(), getSelection(), getSelectionArgs(), null, null, getSortOrder(), null );
+
             }
         };
     }
@@ -103,6 +116,8 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mAdapter.swapCursor(data);
+        this.setTitle(getResources().getString(R.string.Products)+ " ("+String.valueOf(data.getCount()) +")");
+
     }
 
     @Override
@@ -112,7 +127,7 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Log.i("TAG", "Item selected "+ Long.toString(id));
+        Log.i(TAG, "Item selected "+ Long.toString(id));
 
         Intent intent = new Intent(this, OneProductActivity.class);
 
@@ -145,4 +160,113 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
     getSupportLoaderManager().restartLoader(0, null, this);
         return true;
     }
+
+    private boolean checkConnectivity()
+    {
+
+        //    mProgressBar.setProgress(0);
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) return true;
+        return false;
+
+    }
+    public void importAllProducts(View v)
+    {
+        if (checkConnectivity())
+            new DownloadAndImportProducts().execute(stringUrlProducts);
+
+
+    }
+    private void alertView( String title, String message ) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle( title)
+                .setIcon(R.drawable.ic_launcher)
+                .setMessage(message)
+//  .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//      public void onClick(DialogInterface dialoginterface, int i) {
+//          dialoginterface.cancel();
+//          }})
+                .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialoginterface, int i) {
+                    }
+                }).show();
+    }
+    private class DownloadAndImportProducts extends AsyncTask<String, Integer, Long> {
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            mProgressBar.setProgress(values[0]);
+
+        }
+
+        @Override
+        protected void onPostExecute(Long aLong) {
+            super.onPostExecute(aLong);
+            mProgressBar.setProgress(100);
+            String format = getResources().getString(R.string.products_sucсessfully_downloaded);
+            String title =getResources().getString(R.string.downloadcomplete);
+            alertView(title,String.format(format,Long.toString(aLong)));
+      //      getLoaderManager().getLoader(0).forceLoad();
+            RefreshList();
+
+        }
+
+        @Override
+        protected Long doInBackground(String... params) {
+            String[] lines;
+            ProductsDbHelper dbHelper;
+
+            String result = null;
+            try {
+                result = downloadUrl(params[0]);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            dbHelper = new ProductsDbHelper(getBaseContext());
+
+
+            dbHelper.clearTable(ProductsContract.ProductsEntry.TABLE_NAME);
+
+            lines=   result.split(System.getProperty("line.separator"));
+
+            int counter=0;
+            for (String line:lines ){
+                counter++;
+                if (counter==1) { continue;}
+
+                if (counter%10==0)
+                    publishProgress((int) ((counter / (float) lines.length) * 100));
+                String[] arr=line.split(";");
+
+                Log.d(TAG +"/import",arr[0]);
+                int id  = Integer.parseInt(arr[0]);
+
+               /* if (dbHelper.checkIfProductExists(id))
+
+                    continue; */
+                String name = arr[1];
+                String barcode = arr[2];
+                int productType = Integer.parseInt(arr[3]);
+                dbHelper.addProduct(id,name,barcode,"",productType);
+
+            }
+            return (long)lines.length;
+        }
+
+    }
+
+    private void RefreshList() {
+                    getSupportLoaderManager().restartLoader(0, null, this);
+
+    }
+
+
+    private String downloadUrl(String url) throws IOException {
+        return  TextReaderFromHttp.readTextArrayFromUrl(url);
+    }
+
 }

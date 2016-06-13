@@ -78,12 +78,32 @@ public class LoadEntitiesActivity extends AppCompatActivity {
 
     }
 
-    public void importAllStoragesAndCells(View v)
+   /* public void importAllStoragesAndCells(View v)
     {
-        if (checkConnectivity())
-            new DownloadAndImportStockCells().execute(stringUrlStoragesAndCells);
 
-    }
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        if (checkConnectivity())
+                            new DownloadAndImportStockCells().execute(stringUrlStoragesAndCells);
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //No button clicked
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.import_stockcells_message).setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener).show();
+
+
+
+    } */
 
     public void importAllProducts(View v)
     {
@@ -93,13 +113,7 @@ public class LoadEntitiesActivity extends AppCompatActivity {
 
     }
 
-    public void importShipments(View v)
-    {
-        if (checkConnectivity())
-            new DownloadAndImportShipments().execute(stringUrlShipments);
 
-
-    }
 
 /*
 Загрузка товаров
@@ -132,6 +146,8 @@ public class LoadEntitiesActivity extends AppCompatActivity {
             }
 
             dbHelper = new ProductsDbHelper(getBaseContext());
+
+
             dbHelper.clearTable(ProductsContract.ProductsEntry.TABLE_NAME);
 
             lines=   result.split(System.getProperty("line.separator"));
@@ -161,147 +177,9 @@ public class LoadEntitiesActivity extends AppCompatActivity {
         }
 
     }
-    private class DownloadAndImportStockCells extends AsyncTask<String, Integer, Long> {
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-           // super.onProgressUpdate(values);
-            mProgressBar.setProgress(values[0]);
-        }
-
-        @Override
-        protected void onPostExecute(Long aLong) {
-            //super.onPostExecute(aLong);
-            mProgressBar.setProgress(100);
-            alertView("Ячейки в количестве "+Long.toString(aLong)+" загружены");
-
-           }
-
-        @Override
-        protected Long doInBackground(String... urls) {
-            String[] lines;
-            ProductsDbHelper dbHelper;
-            // params comes from the execute() call: params[0] is the url.
-            try {
-                String result =  downloadUrl(urls[0]);
-
-                 dbHelper = new ProductsDbHelper(getBaseContext());
-                dbHelper.clearTable(ProductsContract.StorageEntry.TABLE_NAME);
-                dbHelper.clearTable(ProductsContract.StockCellEntry.TABLE_NAME);
-                List<String> listofstorages = new ArrayList<String>() ;
-                lines=   result.split(System.getProperty("line.separator"));
-
-                int counter=0;
-                for (String line:lines
-                        ) {
-                    counter++;
-                    if (counter==1) { continue;}
-
-                    if (counter%10==0)
-                       publishProgress((int) ((counter / (float) lines.length) * 100));
-                    String[] arr=line.split(";");
-
-                    String storage = arr[0];
-                    String cellname = arr[1];
-                    String barcode = arr[3];
-
-                    // add storege
-                    if (!listofstorages.contains(storage))
-                    {
-                        listofstorages.add(storage);
-                        dbHelper.addStorage(storage);
-                    }
-                    // add stockcell
-                    dbHelper.addStockCell(barcode,cellname,storage);
-
-
-                }
-
-            } catch (IOException e) {
-                return (long)-1;
-            }finally {
-
-            }
-            return (long)lines.length;
-        }
-
-    }
-
-    private class DownloadAndImportShipments extends AsyncTask<String, Integer, Long> {
-        @Override
-        protected Long doInBackground(String... params) {
-
-            InputStream stream = SoapCallToWebService.Call(stringUrlShipments);
-
-
-            XMLDOMParser parser = new XMLDOMParser();
 
 
 
-
-            List<Shipment> listOfShipments = new ArrayList<Shipment>();
-            List<ShipmentItem> listOfShipmentItems = new ArrayList<ShipmentItem>();
-
-            Document doc = parser.getDocument(stream);
-
-            NodeList nodeListOrders = doc.getElementsByTagName("Orders");
-
-            for(int j=0; j< nodeListOrders.getLength();j++) {
-                Element e = (Element) nodeListOrders.item(j);
-
-                String numberin1s = parser.getValue(e, "numberin1s");
-                String dateofshipment = parser.getValue(e, "dateofshipment");
-                String client = parser.getValue(e, "client");
-                String comment = parser.getValue(e, "comment");
-
-                String cleanId = Shipment.getCleanId(numberin1s);
-                Shipment shipmentToAdd =new Shipment(cleanId,dateofshipment,client,comment);
-                listOfShipments.add(shipmentToAdd);
-                Log.d("shipment added", shipmentToAdd.toString());
-
-
-                NodeList nodeListProducts =e.getElementsByTagName("Products");
-                for(int k=0; k< nodeListProducts.getLength();k++) {
-                    {
-                        Element p = (Element) nodeListProducts.item(k);
-                        Integer rownumber = Integer.parseInt(parser.getValue(p, "rownumber"));
-                        Integer productid = Integer.parseInt(parser.getValue(p, "productid"));
-                        String stockcell = parser.getValue(p, "stockcell");
-                        Integer quantity = Integer.parseInt(parser.getValue(p, "quantity"));
-                        ShipmentItem shipmentItemToAdd =new ShipmentItem(cleanId,rownumber,productid,stockcell,quantity);
-                        listOfShipmentItems.add(shipmentItemToAdd);
-                        Log.d("shipment added", listOfShipmentItems.toString());
-
-                    }}
-
-            }
-
-            Log.d("shipmentsitems size", String.valueOf(listOfShipmentItems.size()));
-            Log.d("shipments size", String.valueOf(listOfShipments.size()));
-
-
-            ProductsDbHelper dbHelper = new ProductsDbHelper(getBaseContext());
-
-
-            for (Shipment shipment : listOfShipments)
-            {
-                if (!dbHelper.checkIfShipmentExists(shipment.Id))
-                dbHelper.addShipment(shipment);
-
-            }
-
-            for (ShipmentItem shipmentItem : listOfShipmentItems)
-            {
-                if (dbHelper.checkIfShipmentExists(shipmentItem.ShipmentId) && !dbHelper.checkIfShipmentItemsExistByShipmentAndProduct(shipmentItem.ShipmentId,shipmentItem.ProductId))
-                    dbHelper.addShipmentItem(shipmentItem);
-
-            }
-
-
-            return null;
-
-
-        }
-    }
     private String downloadUrl(String url) throws IOException {
         return  TextReaderFromHttp.readTextArrayFromUrl(url);
     }

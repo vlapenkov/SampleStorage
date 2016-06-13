@@ -18,6 +18,7 @@ import android.widget.ListView;
 
 import com.example.user.sample1.R;
 import com.example.user.sample1.data.ProductsDbHelper;
+import com.example.user.sample1.data.ShipmentItem;
 
 /**
  * Created by user on 09.06.2016.
@@ -26,7 +27,7 @@ public class OneShipmentActivity extends AppCompatActivity implements LoaderMana
     SimpleCursorAdapter mAdapter=null;
     ListView lvData =null;
 
-
+    public static String SHIPMENTITEM_ID_MESSAGE="shipmentItemID";
     ProductsDbHelper mDbHelper;
     String mCurFilter;
     String mShipmentId;
@@ -48,8 +49,8 @@ public class OneShipmentActivity extends AppCompatActivity implements LoaderMana
 
         mAdapter = new SimpleCursorAdapter(this,
                 R.layout.shipmentitem_item, null,
-                new String[] { "rownumber","productid" ,"stockcell","productname","storageid" },
-                new int[] { R.id.text1, R.id.text2,R.id.text3 ,R.id.text4,R.id.text5 }, 0);
+                new String[] { "rownumber","productid","quantityfact" ,"stockcell","productname","storageid" },
+                new int[] { R.id.text1, R.id.text2,R.id.text3 ,R.id.text4,R.id.text5,R.id.text6 }, 0);
 
         lvData.setAdapter(mAdapter);
 
@@ -98,6 +99,19 @@ public class OneShipmentActivity extends AppCompatActivity implements LoaderMana
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        ShipmentItem shipmentItem= mDbHelper.getShipmentItemById(id);
+
+        Intent intent = new Intent(this, OneShipmentItemActivity.class);
+
+        intent.putExtra(SHIPMENTITEM_ID_MESSAGE, shipmentItem);
+       intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+        getSupportLoaderManager().restartLoader(0, null, this);
 
     }
 }
