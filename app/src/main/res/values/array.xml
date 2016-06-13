@@ -14,8 +14,13 @@
 
     <string-array name="storagesArray">
         <item>8000.</item>
-        <item>Первый склад</item>
-        <item>Второй склад</item>
-        <item>Третий склад</item>
+        <item>Ангар-1</item>
+        <item>Ангар-2</item>
+        <item>Ангар-3</item>
+        <item>Ангар-4</item>
+        <item>Ангар-5</item>
+        <item>Ангар-6</item>
+        <item>Ангар-7</item>
+
     </string-array>
 </resources>

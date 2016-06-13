@@ -78,4 +78,5 @@
     <string name="downloadcomplete">Загрузка завершена</string>
     <string name="cell">Ячейка</string>
     <string name="Quantity">Количество</string>
+    <string name="newShipmentsWereAdded">Новые задания были загржены</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.example.user.sample1.activities;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
@@ -12,6 +13,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
@@ -38,6 +40,7 @@ import java.util.List;
 
 public class ShipmentsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, SearchView.OnQueryTextListener,AdapterView.OnItemClickListener {
 
+    private boolean mNewShipmentsWasAdded = false;
    SimpleCursorAdapter mAdapter=null;
     ListView lvData =null;
 
@@ -143,6 +146,7 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
             case R.id.refresh:
                 if (checkConnectivity())
                     new DownloadAndImportShipments().execute(stringUrlShipments);
+
                 getSupportLoaderManager().getLoader(0).forceLoad();
                 return true;
 
@@ -173,6 +177,22 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
         }
         return true;
+    }
+
+    private void alertView( String title, String message ) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle( title)
+                .setIcon(R.drawable.ic_launcher)
+                .setMessage(message)
+//  .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//      public void onClick(DialogInterface dialoginterface, int i) {
+//          dialoginterface.cancel();
+//          }})
+                .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialoginterface, int i) {
+                    }
+                }).show();
     }
 
     @Override
@@ -211,7 +231,7 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
                 String cleanId = Shipment.getCleanId(numberin1s);
                 Shipment shipmentToAdd =new Shipment(cleanId,dateofshipment,client,comment);
                 listOfShipments.add(shipmentToAdd);
-                Log.d("shipment added", shipmentToAdd.toString());
+                Log.d(TAG+ "/shipment added", shipmentToAdd.toString());
 
 
                 NodeList nodeListProducts =e.getElementsByTagName("Products");
@@ -224,9 +244,10 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
                         Integer quantity = Integer.parseInt(parser.getValue(p, "quantity"));
                         ShipmentItem shipmentItemToAdd =new ShipmentItem(cleanId,rownumber,productid,stockcell,quantity);
                         listOfShipmentItems.add(shipmentItemToAdd);
-                        Log.d(TAG +"/added", listOfShipmentItems.toString());
+
 
                     }}
+                Log.d(TAG +"/shipmentitems added", listOfShipmentItems.toString());
 
             }
 
@@ -236,11 +257,12 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
             ProductsDbHelper dbHelper = new ProductsDbHelper(getBaseContext());
 
-
+            mNewShipmentsWasAdded=false;
             for (Shipment shipment : listOfShipments)
             {
                 if (!dbHelper.checkIfShipmentExists(shipment.Id))
-                    dbHelper.addShipment(shipment);
+                {    dbHelper.addShipment(shipment);
+                mNewShipmentsWasAdded=true; }
 
             }
 
@@ -254,6 +276,16 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
             return null;
 
+
+        }
+
+        @Override
+        protected void onPostExecute(Long aLong) {
+            super.onPostExecute(aLong);
+            if (mNewShipmentsWasAdded)
+            {String text = getResources().getString(R.string.newShipmentsWereAdded);
+            String title =getResources().getString(R.string.downloadcomplete);
+            alertView(title,text);}
 
         }
     }

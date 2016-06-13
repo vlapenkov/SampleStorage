@@ -139,10 +139,10 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
         /*    db.execSQL(SQL_DROPTABLE_IFEXISTS+ProductsContract.ShipmentsEntry.TABLE_NAME);
             db.execSQL(SQL_DROPTABLE_IFEXISTS+ProductsContract.ShipmentsItemEntry.TABLE_NAME);
             db.execSQL(SQL_CREATE_SHIPMENTS_TABLE);
-            db.execSQL(SQL_CREATE_SHIPMENTITEMS_TABLE); */
-       //     db.execSQL("delete from "+ProductsContract.ShipmentsEntry.TABLE_NAME);
-         //   db.execSQL("delete from "+ProductsContract.ShipmentsItemEntry.TABLE_NAME);
-        //    dropAllTables(db);
+            db.execSQL(SQL_CREATE_SHIPMENTITEMS_TABLE);
+           db.execSQL("delete from "+ProductsContract.ShipmentsEntry.TABLE_NAME);
+           db.execSQL("delete from "+ProductsContract.ShipmentsItemEntry.TABLE_NAME);
+            dropAllTables(db); */
            onCreate(db);
         }
 
