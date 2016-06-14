@@ -360,7 +360,11 @@ Cursor cursor =  null;
         SQLiteDatabase db = this.getReadableDatabase();
         if (filter!=null)
             cursor= db.query(ProductsContract.ShipmentsEntry.TABLE_NAME, null,"_id like ? or dateofshipment like ? or client like ?", new String[] { "%"+filter+"%","%"+filter+"%","%"+filter+"%"}, null, null, null);
-        cursor= db.query(ProductsContract.ShipmentsEntry.TABLE_NAME, null, null, null, null, null, null);
+    //    cursor= db.query(ProductsContract.ShipmentsEntry.TABLE_NAME, null, null, null, null, null, null);
+
+        String sql_select = "select _id,SUBSTR(dateofshipment,1,10) dateofshipment, client from "+ProductsContract.ShipmentsEntry.TABLE_NAME + " order by dateofshipment";
+         cursor =  db.rawQuery( sql_select, null );
+
         return  cursor;
         //Cursor res =  db.rawQuery( "select _id, name, storageid from " + ProductsContract.StockCellEntry.TABLE_NAME+ " inner join "+ProductsContract.StorageEntry.TABLE_NAME +" on stockcells.storageid= storages._id", null );
 

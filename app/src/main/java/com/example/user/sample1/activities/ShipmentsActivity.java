@@ -220,11 +220,23 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
     }
     private class DownloadAndImportShipments extends AsyncTask<String, Integer, Long> {
+
+
         ProgressDialog pDialog;
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+
+        }
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             pDialog = new ProgressDialog(ShipmentsActivity.this);
+            pDialog.setProgress(0);
+            pDialog.setMax(10);
+            pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
             pDialog.setMessage("Loading shipments ....");
             pDialog.show();
 

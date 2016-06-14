@@ -1,5 +1,6 @@
 package com.example.user.sample1.activities;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -195,17 +196,33 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
                 }).show();
     }
     private class DownloadAndImportProducts extends AsyncTask<String, Integer, Long> {
+
+        ProgressDialog pDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(ProductsActivity.this);
+            pDialog.setProgress(0);
+            pDialog.setMax(100);
+
+            pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            pDialog.setMessage("Loading products ....");
+            pDialog.show();
+        }
+
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
-            mProgressBar.setProgress(values[0]);
+            pDialog.setProgress(values[0]);
 
         }
 
         @Override
         protected void onPostExecute(Long aLong) {
             super.onPostExecute(aLong);
-            mProgressBar.setProgress(100);
+            //pDialog.setProgress(100);
+            pDialog.dismiss();
             String format = getResources().getString(R.string.products_sucсessfully_downloaded);
             String title =getResources().getString(R.string.downloadcomplete);
             alertView(title,String.format(format,Long.toString(aLong)));
