@@ -4,6 +4,9 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
 
     <application
         android:allowBackup="true"
@@ -18,8 +21,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.ShipmentsActivity"
-            android:label="@string/shipments">
+            android:name=".activities.ShipmentsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

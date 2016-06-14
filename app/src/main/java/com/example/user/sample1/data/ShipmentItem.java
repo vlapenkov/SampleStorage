@@ -48,6 +48,25 @@ public class ShipmentItem implements Serializable{
                 ", Quantity=" + Quantity +
                 '}';
     }
+
+    /*
+    *  "            <tran:Products>\n" +
+                "               <tran:rownumber>24</tran:rownumber>\n" +
+                "               <tran:productid>9130104</tran:productid>\n" +
+                "               <tran:stockcell>81110735</tran:stockcell>\n" +
+                "               <tran:quantity>3</tran:quantity>\n" +
+                "               <tran:quantityfact>19</tran:quantityfact>\n" +
+                "            </tran:Products>\n" +*/
+    public String toXML() {
+        return "<tran:Products>" +
+                "<tran:rownumber>"+this.RowNumber+"</tran:rownumber>"+
+                "<tran:productid>"+this.ProductId+"</tran:productid>" +
+                "<tran:stockcell>"+this.StockCellFact +"</tran:stockcell>" +
+                "<tran:quantity>"+this.Quantity+"</tran:quantity>" +
+                "<tran:quantityfact>"+this.QuantityFact+"</tran:quantityfact>" +
+                "</tran:Products>";
+    }
+
 /*
  public static final String COLUMN_SHIPMENTID = "shipmentid";
         public static final String COLUMN_PRODUCTID = "productid";

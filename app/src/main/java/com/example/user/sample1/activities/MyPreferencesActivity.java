@@ -16,7 +16,7 @@ import java.util.Set;
 /**
  * Created by user on 05.06.2016.
  */
-public class MyPreferencesActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener  {
+public class MyPreferencesActivity extends PreferenceActivity /*implements SharedPreferences.OnSharedPreferenceChangeListener*/  {
     private SharedPreferences.OnSharedPreferenceChangeListener listener;
     private String oldCatName;
     private EditTextPreference catName;
@@ -66,49 +66,14 @@ public class MyPreferencesActivity extends PreferenceActivity implements SharedP
     }
 
 
-
+/*
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         catName = (EditTextPreference) findPreference("username");
         catName.setTitle("triggered");
     }
 
-    /*
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (! key.equals("username")) return;
-        String username=sharedPreferences.getString("username", "");
 
-        Preference pref = findPreference("username");
-        pref.setSummary(username);
-
-    }
-
-    @Override
-    public boolean onPreferenceChange(Preference preference, Object newValue) {
-        return false;
-    }
-    */
-/*
-    public static class MyPreferenceFragment extends PreferenceFragment
-    {
-        @Override
-        public void onCreate(final Bundle savedInstanceState)
-        {
-            super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.preferences);
-        }
-    }
-*/
-    /*
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        Preference pref = findPreference(key);
-
-        if (pref instanceof ListPreference) {
-            ListPreference listPref = (ListPreference) pref;
-            pref.setSummary(listPref.getEntry());
-        }
-    }
     */
 
 }

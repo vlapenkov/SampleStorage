@@ -3,7 +3,7 @@
     <EditTextPreference android:title="Your Name"
         android:key="username"
         android:summary="Please provide your username"></EditTextPreference>
-    <CheckBoxPreference android:title="Application Updates"
+    <!--<CheckBoxPreference android:title="Application Updates"
         android:defaultValue="false"
         android:summary="This option if selected will allow the application to check for latest versions."
         android:key="applicationUpdates" />
@@ -12,7 +12,7 @@
         android:key="downloadType"
         android:defaultValue="1"
         android:entries="@array/listArray"
-        android:entryValues="@array/listValues" />
+        android:entryValues="@array/listValues" /> -->
     <MultiSelectListPreference
         android:title="@string/multiselectStorages"
         android:entries="@array/storagesArray"

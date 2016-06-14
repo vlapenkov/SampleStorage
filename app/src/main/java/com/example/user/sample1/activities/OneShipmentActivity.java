@@ -2,6 +2,7 @@ package com.example.user.sample1.activities;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -19,8 +20,11 @@ import android.widget.ListView;
 import com.example.user.sample1.R;
 import com.example.user.sample1.data.ProductsDbHelper;
 import com.example.user.sample1.data.ShipmentItem;
+import com.example.user.sample1.services.SoapCallToWebService;
 
-/**
+import java.io.InputStream;
+
+/*****
  * Created by user on 09.06.2016.
  */
 public class OneShipmentActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,AdapterView.OnItemClickListener {
@@ -40,7 +44,8 @@ public class OneShipmentActivity extends AppCompatActivity implements LoaderMana
 
         Intent intent = getIntent();
          mShipmentId = intent.getStringExtra(ShipmentsActivity.SHIPMENT_ID_MESSAGE);
-        setTitle("Задание №"+String.valueOf(mShipmentId));
+        String shipmentNumber= getResources().getString(R.string.ShipmentNumber);
+        setTitle(shipmentNumber+String.valueOf(mShipmentId));
 
         mDbHelper = new ProductsDbHelper(this);
         lvData = (ListView) findViewById(R.id.lvData);
@@ -98,6 +103,16 @@ public class OneShipmentActivity extends AppCompatActivity implements LoaderMana
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.refresh:{
+                new SendShipment().execute(ShipmentsActivity.StringUrlShipments) ;
+            }
+        }
+        return true;
+    }
+
+    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         ShipmentItem shipmentItem= mDbHelper.getShipmentItemById(id);
 
@@ -113,5 +128,29 @@ public class OneShipmentActivity extends AppCompatActivity implements LoaderMana
         super.onRestart();
         getSupportLoaderManager().restartLoader(0, null, this);
 
+    }
+
+
+
+    private class SendShipment extends AsyncTask<String,Void,String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            StringBuffer chaine = new StringBuffer("");
+
+            Cursor cursor=mDbHelper.getShipmentItemsByShipmentId(mShipmentId);
+            if (cursor!=null && cursor.getCount()>0)
+                cursor.moveToFirst();
+            do{
+                ShipmentItem item =ShipmentItem.fromCursor(cursor);
+            /*if (item.QuantityFact>0)*/ chaine.append(item.toXML()); }
+            while (cursor.moveToNext());
+
+
+            InputStream stream = new SoapCallToWebService().sendShipment(ShipmentsActivity.StringUrlShipments,mShipmentId, chaine.toString());
+
+
+            return null;
+        }
     }
 }

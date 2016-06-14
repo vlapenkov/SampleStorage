@@ -102,7 +102,8 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
         //    initializeData(db);
         } catch (Exception e)
         {
-            Log.e("error",e.getMessage());
+            Log.e("db helper error",e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -120,7 +121,7 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_DROPTABLE_IFEXISTS+ProductsContract.ShipmentsEntry.TABLE_NAME);
         db.execSQL(SQL_DROPTABLE_IFEXISTS+ProductsContract.ShipmentsItemEntry.TABLE_NAME);
         db.execSQL(SQL_DROPTABLE_IFEXISTS+ProductsContract.StorageEntry.TABLE_NAME);
-        db.execSQL(SQL_DROPTABLE_IFEXISTS+ProductsContract.StockCellEntry.TABLE_NAME);
+        db.execSQL(SQL_DROPTABLE_IFEXISTS + ProductsContract.StockCellEntry.TABLE_NAME);
 
     }
 
@@ -321,7 +322,7 @@ return true;
         Cursor res =  db.rawQuery( "select * from " + ProductsContract.ProductsEntry.TABLE_NAME+ " where _id="+id, null );
         if (res!=null && res.getCount()>0)
         {   res.moveToFirst();     return Product.fromCursor(res);
-         }else throw new NullPointerException("No product found with id="+id);
+         }else return null;
 
     }
 /*
@@ -370,7 +371,7 @@ Cursor cursor =  null;
 
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String sql_select ="select shipmentitems._id, shipmentitems.rownumber, shipmentitems.productid,shipmentitems.stockcell, shipmentitems.quantityfact, IFNULL(products.name,'---') as productname, IFNULL(stockcells.storageid,'---') storageid from shipmentitems  left outer join products on shipmentitems.productid=products._id" +
+        String sql_select ="select shipmentitems._id, shipmentitems.rownumber, shipmentitems.productid,IFNULL(shipmentitems.stockcellfact,shipmentitems.stockcell) stockcell, shipmentitems.quantityfact, IFNULL(products.name,'---') as productname, IFNULL(stockcells.storageid,'---') storageid from shipmentitems  left outer join products on shipmentitems.productid=products._id" +
                 "  left join stockcells on shipmentitems.stockcell=stockcells._id  where shipmentitems.shipmentid="+shipmentId +" order by rownumber";
        //     Cursor cur = db.query(ProductsContract.ShipmentsItemEntry.TABLE_NAME, null,"shipmentid = ?", new String[] { shipmentId}, null, null, null);
 
@@ -387,6 +388,14 @@ Cursor cursor =  null;
         if (res!=null && res.getCount()>0)
         {   res.moveToFirst();     return ShipmentItem.fromCursor(res);
         }else throw new NullPointerException("No shipment item found with id="+id);
+
+    }
+
+    public Cursor getShipmentItemsByShipmentId(String  shipmentid){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor res =  db.rawQuery( "select * from " + ProductsContract.ShipmentsItemEntry.TABLE_NAME+ " where shipmentid="+shipmentid, null );
+        return res;
 
     }
 

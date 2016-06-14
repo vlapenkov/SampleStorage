@@ -71,7 +71,7 @@
     <string name="shipments">Задания на отгрузку</string>
     <string name="btnScanBarCode">Scan</string>
     <string name="doOKAndToNext">OK</string>
-    <string name="refresh">Обновить</string>
+    <string name="refresh">Загрузить</string>
     <string name="loadtodatabase">Загрузить</string>
     <string name="stockcells">Склады и ячейки</string>
     <string name="Products">Товары</string>
@@ -79,4 +79,8 @@
     <string name="cell">Ячейка</string>
     <string name="Quantity">Количество</string>
     <string name="newShipmentsWereAdded">Новые задания были загржены</string>
+    <string name="ShipmentNumber">Задание №</string>
+    <string name="cell_read">Ячейка считана</string>
+    <string name="product_read">Товар считан</string>
+    <string name="products_shouldbe_equal">Считанный код товара и код в задании должны быть одинаковы</string>
 </resources>

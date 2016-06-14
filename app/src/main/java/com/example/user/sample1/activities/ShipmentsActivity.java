@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -13,6 +14,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -28,6 +30,8 @@ import com.example.user.sample1.data.ProductsDbHelper;
 import com.example.user.sample1.data.Shipment;
 import com.example.user.sample1.data.ShipmentItem;
 import com.example.user.sample1.services.SoapCallToWebService;
+import com.example.user.sample1.services.ThreadManager;
+import com.example.user.sample1.services.UtilsConnectivityService;
 import com.example.user.sample1.services.XMLDOMParser;
 
 import org.w3c.dom.Document;
@@ -46,14 +50,19 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
     private static final String TAG = "ShipmentsActivity";
     public static String SHIPMENT_ID_MESSAGE="shipmentID";
-    private static final String stringUrlShipments="http://37.1.84.50:8080/YST/ws/ServiceTransfer";
+    public static final String StringUrlShipments="http://37.1.84.50:8080/YST/ws/ServiceTransfer";
 
     ProductsDbHelper mDbHelper;
     String mCurFilter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_storage_entries);
+        setContentView(R.layout.activity_shipment_items);
+      /*  ActionBar ab = getSupportActionBar();
+        ab.setHomeButtonEnabled(true);
+        ab.setDisplayUseLogoEnabled(true);
+        ab.setLogo(R.drawable.ic_launcher); */
+
         mDbHelper = new ProductsDbHelper(this);
         lvData = (ListView) findViewById(R.id.lvData);
 
@@ -70,6 +79,9 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
         lvData.setAdapter(mAdapter);
 
        lvData.setOnItemClickListener(this);
+        this.setTitle(R.string.shipments);
+
+
 
         getSupportLoaderManager().initLoader(0, null, this);
     }
@@ -143,12 +155,30 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.refresh:
-                if (checkConnectivity())
-                    new DownloadAndImportShipments().execute(stringUrlShipments);
+            case R.id.refresh: {
+                if (checkConnectivity()) {
+                    new DownloadAndImportShipments().execute(StringUrlShipments);
+                    getSupportLoaderManager().getLoader(0).forceLoad();
+                }
+                 /*
+                    ThreadManager.runInBackgroundThenUi(new Runnable() {
+                        @Override
+                        public void run() {
+                            new UtilsConnectivityService(ShipmentsActivity.this).setWifiOn();
+                        }
+                    }, new Runnable() {
+                        @Override
+                        public void run() {
+                            if (new UtilsConnectivityService(ShipmentsActivity.this).checkIfWifiTurnedOn())
+                            { new DownloadAndImportShipments().execute(stringUrlShipments);
 
-                getSupportLoaderManager().getLoader(0).forceLoad();
-                return true;
+                            getSupportLoaderManager().getLoader(0).forceLoad(); }
+                        }
+                    });
+*/
+
+
+                return true; }
 
             case R.id.toPreferences: {
                 Intent intent = new Intent(this, MyPreferencesActivity.class);
@@ -172,6 +202,8 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
                 startActivity(intent);
                 return true;
             }
+
+
             /*default:
                 return super.onOptionsItemSelected(item); */
 
@@ -205,11 +237,15 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
         startActivity(intent);
     }
 
+    private void RefreshList() {
+        getSupportLoaderManager().restartLoader(0, null, this);
+
+    }
     private class DownloadAndImportShipments extends AsyncTask<String, Integer, Long> {
         @Override
         protected Long doInBackground(String... params) {
 
-            InputStream stream = SoapCallToWebService.Call(stringUrlShipments);
+            InputStream stream = SoapCallToWebService.receiveCurrentShipments(StringUrlShipments);
 
             XMLDOMParser parser = new XMLDOMParser();
 
@@ -286,7 +322,11 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
             {String text = getResources().getString(R.string.newShipmentsWereAdded);
             String title =getResources().getString(R.string.downloadcomplete);
             alertView(title,text);}
-
+            RefreshList();
         }
+
+
     }
+
+
 }

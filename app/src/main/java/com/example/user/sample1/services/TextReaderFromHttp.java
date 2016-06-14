@@ -26,6 +26,9 @@ public class TextReaderFromHttp {
         }
         return sb.toString();
     }
+/*
+* read text from url
+* */
 
     public static String readTextArrayFromUrl(String url) throws IOException {
         URL url1 = new URL(url);

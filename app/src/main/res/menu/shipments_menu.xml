@@ -32,4 +32,9 @@
         android:orderInCategory="60"
         android:title="@string/Products"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/turnOnOffWifi"
+        android:orderInCategory="60"
+        android:title="Turn on wifi"
+        app:showAsAction="never" />
 </menu>
