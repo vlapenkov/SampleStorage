@@ -18,8 +18,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.ShipmentsActivity"
-            android:label="@string/shipments">
+            android:name=".activities.ShipmentsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

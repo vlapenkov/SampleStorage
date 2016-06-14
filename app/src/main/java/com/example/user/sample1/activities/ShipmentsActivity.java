@@ -1,5 +1,6 @@
 package com.example.user.sample1.activities;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -53,7 +55,12 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_storage_entries);
+        setContentView(R.layout.activity_shipment_items);
+      /*  ActionBar ab = getSupportActionBar();
+        ab.setHomeButtonEnabled(true);
+        ab.setDisplayUseLogoEnabled(true);
+        ab.setLogo(R.drawable.ic_launcher); */
+
         mDbHelper = new ProductsDbHelper(this);
         lvData = (ListView) findViewById(R.id.lvData);
 
@@ -70,6 +77,9 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
         lvData.setAdapter(mAdapter);
 
        lvData.setOnItemClickListener(this);
+        this.setTitle(R.string.shipments);
+
+
 
         getSupportLoaderManager().initLoader(0, null, this);
     }
@@ -205,7 +215,20 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
         startActivity(intent);
     }
 
+    private void RefreshList() {
+        getSupportLoaderManager().restartLoader(0, null, this);
+
+    }
     private class DownloadAndImportShipments extends AsyncTask<String, Integer, Long> {
+        ProgressDialog pDialog;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(ShipmentsActivity.this);
+            pDialog.setMessage("Loading shipments ....");
+            pDialog.show();
+
+        }
         @Override
         protected Long doInBackground(String... params) {
 
@@ -282,11 +305,14 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
         @Override
         protected void onPostExecute(Long aLong) {
             super.onPostExecute(aLong);
+            pDialog.dismiss();
             if (mNewShipmentsWasAdded)
             {String text = getResources().getString(R.string.newShipmentsWereAdded);
             String title =getResources().getString(R.string.downloadcomplete);
             alertView(title,text);}
-
+            RefreshList();
         }
+
+
     }
 }

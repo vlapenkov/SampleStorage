@@ -5,18 +5,27 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.user.sample1.R;
+import com.example.user.sample1.data.Product;
 import com.example.user.sample1.data.ProductsDbHelper;
 import com.example.user.sample1.data.ShipmentItem;
+import com.example.user.sample1.services.BarCodeUtils;
 import com.google.zxing.common.StringUtils;
+
+import javax.xml.datatype.Duration;
+
+import me.sudar.zxingorient.ZxingOrient;
+import me.sudar.zxingorient.ZxingOrientResult;
 
 public class OneShipmentItemActivity extends AppCompatActivity {
     ShipmentItem mShipmentItem;
     EditText et_Cell;
-    EditText et_QuantityFact;
+    public static String TAG="OneShipmentItemActivity";
 
 
     ProductsDbHelper mDbHelper;
@@ -31,8 +40,10 @@ public class OneShipmentItemActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         mShipmentItem = (ShipmentItem)intent.getSerializableExtra(OneShipmentActivity.SHIPMENTITEM_ID_MESSAGE);
-        String productName = mDbHelper.getProductById(mShipmentItem.ProductId).Name;
-        //Log.d("Victiry!",mShipmentItem.StockCell);
+        //String productName = mDbHelper.getProductById(mShipmentItem.ProductId).Name;
+        Product product =mDbHelper.getProductById(mShipmentItem.ProductId);
+        String productName = product!=null?product.Name:"";
+
         TextView tvRowNumber  = (TextView) findViewById(R.id.tv_RowNumber);
         TextView tvProductId = (TextView) findViewById(R.id.tv_ProductId);
         TextView tvProductName =(TextView) findViewById(R.id.tvProductName);
@@ -60,6 +71,8 @@ public class OneShipmentItemActivity extends AppCompatActivity {
 
 
         tvProductName.setText(productName);
+
+        et_QuantityFact.requestFocus();
     }
 
     public void doOKAndToNext(View v)
@@ -83,4 +96,43 @@ String cell = et_Cell.getText().toString();
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent); }
     }
+
+    public void scanBarCode(View v)
+    {
+
+        new ZxingOrient(OneShipmentItemActivity.this).initiateScan();
+    }
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+
+        String cellRead="";
+        String nameOfProduct = "";
+        TextView tvProductName = (TextView)findViewById(R.id.tvProductName);
+        EditText et_Cell = (EditText) findViewById(R.id.et_Cell);
+
+//retrieve scan result
+        ZxingOrientResult scanningResult = ZxingOrient.parseActivityResult(requestCode, resultCode, intent);
+        if (scanningResult != null) {
+
+            String contents= scanningResult.getContents();
+
+            int productId = BarCodeUtils.getProductIdFromBarCode(contents);
+
+            if (productId==0) { cellRead =BarCodeUtils.getCellFromBarCode(contents);}
+            else {
+                if (productId!=mShipmentItem.ProductId) Toast.makeText(OneShipmentItemActivity.this,R.string.products_shouldbe_equal, Toast.LENGTH_LONG).show();
+                else //productId==mShipmentItem.ProductId
+                {Toast.makeText(OneShipmentItemActivity.this,R.string.product_read, Toast.LENGTH_LONG).show();}
+
+            }
+            Log.d(TAG+"/product",String.valueOf(productId));
+            Log.d(TAG+"/cell",cellRead);
+            if (!cellRead.isEmpty()) {
+                et_Cell.setText(cellRead);
+                Toast.makeText(OneShipmentItemActivity.this,R.string.cell_read, Toast.LENGTH_LONG).show();
+            }
+
+
+        }
+    }
+
 }

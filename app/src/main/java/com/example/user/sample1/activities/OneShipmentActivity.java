@@ -20,7 +20,7 @@ import com.example.user.sample1.R;
 import com.example.user.sample1.data.ProductsDbHelper;
 import com.example.user.sample1.data.ShipmentItem;
 
-/**
+/*****
  * Created by user on 09.06.2016.
  */
 public class OneShipmentActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,AdapterView.OnItemClickListener {
@@ -40,7 +40,8 @@ public class OneShipmentActivity extends AppCompatActivity implements LoaderMana
 
         Intent intent = getIntent();
          mShipmentId = intent.getStringExtra(ShipmentsActivity.SHIPMENT_ID_MESSAGE);
-        setTitle("Задание №"+String.valueOf(mShipmentId));
+        String shipmentNumber= getResources().getString(R.string.ShipmentNumber);
+        setTitle(shipmentNumber+String.valueOf(mShipmentId));
 
         mDbHelper = new ProductsDbHelper(this);
         lvData = (ListView) findViewById(R.id.lvData);
@@ -86,7 +87,7 @@ public class OneShipmentActivity extends AppCompatActivity implements LoaderMana
 
 
 
-
+/*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -96,7 +97,7 @@ public class OneShipmentActivity extends AppCompatActivity implements LoaderMana
 
         return true;
     }
-
+*/
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         ShipmentItem shipmentItem= mDbHelper.getShipmentItemById(id);
