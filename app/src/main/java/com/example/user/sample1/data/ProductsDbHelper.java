@@ -353,7 +353,9 @@ return true;
 
 }
 
+/*
 
+ */
     public Cursor getShipments(String filter) {
 
 Cursor cursor =  null;
