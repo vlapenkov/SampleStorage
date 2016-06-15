@@ -1,5 +1,6 @@
 package com.example.user.sample1.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -133,6 +134,24 @@ public class OneShipmentActivity extends AppCompatActivity implements LoaderMana
 
 
     private class SendShipment extends AsyncTask<String,Void,String> {
+
+        ProgressDialog pDialog;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(OneShipmentActivity.this);
+
+            pDialog.setMessage(getString(R.string.shipment_is_being_uploaded));
+            pDialog.show();
+
+        }
+
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            pDialog.dismiss();
+        }
 
         @Override
         protected String doInBackground(String... params) {

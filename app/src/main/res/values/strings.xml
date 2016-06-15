@@ -78,9 +78,13 @@
     <string name="downloadcomplete">Загрузка завершена</string>
     <string name="cell">Ячейка</string>
     <string name="Quantity">Количество</string>
-    <string name="newShipmentsWereAdded">Новые задания были загржены</string>
+    <string name="newShipmentsWereAdded">Новые задания были загружены</string>
     <string name="ShipmentNumber">Задание №</string>
     <string name="cell_read">Ячейка считана</string>
     <string name="product_read">Товар считан</string>
     <string name="products_shouldbe_equal">Считанный код товара и код в задании должны быть одинаковы</string>
+    <string name="shipments_are_being_downloaded">Идет загрузка заданий ...</string>
+    <string name="shipment_is_being_uploaded">Задание выгружается в 1С ...</string>
+    <string name="products_are_being_downloaded">Идет загрузка товаров ...</string>
+    <string name="stockcells_are_being_downloaded">Идет загрузка ячеек и складов ...</string>
 </resources>

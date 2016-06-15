@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="30dp">
     </ListView>
-    <RelativeLayout
+    <!--<RelativeLayout
         android:id="@+id/InnerRelativeLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -27,5 +27,5 @@
             android:layout_height="24dp"
             style="?android:attr/progressBarStyleHorizontal">
         </ProgressBar>
-    </RelativeLayout>
+    </RelativeLayout> -->
 </RelativeLayout>

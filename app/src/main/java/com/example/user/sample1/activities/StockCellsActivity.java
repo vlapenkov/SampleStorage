@@ -1,5 +1,6 @@
 package com.example.user.sample1.activities;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
@@ -35,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StockCellsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, SearchView.OnQueryTextListener,AdapterView.OnItemClickListener{
-    ProgressBar mProgressBar;
+
    SimpleCursorAdapter mAdapter=null;
     ListView lvData =null;
     private static final String stringUrlStoragesAndCells="http://yst.ru/data/Stores.txt";
@@ -48,7 +49,7 @@ public class StockCellsActivity extends AppCompatActivity implements LoaderManag
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_storage_entries);
-        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+
         mDbHelper = new ProductsDbHelper(this);
         lvData = (ListView) findViewById(R.id.lvData);
 
@@ -97,7 +98,6 @@ public class StockCellsActivity extends AppCompatActivity implements LoaderManag
     private boolean checkConnectivity()
     {
 
-        mProgressBar.setProgress(0);
         ConnectivityManager connMgr = (ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -121,19 +121,34 @@ public class StockCellsActivity extends AppCompatActivity implements LoaderManag
                 }).show();
     }
     private class DownloadAndImportStockCells extends AsyncTask<String, Integer, Long> {
+        ProgressDialog pDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(StockCellsActivity.this);
+            pDialog.setProgress(0);
+            pDialog.setMax(100);
+
+            pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            pDialog.setMessage(getString(R.string.stockcells_are_being_downloaded));
+            pDialog.show();
+        }
         @Override
         protected void onProgressUpdate(Integer... values) {
-            // super.onProgressUpdate(values);
-            mProgressBar.setProgress(values[0]);
+            super.onProgressUpdate(values);
+            pDialog.setProgress(values[0]);
         }
 
         @Override
         protected void onPostExecute(Long aLong) {
             super.onPostExecute(aLong);
-            mProgressBar.setProgress(100);
+            //pDialog.setProgress(100);
+            pDialog.dismiss();
             String format = getResources().getString(R.string.products_sucсessfully_downloaded);
             String title =getResources().getString(R.string.downloadcomplete);
-            alertView(title,String.format(format,Long.toString(aLong)));
+            alertView(title, String.format(format, Long.toString(aLong)));
+            //      getLoaderManager().getLoader(0).forceLoad();
             RefreshList();
 
         }

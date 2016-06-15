@@ -1,5 +1,6 @@
 package com.example.user.sample1.activities;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -72,9 +73,6 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
                 R.layout.stockcell_item, mDbHelper.getShipments(mCurFilter),
                 new String[] { "_id", "dateofshipment","client" },
                 new int[] { R.id.text1, R.id.text2,R.id.text3  }, 0);
-      /*  String[] from = new String[] {"client"};
-        int[] to = new int[] {android.R.id.text1};
-        mAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, mDbHelper.getShipments(mCurFilter), from, to); */
 
         lvData.setAdapter(mAdapter);
 
@@ -242,6 +240,34 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
     }
     private class DownloadAndImportShipments extends AsyncTask<String, Integer, Long> {
+        ProgressDialog pDialog;
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(ShipmentsActivity.this);
+
+            pDialog.setMessage(getString(R.string.shipments_are_being_downloaded));
+            pDialog.show();
+
+        }
+
+        @Override
+        protected void onPostExecute(Long aLong) {
+            super.onPostExecute(aLong);
+            pDialog.dismiss();
+            if (mNewShipmentsWasAdded)
+            {String text = getResources().getString(R.string.newShipmentsWereAdded);
+                String title =getResources().getString(R.string.downloadcomplete);
+                alertView(title,text);}
+            RefreshList();
+        }
         @Override
         protected Long doInBackground(String... params) {
 
@@ -288,7 +314,7 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
             }
 
             Log.d(TAG+"/shipmentsitems size", String.valueOf(listOfShipmentItems.size()));
-            Log.d(TAG+"/shipments size", String.valueOf(listOfShipments.size()));
+            Log.d(TAG + "/shipments size", String.valueOf(listOfShipments.size()));
 
 
             ProductsDbHelper dbHelper = new ProductsDbHelper(getBaseContext());
@@ -315,15 +341,7 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
         }
 
-        @Override
-        protected void onPostExecute(Long aLong) {
-            super.onPostExecute(aLong);
-            if (mNewShipmentsWasAdded)
-            {String text = getResources().getString(R.string.newShipmentsWereAdded);
-            String title =getResources().getString(R.string.downloadcomplete);
-            alertView(title,text);}
-            RefreshList();
-        }
+
 
 
     }

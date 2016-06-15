@@ -1,5 +1,6 @@
 package com.example.user.sample1.activities;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -41,13 +42,13 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
     public static String PRODUCT_ID_MESSAGE="productID";
     ProductsDbHelper mDbHelper;
     String mCurFilter;
-    ProgressBar mProgressBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+
 
         mDbHelper = new ProductsDbHelper(this);
 
@@ -157,7 +158,7 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
         }
         mCurFilter = newFilter;
 
-    getSupportLoaderManager().restartLoader(0, null, this);
+        getSupportLoaderManager().restartLoader(0, null, this);
         return true;
     }
 
@@ -195,21 +196,38 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
                 }).show();
     }
     private class DownloadAndImportProducts extends AsyncTask<String, Integer, Long> {
+
+        ProgressDialog pDialog;
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(ProductsActivity.this);
+            pDialog.setProgress(0);
+            pDialog.setMax(100);
+
+            pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            pDialog.setMessage("Loading products ....");
+            pDialog.show();
+        }
+
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
-            mProgressBar.setProgress(values[0]);
+            pDialog.setProgress(values[0]);
 
         }
 
         @Override
         protected void onPostExecute(Long aLong) {
             super.onPostExecute(aLong);
-            mProgressBar.setProgress(100);
+            //pDialog.setProgress(100);
+            pDialog.dismiss();
             String format = getResources().getString(R.string.products_sucсessfully_downloaded);
             String title =getResources().getString(R.string.downloadcomplete);
             alertView(title,String.format(format,Long.toString(aLong)));
-      //      getLoaderManager().getLoader(0).forceLoad();
+            //      getLoaderManager().getLoader(0).forceLoad();
             RefreshList();
 
         }
@@ -238,15 +256,13 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
                 counter++;
                 if (counter==1) { continue;}
 
-                if (counter%10==0)
-                    publishProgress((int) ((counter / (float) lines.length) * 100));
+                if (counter%10==0) publishProgress((int) ((counter / (float) lines.length) * 100));
                 String[] arr=line.split(";");
 
                 Log.d(TAG +"/import",arr[0]);
                 int id  = Integer.parseInt(arr[0]);
 
                /* if (dbHelper.checkIfProductExists(id))
-
                     continue; */
                 String name = arr[1];
                 String barcode = arr[2];
@@ -260,7 +276,7 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
     }
 
     private void RefreshList() {
-                    getSupportLoaderManager().restartLoader(0, null, this);
+        getSupportLoaderManager().restartLoader(0, null, this);
 
     }
 
