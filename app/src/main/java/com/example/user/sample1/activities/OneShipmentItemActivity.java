@@ -14,7 +14,9 @@ import com.example.user.sample1.R;
 import com.example.user.sample1.data.Product;
 import com.example.user.sample1.data.ProductsDbHelper;
 import com.example.user.sample1.data.ShipmentItem;
+import com.example.user.sample1.dialogs.ProductPictureDialog;
 import com.example.user.sample1.services.BarCodeUtils;
+import com.example.user.sample1.services.UtilsConnectivityService;
 import com.google.zxing.common.StringUtils;
 
 import javax.xml.datatype.Duration;
@@ -22,7 +24,7 @@ import javax.xml.datatype.Duration;
 import me.sudar.zxingorient.ZxingOrient;
 import me.sudar.zxingorient.ZxingOrientResult;
 
-public class OneShipmentItemActivity extends AppCompatActivity {
+public class OneShipmentItemActivity extends AppCompatActivity implements View.OnClickListener {
     ShipmentItem mShipmentItem;
     EditText et_Cell;
     public static String TAG="OneShipmentItemActivity";
@@ -50,17 +52,14 @@ public class OneShipmentItemActivity extends AppCompatActivity {
         //TextView tv_CellPlanCaption = (TextView) findViewById(R.id.tv_CellPlanCaption);
         EditText et_Cell = (EditText) findViewById(R.id.et_Cell);
         TextView tv_Storage = (TextView) findViewById(R.id.tv_Storage);
-        //EditText et_CellFact = (EditText) findViewById(R.id.et_CellFact);
-        //TextView tv_StorageFact =
         EditText et_QuantityFact= (EditText) findViewById(R.id.et_QuantityFact);
         TextView tv_QuantityPlan = (TextView) findViewById(R.id.tv_QuantityPlan);
 
         tvRowNumber.setText(String.valueOf(mShipmentItem.RowNumber));
         tvProductId.setText(String.valueOf(mShipmentItem.ProductId));
-        //tvProductName.setText(mShipmentItem.);
-        //tv_CellPlanCaption.setText(mShipmentItem.StockCell);
 
-        //tv_Storage.setText();
+        tvProductId.setOnClickListener(this);
+
 
         if(mShipmentItem.StockCellFact != null && !mShipmentItem.StockCellFact.isEmpty()) et_Cell.setText(mShipmentItem.StockCellFact);
         else et_Cell.setText(mShipmentItem.StockCell);
@@ -113,7 +112,7 @@ String cell = et_Cell.getText().toString();
         ZxingOrientResult scanningResult = ZxingOrient.parseActivityResult(requestCode, resultCode, intent);
         if (scanningResult != null) {
 
-            String contents= scanningResult.getContents();
+            String contents= scanningResult.getContents(); if (contents==null) return;
 
             int productId = BarCodeUtils.getProductIdFromBarCode(contents);
 
@@ -135,4 +134,15 @@ String cell = et_Cell.getText().toString();
         }
     }
 
-}
+    @Override
+    public void onClick(View v) {
+
+        if (new UtilsConnectivityService(OneShipmentItemActivity.this).checkConnectivity()) {
+            TextView tvId = (TextView) findViewById(R.id.tv_ProductId);
+            ProductPictureDialog pDialog = new ProductPictureDialog();
+            Bundle bundle = new Bundle();
+            bundle.putString("productId", tvId.getText().toString());
+            pDialog.setArguments(bundle);
+            pDialog.show(getFragmentManager(), "Заголовок");
+    }
+}}

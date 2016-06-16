@@ -354,6 +354,20 @@ return true;
 }
 
 
+    public String getStorageOfCell(String cell) {
+
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+         Cursor cursor= db.rawQuery("SELECT storageid from " + ProductsContract.StockCellEntry.TABLE_NAME + " where _id=" + cell,null);
+        if (cursor!=null && cursor.getCount()>0)
+        {   cursor.moveToFirst();
+            return cursor.getString(0);
+
+        }
+    return "";
+    }
+
     public Cursor getShipments(String filter) {
 
         Cursor cursor =  null;
@@ -362,7 +376,7 @@ return true;
             cursor= db.query(ProductsContract.ShipmentsEntry.TABLE_NAME, null,"_id like ? or dateofshipment like ? or client like ?", new String[] { "%"+filter+"%","%"+filter+"%","%"+filter+"%"}, null, null, null);
         //    cursor= db.query(ProductsContract.ShipmentsEntry.TABLE_NAME, null, null, null, null, null, null);
 
-        String sql_select = "select _id,SUBSTR(dateofshipment,1,10) dateofshipment, client from "+ProductsContract.ShipmentsEntry.TABLE_NAME + " order by dateofshipment";
+        String sql_select = "select _id,SUBSTR(dateofshipment,6,5) dateofshipment, client from "+ProductsContract.ShipmentsEntry.TABLE_NAME + " order by dateofshipment";
         cursor =  db.rawQuery( sql_select, null );
 
         return  cursor;

@@ -4,34 +4,39 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.user.sample1.R;
+import com.example.user.sample1.data.ProductsContract;
 import com.example.user.sample1.data.ProductsDbHelper;
 import com.example.user.sample1.data.Shipment;
 import com.example.user.sample1.data.ShipmentItem;
+import com.example.user.sample1.dialogs.AlertSuccess;
+import com.example.user.sample1.dialogs.YesNoDialogFragment;
 import com.example.user.sample1.services.SoapCallToWebService;
-import com.example.user.sample1.services.ThreadManager;
 import com.example.user.sample1.services.UtilsConnectivityService;
 import com.example.user.sample1.services.XMLDOMParser;
 
@@ -41,9 +46,11 @@ import org.w3c.dom.NodeList;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-public class ShipmentsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, SearchView.OnQueryTextListener,AdapterView.OnItemClickListener {
+public class ShipmentsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, SearchView.OnQueryTextListener,AdapterView.OnItemClickListener,NavigationView.OnNavigationItemSelectedListener {
 
     private boolean mNewShipmentsWasAdded = false;
    SimpleCursorAdapter mAdapter=null;
@@ -58,7 +65,25 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_shipment_items);
+        //setContentView(R.layout.activity_shipments);
+
+        setContentView(R.layout.main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        // for using drawer
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+
+        //Initializing NavigationView
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        //Setting Navigation View Item Selected Listener to handle the item click of the navigation menu
+        navigationView.setNavigationItemSelectedListener(this);
+
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
       /*  ActionBar ab = getSupportActionBar();
         ab.setHomeButtonEnabled(true);
         ab.setDisplayUseLogoEnabled(true);
@@ -70,11 +95,12 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
 
        mAdapter = new SimpleCursorAdapter(this,
-                R.layout.stockcell_item, mDbHelper.getShipments(mCurFilter),
+                R.layout.shipment_item, mDbHelper.getShipments(mCurFilter),
                 new String[] { "_id", "dateofshipment","client" },
                 new int[] { R.id.text1, R.id.text2,R.id.text3  }, 0);
 
-        lvData.setAdapter(mAdapter);
+
+            lvData.setAdapter(mAdapter);
 
        lvData.setOnItemClickListener(this);
         this.setTitle(R.string.shipments);
@@ -84,6 +110,81 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
         getSupportLoaderManager().initLoader(0, null, this);
     }
 
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        switch(id) {
+            case R.id.import_shipments: {
+                if (new UtilsConnectivityService(ShipmentsActivity.this).checkConnectivity()) {
+                    new DownloadAndImportShipments().execute(StringUrlShipments);
+                    getSupportLoaderManager().getLoader(0).forceLoad();
+                }
+
+                return true; }
+
+            case R.id.clear: {
+
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+                                new ClearAllShipments().execute();
+                                break;
+                        }
+                    }
+
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(R.string.clear_shipments_message).setPositiveButton(R.string.yes, dialogClickListener)
+                        .setNegativeButton(R.string.no, dialogClickListener).show();
+
+                return true;
+            }
+
+            case R.id.toPreferences: {
+                Intent intent = new Intent(this, MyPreferencesActivity.class);
+
+                startActivity(intent);
+                return true;}
+
+            case R.id.toStockCells: {
+
+                Intent intent = new Intent(this, StockCellsActivity.class);
+
+                startActivity(intent);
+                return true;
+            }
+            case R.id.toProducts: {
+
+               Intent intent = new Intent(this, ProductsActivity.class);
+
+                startActivity(intent);
+
+                //YesNoDialogFragment.newInstance(R.string.history_title).show(getFragmentManager(), "dialog");
+                return true;
+            }
+        }
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String[] projection=null,selectionArgs=null;
@@ -102,6 +203,7 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mAdapter.swapCursor(data);
+
     }
 
     @Override
@@ -130,101 +232,6 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
         return false;
     }
 
-
-    private boolean checkConnectivity()
-    {
-   ConnectivityManager connMgr = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) return true;
-        return false;
-
-    }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.shipments_menu, menu);
-        MenuItem searchItem = menu.findItem(R.id.search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-//        searchView.setOnQueryTextListener(this);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.refresh: {
-                if (checkConnectivity()) {
-                    new DownloadAndImportShipments().execute(StringUrlShipments);
-                    getSupportLoaderManager().getLoader(0).forceLoad();
-                }
-                 /*
-                    ThreadManager.runInBackgroundThenUi(new Runnable() {
-                        @Override
-                        public void run() {
-                            new UtilsConnectivityService(ShipmentsActivity.this).setWifiOn();
-                        }
-                    }, new Runnable() {
-                        @Override
-                        public void run() {
-                            if (new UtilsConnectivityService(ShipmentsActivity.this).checkIfWifiTurnedOn())
-                            { new DownloadAndImportShipments().execute(stringUrlShipments);
-
-                            getSupportLoaderManager().getLoader(0).forceLoad(); }
-                        }
-                    });
-*/
-
-
-                return true; }
-
-            case R.id.toPreferences: {
-                Intent intent = new Intent(this, MyPreferencesActivity.class);
-
-                startActivity(intent);
-                return true;}
-
-            case R.id.toStockCells:
-            {
-
-                Intent intent = new Intent(this, StockCellsActivity.class);
-
-                startActivity(intent);
-                return true;
-            }
-            case R.id.toProducts:
-            {
-
-                Intent intent = new Intent(this, ProductsActivity.class);
-
-                startActivity(intent);
-                return true;
-            }
-
-
-            /*default:
-                return super.onOptionsItemSelected(item); */
-
-        }
-        return true;
-    }
-
-    private void alertView( String title, String message ) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-        dialog.setTitle( title)
-                .setIcon(R.drawable.ic_launcher)
-                .setMessage(message)
-//  .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//      public void onClick(DialogInterface dialoginterface, int i) {
-//          dialoginterface.cancel();
-//          }})
-                .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialoginterface, int i) {
-                    }
-                }).show();
-    }
-
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Log.d(TAG, String.valueOf(id));
@@ -239,6 +246,11 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
         getSupportLoaderManager().restartLoader(0, null, this);
 
     }
+
+    public void doPositiveClick() {
+        Log.i(TAG, "Positive click");
+    }
+
     private class DownloadAndImportShipments extends AsyncTask<String, Integer, Long> {
         ProgressDialog pDialog;
 
@@ -263,9 +275,13 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
             super.onPostExecute(aLong);
             pDialog.dismiss();
             if (mNewShipmentsWasAdded)
-            {String text = getResources().getString(R.string.newShipmentsWereAdded);
-                String title =getResources().getString(R.string.downloadcomplete);
-                alertView(title,text);}
+            {String text = getString(R.string.newShipmentsWereAdded);
+                String title =getString(R.string.downloadcomplete);
+                AlertSuccess.show(ShipmentsActivity.this, title, text);
+                //alertView(title,text);
+            }
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            if (drawer.isDrawerOpen(GravityCompat.START))   drawer.closeDrawer(GravityCompat.START);
             RefreshList();
         }
         @Override
@@ -282,6 +298,13 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
             NodeList nodeListOrders = doc.getElementsByTagName("Orders");
 
+            ProductsDbHelper dbHelper = new ProductsDbHelper(getBaseContext());
+
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            Boolean  onlySelectedStorages = preferences.getBoolean("onlySelectedStorages", false);
+            Set<String> arrayOfStorages = preferences.getStringSet("storagesArray", new HashSet<String>());
+
+
             for(int j=0; j< nodeListOrders.getLength();j++) {
                 Element e = (Element) nodeListOrders.item(j);
 
@@ -292,10 +315,9 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
                 String cleanId = Shipment.getCleanId(numberin1s);
                 Shipment shipmentToAdd =new Shipment(cleanId,dateofshipment,client,comment);
-                listOfShipments.add(shipmentToAdd);
-                Log.d(TAG+ "/shipment added", shipmentToAdd.toString());
 
 
+                Boolean hasItems= false;
                 NodeList nodeListProducts =e.getElementsByTagName("Products");
                 for(int k=0; k< nodeListProducts.getLength();k++) {
                     {
@@ -303,21 +325,32 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
                         Integer rownumber = Integer.parseInt(parser.getValue(p, "rownumber"));
                         Integer productid = Integer.parseInt(parser.getValue(p, "productid"));
                         String stockcell = parser.getValue(p, "stockcell");
+                        if(onlySelectedStorages)
+                        {   String storage=dbHelper.getStorageOfCell(stockcell);
+                        Log.d(TAG+"storage","|"+storage+"|");
+                        if (storage!=null ) {
+                            if (!arrayOfStorages.contains(storage)) continue;
+
+                        }else {
+                            continue;
+                        }
+
+                        }
                         Integer quantity = Integer.parseInt(parser.getValue(p, "quantity"));
                         ShipmentItem shipmentItemToAdd =new ShipmentItem(cleanId,rownumber,productid,stockcell,quantity);
                         listOfShipmentItems.add(shipmentItemToAdd);
-
+                        hasItems=true;
 
                     }}
-                Log.d(TAG +"/shipmentitems added", listOfShipmentItems.toString());
+                if (hasItems)
+                {listOfShipments.add(shipmentToAdd);
+                Log.d(TAG+ "/shipment added", shipmentToAdd.toString());
+                Log.d(TAG +"/shipmentitems added", listOfShipmentItems.toString()); }
 
             }
 
             Log.d(TAG+"/shipmentsitems size", String.valueOf(listOfShipmentItems.size()));
             Log.d(TAG + "/shipments size", String.valueOf(listOfShipments.size()));
-
-
-            ProductsDbHelper dbHelper = new ProductsDbHelper(getBaseContext());
 
             mNewShipmentsWasAdded=false;
             for (Shipment shipment : listOfShipments)
@@ -334,17 +367,28 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
                     dbHelper.addShipmentItem(shipmentItem);
 
             }
-
-
             return null;
-
-
         }
-
-
-
-
     }
 
+/*
+* class removes all shipments
+* */
+    private class ClearAllShipments extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            mDbHelper.clearTable(ProductsContract.ShipmentsItemEntry.TABLE_NAME);
+            mDbHelper.clearTable(ProductsContract.ShipmentsEntry.TABLE_NAME);
 
+            return null;
+        }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        super.onPostExecute(aVoid);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START))    drawer.closeDrawer(GravityCompat.START);
+        getSupportLoaderManager().getLoader(0).forceLoad();
+    }
+}
 }

@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <EditTextPreference android:title="Your Name"
+    <EditTextPreference android:title="@string/yourName"
         android:key="username"
-        android:summary="Please provide your username"></EditTextPreference>
+        android:summary="@string/enterYourName"></EditTextPreference>
+    <CheckBoxPreference android:title="@string/filter_selected_storages"
+        android:defaultValue="false"
+        android:summary="@string/summary_selected_storages"
+        android:key="onlySelectedStorages" />
     <!--<CheckBoxPreference android:title="Application Updates"
         android:defaultValue="false"
         android:summary="This option if selected will allow the application to check for latest versions."
@@ -17,7 +21,7 @@
         android:title="@string/multiselectStorages"
         android:entries="@array/storagesArray"
         android:entryValues="@array/storagesArray"
-        android:summary="List of storages available"
+        android:summary=""
         android:key="storagesArray"
         />
 </PreferenceScreen>

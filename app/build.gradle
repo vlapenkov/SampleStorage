@@ -27,4 +27,5 @@ dependencies {
     compile 'com.android.support:support-v4:23.3.0'
     compile 'com.google.zxing:android-integration:3.2.1'
     compile 'me.sudar:zxing-orient:2.1.1@aar'
+    compile 'com.android.support:design:23.3.0'
 }

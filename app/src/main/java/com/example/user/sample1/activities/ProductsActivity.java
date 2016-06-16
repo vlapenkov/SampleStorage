@@ -28,7 +28,9 @@ import android.widget.ProgressBar;
 import com.example.user.sample1.R;
 import com.example.user.sample1.data.ProductsContract;
 import com.example.user.sample1.data.ProductsDbHelper;
+import com.example.user.sample1.dialogs.AlertSuccess;
 import com.example.user.sample1.services.TextReaderFromHttp;
+import com.example.user.sample1.services.UtilsConnectivityService;
 
 import java.io.IOException;
 
@@ -87,7 +89,7 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.refresh:
-                if (checkConnectivity())
+                if (new UtilsConnectivityService(ProductsActivity.this).checkConnectivity())
                     new DownloadAndImportProducts().execute(stringUrlProducts);
                 getSupportLoaderManager().getLoader(0).forceLoad();
                 return true;
@@ -162,39 +164,15 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
         return true;
     }
 
-    private boolean checkConnectivity()
-    {
 
-        //    mProgressBar.setProgress(0);
-        ConnectivityManager connMgr = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) return true;
-        return false;
-
-    }
     public void importAllProducts(View v)
     {
-        if (checkConnectivity())
+        if (new UtilsConnectivityService(ProductsActivity.this).checkConnectivity())
             new DownloadAndImportProducts().execute(stringUrlProducts);
 
 
     }
-    private void alertView( String title, String message ) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-        dialog.setTitle( title)
-                .setIcon(R.drawable.ic_launcher)
-                .setMessage(message)
-//  .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//      public void onClick(DialogInterface dialoginterface, int i) {
-//          dialoginterface.cancel();
-//          }})
-                .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialoginterface, int i) {
-                    }
-                }).show();
-    }
     private class DownloadAndImportProducts extends AsyncTask<String, Integer, Long> {
 
         ProgressDialog pDialog;
@@ -208,7 +186,7 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
             pDialog.setMax(100);
 
             pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            pDialog.setMessage("Loading products ....");
+            pDialog.setMessage("Loading products ...");
             pDialog.show();
         }
 
@@ -224,10 +202,10 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
             super.onPostExecute(aLong);
             //pDialog.setProgress(100);
             pDialog.dismiss();
-            String format = getResources().getString(R.string.products_sucсessfully_downloaded);
-            String title =getResources().getString(R.string.downloadcomplete);
-            alertView(title,String.format(format,Long.toString(aLong)));
-            //      getLoaderManager().getLoader(0).forceLoad();
+            String message = getString(R.string.products_sucсessfully_downloaded);
+            String title =getString(R.string.downloadcomplete);
+            AlertSuccess.show(ProductsActivity.this,title,message);
+
             RefreshList();
 
         }

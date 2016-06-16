@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/import_shipments"
+            android:icon="@drawable/ic_menu_download"
+            android:title="@string/importShipments" />
+        <item
+            android:id="@+id/clear"
+            android:icon="@drawable/ic_menu_clear"
+            android:title="@string/clear" />
+        <!--<item
+            android:id="@+id/nav_slideshow"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="Slideshow" />
+        <item
+            android:id="@+id/nav_manage"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Tools" /> -->
+        <item
+            android:id="@+id/toProducts"
+            android:icon="@drawable/ic_menu_share"
+            android:title="@string/Products" />
+        <item
+            android:id="@+id/toStockCells"
+            android:icon="@drawable/ic_menu_send"
+            android:title="@string/stockcells" />
+
+        <item
+            android:id="@+id/toPreferences"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/toPreferences" />
+    </group>
+<!--
+    <item android:title="@string/dictionaries">
+        <menu>
+            <item
+                android:id="@+id/toProducts"
+                android:icon="@drawable/ic_menu_share"
+                android:title="@string/Products" />
+            <item
+                android:id="@+id/toStockCells"
+                android:icon="@drawable/ic_menu_send"
+                android:title="@string/stockcells" />
+        </menu>
+    </item>
+-->
+</menu>

@@ -3,11 +3,14 @@ package com.example.user.sample1.activities;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import com.example.user.sample1.R;
 import com.example.user.sample1.data.Product;
 import com.example.user.sample1.data.ProductsDbHelper;
+import com.example.user.sample1.dialogs.ProductPictureDialog;
+import com.example.user.sample1.services.UtilsConnectivityService;
 
 public class OneProductActivity extends AppCompatActivity {
 
@@ -45,6 +48,18 @@ public class OneProductActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
+    }
+
+    public void showPicture (View v)
+    {
+        if (new UtilsConnectivityService(OneProductActivity.this).checkConnectivity()) {
+        TextView tvId = (TextView) findViewById(R.id.tv_Id);
+        ProductPictureDialog pDialog = new ProductPictureDialog();
+        Bundle bundle = new Bundle();
+        bundle.putString("productId", tvId.getText().toString());
+        pDialog.setArguments(bundle);
+        pDialog.show(getFragmentManager(), "Заголовок");
+    }
     }
 
 

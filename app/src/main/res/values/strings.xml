@@ -1,6 +1,7 @@
 <resources>
     <string name="products_sucсessfully_downloaded">Товары в количестве %1$s успешно загружены</string>
     <string name="import_stockcells_message">При загрузке ячеек и складов задания будут очищены</string>
+    <string name="clear_shipments_message">Удалить все задания?</string>
     <string name="app_name">ТСД Яршинторг</string>
     <string name="createproduct">Create product</string>
     <string name="toPreferences">Настройки</string>
@@ -32,7 +33,7 @@
     </string-array>
 
     <!-- Example settings for Data & Sync -->
-    <string name="pref_header_data_sync">Data &amp; sync</string>
+   <!-- <string name="pref_header_data_sync">Data &amp; sync</string>
 
     <string name="pref_title_sync_frequency">Sync frequency</string>
     <string-array name="pref_sync_frequency_titles">
@@ -50,7 +51,9 @@
         <item>180</item>
         <item>360</item>
         <item>-1</item>
-    </string-array>
+    </string-array> -->
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
 
     <string name="pref_title_system_sync_settings">System sync settings</string>
 
@@ -65,7 +68,7 @@
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="generateStoragesAndCells">Загрузить склады и ячейки</string>
     <string name="generateProducts">Загрузить товары</string>
-    <string name="multiselectStorages">storages</string>
+    <string name="multiselectStorages">Склады</string>
     <string name="hint_search">Поиск</string>
     <string name="importShipments">Загрузить задания</string>
     <string name="shipments">Задания на отгрузку</string>
@@ -87,4 +90,14 @@
     <string name="shipment_is_being_uploaded">Задание выгружается в 1С ...</string>
     <string name="products_are_being_downloaded">Идет загрузка товаров ...</string>
     <string name="stockcells_are_being_downloaded">Идет загрузка ячеек и складов ...</string>
+    <string name="clear">Очистить</string>
+    <string name="summary_selected_storages">Загрузка заданий только по выбранным складам</string>
+    <string name="filter_selected_storages">Отбор по выбранным складам</string>
+    <string name="yourName">Ваше имя</string>
+    <string name="enterYourName">Введите ваше имя</string>
+    <string name="navigation_drawer_open">Open</string>
+    <string name="navigation_drawer_close">Close</string>
+    <string name="dictionaries">Справочники</string>
+    <string name="picture_of_product">Фото товара</string>
+    <string name="show_picture">Показать фото</string>
 </resources>

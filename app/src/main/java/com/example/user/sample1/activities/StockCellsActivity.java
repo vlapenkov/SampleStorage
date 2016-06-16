@@ -29,7 +29,9 @@ import android.widget.ProgressBar;
 import com.example.user.sample1.R;
 import com.example.user.sample1.data.ProductsContract;
 import com.example.user.sample1.data.ProductsDbHelper;
+import com.example.user.sample1.dialogs.AlertSuccess;
 import com.example.user.sample1.services.TextReaderFromHttp;
+import com.example.user.sample1.services.UtilsConnectivityService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -66,60 +68,12 @@ public class StockCellsActivity extends AppCompatActivity implements LoaderManag
         getSupportLoaderManager().initLoader(0, null, this);
     }
 
-/*
-    public void importAllStoragesAndCells(View v)
-    {
 
-        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which){
-                    case DialogInterface.BUTTON_POSITIVE:
-                        if (checkConnectivity())
-                            new DownloadAndImportStockCells().execute(stringUrlStoragesAndCells);
-
-                        break;
-
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        //No button clicked
-                        break;
-                }
-            }
-
-        };
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(R.string.import_stockcells_message).setPositiveButton("Yes", dialogClickListener)
-                .setNegativeButton("No", dialogClickListener).show();
-
-
-
-    }*/
-    private boolean checkConnectivity()
-    {
-
-        ConnectivityManager connMgr = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) return true;
-        return false;
-
-    }
     private String downloadUrl(String url) throws IOException {
         return  TextReaderFromHttp.readTextArrayFromUrl(url);
     }
 
-    private void alertView( String title,String message ) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-        dialog.setTitle( title )
-                .setIcon(R.drawable.ic_launcher)
-                .setMessage(message)
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialoginterface, int i) {
-                    }
-                }).show();
-    }
     private class DownloadAndImportStockCells extends AsyncTask<String, Integer, Long> {
         ProgressDialog pDialog;
 
@@ -145,9 +99,9 @@ public class StockCellsActivity extends AppCompatActivity implements LoaderManag
             super.onPostExecute(aLong);
             //pDialog.setProgress(100);
             pDialog.dismiss();
-            String format = getResources().getString(R.string.products_sucсessfully_downloaded);
+            String message = getResources().getString(R.string.products_sucсessfully_downloaded);
             String title =getResources().getString(R.string.downloadcomplete);
-            alertView(title, String.format(format, Long.toString(aLong)));
+            AlertSuccess.show(StockCellsActivity.this,title,message);
             //      getLoaderManager().getLoader(0).forceLoad();
             RefreshList();
 
@@ -290,11 +244,11 @@ public class StockCellsActivity extends AppCompatActivity implements LoaderManag
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.refresh:
-                if (checkConnectivity())
+                if (new UtilsConnectivityService(this).checkConnectivity())
                  new DownloadAndImportStockCells().execute(stringUrlStoragesAndCells);
                 getSupportLoaderManager().getLoader(0).forceLoad();
 
-                return true;
+
         }
         return true;
     }

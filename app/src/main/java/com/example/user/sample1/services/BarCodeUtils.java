@@ -41,15 +41,7 @@ public class BarCodeUtils {
     public static String getCellFromBarCode(String barCode)
     {
         return barCode;
-        /*
-        if (barCode==null||barCode.length()!=12) return 0;
 
-        String str_id=barCode.substring(4, 11);
-
-        str_id=trimLeadingZeroes(str_id);
-
-        if (!isInteger(str_id)) return 0;
-        return Integer.parseInt(str_id); */
 
 
     }

@@ -14,6 +14,7 @@
 
     <string-array name="storagesArray">
         <item>8000.</item>
+        <item>ЦЦЛ(А.X.)</item>
         <item>Ангар-1</item>
         <item>Ангар-2</item>
         <item>Ангар-3</item>

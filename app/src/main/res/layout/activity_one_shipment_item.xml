@@ -16,8 +16,10 @@
     <TextView
         android:id="@+id/tv_RowNumber"
         android:layout_width="0dp"
+        android:textSize="@dimen/textview_height"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:text="num"
         />
     <TextView
         android:id="@+id/tv_ProductId"
@@ -25,6 +27,9 @@
         android:layout_height="wrap_content"
         android:layout_weight="3"
         android:textSize="@dimen/textview_height"
+        android:linksClickable="false"
+        android:autoLink="all"
+        android:text="productId"
         android:textColor="@color/contents_text"/>
 
     </LinearLayout>

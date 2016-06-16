@@ -39,7 +39,7 @@ public class OneShipmentActivity extends AppCompatActivity implements LoaderMana
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_shipment_items);
+        setContentView(R.layout.activity_shipments);
 
 
 

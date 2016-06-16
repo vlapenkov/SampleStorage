@@ -17,20 +17,7 @@ import com.example.user.sample1.data.Product;
  */
 public class ProductsCursorAdapter extends CursorAdapter  {
 
-   /* public static class ViewHolder {
-        public final ImageView iconView;
-        public final TextView textView;
-
-
-        public ViewHolder(View view) {
-            iconView = (ImageView) view.findViewById(R.id.ivImg);
-            textView = (TextView) view.findViewById(R.id.tvText);
-
-        }
-
-
-    } */
-
+   
     public ProductsCursorAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
     }
@@ -60,6 +47,7 @@ public class ProductsCursorAdapter extends CursorAdapter  {
             case 1: {resourcePicture=R.drawable.tire; break;}
         case 2: {resourcePicture=R.drawable.wheel; break;}
         case 3: {resourcePicture=R.drawable.battery; break;}
+            case 4: {resourcePicture=R.drawable.ic_accesoir; break;}
         default:
         }
         tvImg.setImageResource(resourcePicture);
