@@ -27,7 +27,7 @@ public class SimpleIntentService extends IntentService {
         int next_id = dbhelper.getLatestProductId()+1;
 
 //        dbhelper.addProduct(next_id,"test product "+next_id,idOne.toString(),"test comments");
-        dbhelper.addProduct(next_id,"test product "+next_id,"4028224119007","test comments",2);
+        dbhelper.addProduct(next_id,"test product "+next_id,"4028224119007","test comments",2,"article1");
     }
 }
 

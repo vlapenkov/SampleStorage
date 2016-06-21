@@ -51,6 +51,15 @@
         android:layout_gravity="center_vertical"
         android:text="">
     </TextView>
+    <TextView
+        android:id="@+id/tv_Article"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/textview_height"
+        android:autoLink="web"
+        android:layout_gravity="center_vertical"
+        android:text="">
+    </TextView>
 
 </LinearLayout>
     <LinearLayout

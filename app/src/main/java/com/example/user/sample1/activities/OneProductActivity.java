@@ -32,6 +32,7 @@ public class OneProductActivity extends AppCompatActivity {
         TextView tvName = (TextView) findViewById(R.id.tvName);
         TextView tvBarCode = (TextView) findViewById(R.id.tvBarCode);
         TextView tvProductType = (TextView) findViewById(R.id.tvProductType);
+        TextView tvArticle = (TextView) findViewById(R.id.tv_Article);
 
 
 
@@ -39,6 +40,7 @@ public class OneProductActivity extends AppCompatActivity {
         tvName.setText(product.Name);
         tvBarCode.setText(product.Barcode);
         tvProductType.setText(product.getStringTypeOfProduct());
+        tvArticle.setText(product.Article);
 
 
 

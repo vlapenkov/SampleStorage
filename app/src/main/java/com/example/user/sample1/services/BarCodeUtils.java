@@ -25,6 +25,9 @@ public class BarCodeUtils {
 
     }
 
+    /*
+        Прочитать товар
+     */
     public static int getProductIdFromBarCode(String barCode)
     {
         if (barCode==null||barCode.length()!=12) return 0;

@@ -45,6 +45,7 @@ public class ProductsContract {
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_BARCODE = "barcode";
         public static final String COLUMN_PRODUCTTYPE = "producttype";
+        public static final String COLUMN_ARTICLE = "artilce";
          public static final String COLUMN_COMMENTS = "comments";
 
 
@@ -105,7 +106,8 @@ public class ProductsContract {
         public static final String COLUMN_STOCKCELL_FACT = "stockcellfact";
         public static final String COLUMN_COUNT_FACT = "quantityfact";
         public static final String COLUMN_COUNT = "quantity";
-        public static final String COLUMN_ISPROCESSED = "isprocessed";
+        public static final String COLUMN_REST = "rest";
+        //public static final String COLUMN_ISPROCESSED = "isprocessed";
 
 
     }

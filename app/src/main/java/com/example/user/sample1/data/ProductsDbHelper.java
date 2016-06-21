@@ -18,7 +18,7 @@ import com.example.user.sample1.data.ProductsContract;
 public class ProductsDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 13;
+    private static final int DATABASE_VERSION = 14;
 
     static final String DATABASE_NAME = "products.db";
 
@@ -30,6 +30,7 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
                     ProductsContract.ProductsEntry._ID + " integer primary key , " +
                     ProductsContract.ProductsEntry.COLUMN_NAME + " text, " +
                     ProductsContract.ProductsEntry.COLUMN_BARCODE + " text, " +
+                    ProductsContract.ProductsEntry.COLUMN_ARTICLE + " text, " +
                    ProductsContract.ProductsEntry.COLUMN_PRODUCTTYPE + " integer, " +
                     ProductsContract.ProductsEntry.COLUMN_COMMENTS +" text "+
                     ");";
@@ -57,6 +58,7 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
                     ProductsContract.ShipmentsItemEntry.COLUMN_COUNT +" integer, "+
                     ProductsContract.ShipmentsItemEntry.COLUMN_STOCKCELL_FACT +" text, "+
                     ProductsContract.ShipmentsItemEntry.COLUMN_COUNT_FACT +" integer, "+
+                    ProductsContract.ShipmentsItemEntry.COLUMN_REST +" integer, "+
                     // специально удаляем внешний ключ по ProductId т.к. товары постоянно добавляются
                   // "FOREIGN KEY( "+ ProductsContract.ShipmentsItemEntry.COLUMN_PRODUCTID+") REFERENCES "+ ProductsContract.ProductsEntry.TABLE_NAME+" ("+COLUMN_ID+") ," +
                     "FOREIGN KEY( "+ ProductsContract.ShipmentsItemEntry.COLUMN_SHIPMENTID+") REFERENCES "+ProductsContract.ShipmentsEntry.TABLE_NAME +" ("+COLUMN_ID+")" + ");";
@@ -137,13 +139,7 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
         final String SQL_DROPTABLE_IFEXISTS ="drop table if exists ";
         if (newVersion>4) {
             dropAllTables(db);
-        /*    db.execSQL(SQL_DROPTABLE_IFEXISTS+ProductsContract.ShipmentsEntry.TABLE_NAME);
-            db.execSQL(SQL_DROPTABLE_IFEXISTS+ProductsContract.ShipmentsItemEntry.TABLE_NAME);
-            db.execSQL(SQL_CREATE_SHIPMENTS_TABLE);
-            db.execSQL(SQL_CREATE_SHIPMENTITEMS_TABLE);
-           db.execSQL("delete from "+ProductsContract.ShipmentsEntry.TABLE_NAME);
-           db.execSQL("delete from "+ProductsContract.ShipmentsItemEntry.TABLE_NAME);
-            dropAllTables(db); */
+
            onCreate(db);
         }
 
@@ -228,7 +224,7 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
 
     }
 
-    public boolean addProduct ( int id, String name,String barcode,String comments,int productType )
+    public boolean addProduct ( int id, String name,String barcode,String comments,int productType,String article )
     {
 
         try {
@@ -240,6 +236,7 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
             cv.put(ProductsContract.ProductsEntry.COLUMN_BARCODE, barcode);
             cv.put(ProductsContract.ProductsEntry.COLUMN_COMMENTS, comments);
             cv.put(ProductsContract.ProductsEntry.COLUMN_PRODUCTTYPE, productType);
+            cv.put(ProductsContract.ProductsEntry.COLUMN_ARTICLE, article);
 
             db.insert(ProductsContract.ProductsEntry.TABLE_NAME, null, cv);
         }
@@ -325,6 +322,16 @@ return true;
          }else return null;
 
     }
+
+    public Product getProductByBarCode(String barcode){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor res =  db.rawQuery( "select * from " + ProductsContract.ProductsEntry.TABLE_NAME+ " where barcode="+barcode, null );
+        if (res!=null && res.getCount()>0)
+        {   res.moveToFirst();     return Product.fromCursor(res);
+        }else return null;
+
+    }
 /*
     public Cursor getAllProducts() {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -338,8 +345,8 @@ return true;
 
         //    return db.rawQuery("select * from " + ProductsContract.ProductsEntry.TABLE_NAME + " where name like '%" + filter + "%'" +" or _id like '%"+ filter + "%'" , null);
 
-          return  db.query(ProductsContract.ProductsEntry.TABLE_NAME, null, "name like ? or _id like ?", new String[] { filter+"%",filter+"%"}, null, null, null);
-        return db.query(ProductsContract.ProductsEntry.TABLE_NAME, null, null, null, null, null, null);
+          return  db.query(ProductsContract.ProductsEntry.TABLE_NAME, null, "name like ? or _id like ?", new String[] { filter+"%",filter+"%"}, null, null, "_id desc");
+        return db.query(ProductsContract.ProductsEntry.TABLE_NAME, null, null, null, null, null, "_id desc");
     }
 
     public Cursor getStockCells(String filter) {
@@ -359,13 +366,27 @@ return true;
 
         SQLiteDatabase db = this.getReadableDatabase();
 
-         Cursor cursor= db.rawQuery("SELECT storageid from " + ProductsContract.StockCellEntry.TABLE_NAME + " where _id=" + cell,null);
+         Cursor cursor= db.rawQuery("SELECT storageid from " + ProductsContract.StockCellEntry.TABLE_NAME + " where _id=" + cell, null);
         if (cursor!=null && cursor.getCount()>0)
         {   cursor.moveToFirst();
             return cursor.getString(0);
 
         }
     return "";
+    }
+
+    public String getNameOfCell(String cell) {
+
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor= db.rawQuery("SELECT name from " + ProductsContract.StockCellEntry.TABLE_NAME + " where _id=" + cell,null);
+        if (cursor!=null && cursor.getCount()>0)
+        {   cursor.moveToFirst();
+            return cursor.getString(0);
+
+        }
+        return "";
     }
 
     public Cursor getShipments(String filter) {

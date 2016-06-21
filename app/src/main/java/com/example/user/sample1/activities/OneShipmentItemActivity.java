@@ -38,8 +38,6 @@ public class OneShipmentItemActivity extends AppCompatActivity implements View.O
 
         mDbHelper = new ProductsDbHelper(this);
 
-
-
         Intent intent = getIntent();
         mShipmentItem = (ShipmentItem)intent.getSerializableExtra(OneShipmentActivity.SHIPMENTITEM_ID_MESSAGE);
         //String productName = mDbHelper.getProductById(mShipmentItem.ProductId).Name;
@@ -49,21 +47,27 @@ public class OneShipmentItemActivity extends AppCompatActivity implements View.O
         TextView tvRowNumber  = (TextView) findViewById(R.id.tv_RowNumber);
         TextView tvProductId = (TextView) findViewById(R.id.tv_ProductId);
         TextView tvProductName =(TextView) findViewById(R.id.tvProductName);
+        TextView tvArticle =(TextView) findViewById(R.id.tv_Article);
         //TextView tv_CellPlanCaption = (TextView) findViewById(R.id.tv_CellPlanCaption);
         EditText et_Cell = (EditText) findViewById(R.id.et_Cell);
-        TextView tv_Storage = (TextView) findViewById(R.id.tv_Storage);
+        TextView tv_CellName = (TextView) findViewById(R.id.tv_Storage);
         EditText et_QuantityFact= (EditText) findViewById(R.id.et_QuantityFact);
         TextView tv_QuantityPlan = (TextView) findViewById(R.id.tv_QuantityPlan);
 
         tvRowNumber.setText(String.valueOf(mShipmentItem.RowNumber));
         tvProductId.setText(String.valueOf(mShipmentItem.ProductId));
+        tvArticle.setText(product.Article);
 
         tvProductId.setOnClickListener(this);
 
 
-        if(mShipmentItem.StockCellFact != null && !mShipmentItem.StockCellFact.isEmpty()) et_Cell.setText(mShipmentItem.StockCellFact);
-        else et_Cell.setText(mShipmentItem.StockCell);
+        String stock_cell ="";
+        if(mShipmentItem.StockCellFact != null && !mShipmentItem.StockCellFact.isEmpty())
+         stock_cell = mShipmentItem.StockCellFact;
 
+        else stock_cell = mShipmentItem.StockCell;
+        et_Cell.setText(stock_cell);
+        tv_CellName.setText(mDbHelper.getNameOfCell(stock_cell));
 
         if(mShipmentItem.QuantityFact!=0 && mShipmentItem.QuantityFact!=mShipmentItem.Quantity) et_QuantityFact.setText(String.valueOf(mShipmentItem.QuantityFact));
         else et_QuantityFact.setText(String.valueOf(mShipmentItem.Quantity));
@@ -114,19 +118,32 @@ String cell = et_Cell.getText().toString();
 
             String contents= scanningResult.getContents(); if (contents==null) return;
 
+            boolean productIsFound = false;
             int productId = BarCodeUtils.getProductIdFromBarCode(contents);
+            Product productFound = null;
 
-            if (productId==0) { cellRead =BarCodeUtils.getCellFromBarCode(contents);}
-            else {
+            if (productId==0) {
+                productFound = mDbHelper.getProductByBarCode(contents);
+                if (productFound!=null) productId=productFound.Id;
+            }
+
+
+
+            //  это ячейка
+                if (productId==0) { cellRead =BarCodeUtils.getCellFromBarCode(contents);}
+            else //  это товар
+                {
                 if (productId!=mShipmentItem.ProductId) Toast.makeText(OneShipmentItemActivity.this,R.string.products_shouldbe_equal, Toast.LENGTH_LONG).show();
                 else //productId==mShipmentItem.ProductId
                 {Toast.makeText(OneShipmentItemActivity.this,R.string.product_read, Toast.LENGTH_LONG).show();}
 
             }
-            Log.d(TAG+"/product",String.valueOf(productId));
-            Log.d(TAG+"/cell",cellRead);
+            Log.d(TAG + "/product", String.valueOf(productId));
+            Log.d(TAG + "/cell", cellRead);
             if (!cellRead.isEmpty()) {
                 et_Cell.setText(cellRead);
+                TextView tv_CellName = (TextView) findViewById(R.id.tv_Storage);
+                tv_CellName.setText(mDbHelper.getNameOfCell(cellRead));
                 Toast.makeText(OneShipmentItemActivity.this,R.string.cell_read, Toast.LENGTH_LONG).show();
             }
 

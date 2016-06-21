@@ -170,7 +170,7 @@ public class LoadEntitiesActivity extends AppCompatActivity {
                 String name = arr[1];
                 String barcode = arr[2];
                 int productType = Integer.parseInt(arr[3]);
-                dbHelper.addProduct(id,name,barcode,"",productType);
+               // dbHelper.addProduct(id,name,barcode,"",productType);
 
             }
             return (long)lines.length;

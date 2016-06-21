@@ -100,4 +100,8 @@
     <string name="dictionaries">Справочники</string>
     <string name="picture_of_product">Фото товара</string>
     <string name="show_picture">Показать фото</string>
+    <string name="tyre">шины</string>
+    <string name="disk">диски</string>
+    <string name="akb">аккумулятор</string>
+    <string name="accr">аксессуар</string>
 </resources>

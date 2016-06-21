@@ -245,7 +245,8 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
                 String name = arr[1];
                 String barcode = arr[2];
                 int productType = Integer.parseInt(arr[3]);
-                dbHelper.addProduct(id,name,barcode,"",productType);
+                String article = arr[4];
+                dbHelper.addProduct(id,name,barcode,"",productType,article);
 
             }
             return (long)lines.length;
