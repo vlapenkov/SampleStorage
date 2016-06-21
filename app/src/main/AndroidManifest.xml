@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.user.sample1">
+    package="com.yst.sklad.tsd">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -14,14 +14,14 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.ProductsActivity"
+        <activity android:name="com.yst.sklad.tsd.activities.ProductsActivity"
             android:label="@string/Products">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.ShipmentsActivity"
+            android:name="com.yst.sklad.tsd.activities.ShipmentsActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,18 +29,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.OneProductActivity" />
-        <activity android:name=".activities.OneShipmentActivity" />
-        <activity android:name=".activities.MyPreferencesActivity" />
+        <activity android:name="com.yst.sklad.tsd.activities.OneProductActivity" />
+        <activity android:name="com.yst.sklad.tsd.activities.OneShipmentActivity" />
+        <activity android:name="com.yst.sklad.tsd.activities.MyPreferencesActivity" />
 
-        <service android:name=".services.SimpleIntentService" />
+        <service android:name="com.yst.sklad.tsd.services.SimpleIntentService" />
 
-        <activity android:name=".activities.LoadEntitiesActivity" />
-        <activity android:name=".activities.StockCellsActivity"
+        <activity android:name="com.yst.sklad.tsd.activities.LoadEntitiesActivity" />
+        <activity android:name="com.yst.sklad.tsd.activities.StockCellsActivity"
             android:label="@string/stockcells">
 
         </activity>
-        <activity android:name=".activities.OneShipmentItemActivity"></activity>
+        <activity android:name="com.yst.sklad.tsd.activities.OneShipmentItemActivity"></activity>
     </application>
 
 </manifest>
