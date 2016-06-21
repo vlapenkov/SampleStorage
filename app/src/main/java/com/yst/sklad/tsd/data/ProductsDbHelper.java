@@ -449,5 +449,14 @@ return true;
     }
 
 
+    public int getRestOfProductInShipmentItem(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
 
+        Cursor res =  db.rawQuery( "select  rest from " + ProductsContract.ShipmentsItemEntry.TABLE_NAME+ " where _id="+id, null );
+        if (res!=null && res.getCount()>0)
+        {   res.moveToFirst();     return res.getInt(0);
+        }
+        else
+            return 0;
+    }
 }

@@ -38,6 +38,7 @@ public class OneShipmentItemActivity extends AppCompatActivity implements View.O
         mShipmentItem = (ShipmentItem)intent.getSerializableExtra(OneShipmentActivity.SHIPMENTITEM_ID_MESSAGE);
         //String productName = mDbHelper.getProductById(mShipmentItem.ProductId).Name;
         Product product =mDbHelper.getProductById(mShipmentItem.ProductId);
+
         String productName = product!=null?product.Name:"";
 
         TextView tvRowNumber  = (TextView) findViewById(R.id.tv_RowNumber);
@@ -49,6 +50,9 @@ public class OneShipmentItemActivity extends AppCompatActivity implements View.O
         TextView tv_CellName = (TextView) findViewById(R.id.tv_Storage);
         EditText et_QuantityFact= (EditText) findViewById(R.id.et_QuantityFact);
         TextView tv_QuantityPlan = (TextView) findViewById(R.id.tv_QuantityPlan);
+
+        TextView tv_RestCaption = (TextView) findViewById(R.id.tv_RestCaption);
+        TextView tv_Rest = (TextView) findViewById(R.id.tv_Rest);
 
         tvRowNumber.setText(String.valueOf(mShipmentItem.RowNumber));
         tvProductId.setText(String.valueOf(mShipmentItem.ProductId));
@@ -64,6 +68,10 @@ public class OneShipmentItemActivity extends AppCompatActivity implements View.O
         else stock_cell = mShipmentItem.StockCell;
         et_Cell.setText(stock_cell);
         tv_CellName.setText(mDbHelper.getNameOfCell(stock_cell));
+
+        int rest = mDbHelper.getRestOfProductInShipmentItem(mShipmentItem.Id);
+
+        if (rest>0) tv_Rest.setText(Integer.toString(rest));
 
         if(mShipmentItem.QuantityFact!=0 && mShipmentItem.QuantityFact!=mShipmentItem.Quantity) et_QuantityFact.setText(String.valueOf(mShipmentItem.QuantityFact));
         else et_QuantityFact.setText(String.valueOf(mShipmentItem.Quantity));

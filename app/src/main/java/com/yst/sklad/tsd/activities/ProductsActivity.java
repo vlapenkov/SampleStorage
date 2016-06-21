@@ -196,7 +196,8 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
             super.onPostExecute(aLong);
             //pDialog.setProgress(100);
             pDialog.dismiss();
-            String message = getString(R.string.products_sucсessfully_downloaded);
+            String format = getString(R.string.products_sucсessfully_downloaded);
+            String message=String.format(format,aLong);
             String title =getString(R.string.downloadcomplete);
             AlertSuccess.show(ProductsActivity.this,title,message);
 

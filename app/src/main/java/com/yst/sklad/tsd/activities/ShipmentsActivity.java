@@ -333,7 +333,8 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
                         }
                         Integer quantity = Integer.parseInt(parser.getValue(p, "quantity"));
-                        ShipmentItem shipmentItemToAdd =new ShipmentItem(cleanId,rownumber,productid,stockcell,quantity);
+                        Integer rest = Integer.parseInt(parser.getValue(p, "rest"));
+                        ShipmentItem shipmentItemToAdd =new ShipmentItem(cleanId,rownumber,productid,stockcell,quantity,rest);
                         listOfShipmentItems.add(shipmentItemToAdd);
                         hasItems=true;
 

@@ -15,16 +15,18 @@ public class ShipmentItem implements Serializable{
     public String StockCellFact;
     public int Quantity;
     public int QuantityFact;
+    public int Rest;
 
     public int getId()
     {return this.Id;};
 
-    public ShipmentItem(String shipmentId, int rowNumber, int productId, String stockCell, int quantity) {
+    public ShipmentItem(String shipmentId, int rowNumber, int productId, String stockCell, int quantity,int rest) {
         ShipmentId = shipmentId;
         RowNumber = rowNumber;
         ProductId = productId;
         StockCell = stockCell;
         Quantity = quantity;
+        Rest=rest;
     }
 
     public ShipmentItem(int id, String shipmentId, int rowNumber, int productId, String stockCell, String stockCellFact, int quantity, int quantityFact) {

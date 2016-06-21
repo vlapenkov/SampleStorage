@@ -12,7 +12,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:id="@+id/caption">
+    android:id="@+id/caption"
+    android:layout_marginBottom="10dp">
     <TextView
         android:id="@+id/tv_RowNumber"
         android:layout_width="0dp"
@@ -106,6 +107,27 @@
             android:text=""
             android:layout_weight="1"/>
         </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/cellRest"
+        android:layout_below="@id/cellQuantity">
+        <TextView
+            android:id="@+id/tv_RestCaption"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/Rest"
+            android:layout_weight="1"/>
+        <TextView
+            android:id="@+id/tv_Rest"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text=""
+            android:layout_weight="1"/>
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
