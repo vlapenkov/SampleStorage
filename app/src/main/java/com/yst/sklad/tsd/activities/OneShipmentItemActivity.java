@@ -69,9 +69,11 @@ public class OneShipmentItemActivity extends AppCompatActivity implements View.O
         et_Cell.setText(stock_cell);
         tv_CellName.setText(mDbHelper.getNameOfCell(stock_cell));
 
-        int rest = mDbHelper.getRestOfProductInShipmentItem(mShipmentItem.Id);
+      //  int rest = mDbHelper.getRestOfProductInShipmentItem(mShipmentItem.);
 
-        if (rest>0) tv_Rest.setText(Integer.toString(rest));
+        //if (rest>0) tv_Rest.setText(Integer.toString(rest));
+
+        if(mShipmentItem.Rest>0) { tv_Rest.setText(Integer.toString(mShipmentItem.Rest)); } else tv_RestCaption.setText("");
 
         if(mShipmentItem.QuantityFact!=0 && mShipmentItem.QuantityFact!=mShipmentItem.Quantity) et_QuantityFact.setText(String.valueOf(mShipmentItem.QuantityFact));
         else et_QuantityFact.setText(String.valueOf(mShipmentItem.Quantity));
@@ -134,7 +136,7 @@ String cell = et_Cell.getText().toString();
 
 
             //  это ячейка
-                if (productId==0) { cellRead =BarCodeUtils.getCellFromBarCode(contents);}
+                if (productId==0 && contents!=null &&contents.length()==8) { cellRead =BarCodeUtils.getCellFromBarCode(contents);}
             else //  это товар
                 {
                 if (productId!=mShipmentItem.ProductId) Toast.makeText(OneShipmentItemActivity.this,R.string.products_shouldbe_equal, Toast.LENGTH_LONG).show();

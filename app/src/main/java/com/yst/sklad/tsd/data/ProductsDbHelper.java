@@ -209,6 +209,7 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
             cv.put(ProductsContract.ShipmentsItemEntry.COLUMN_STOCKCELL, shipmentItem.StockCell);
             cv.put(ProductsContract.ShipmentsItemEntry.COLUMN_COUNT, shipmentItem.Quantity);
             cv.put(ProductsContract.ShipmentsItemEntry.COLUMN_ROWNUMBER, shipmentItem.RowNumber);
+            cv.put(ProductsContract.ShipmentsItemEntry.COLUMN_REST, shipmentItem.Rest);
 
             db.insert(ProductsContract.ShipmentsItemEntry.TABLE_NAME, null, cv);
         }

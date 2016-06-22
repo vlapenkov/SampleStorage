@@ -54,7 +54,7 @@ public class OneShipmentActivity extends AppCompatActivity implements LoaderMana
 
 
         mAdapter = new SimpleCursorAdapter(this,
-                R.layout.shipmentitem_item, null,
+                R.layout.shipmentitem_item, mDbHelper.getShipmentItems(mShipmentId),
                 new String[] { "rownumber","productid","quantityfact" ,"stockcell","productname","storageid" },
                 new int[] { R.id.text1, R.id.text2,R.id.text3 ,R.id.text4,R.id.text5,R.id.text6 }, 0);
 

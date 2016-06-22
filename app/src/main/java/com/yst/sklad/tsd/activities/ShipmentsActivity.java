@@ -176,6 +176,12 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
                 //YesNoDialogFragment.newInstance(R.string.history_title).show(getFragmentManager(), "dialog");
                 return true;
             }
+            case R.id.exit: {
+
+               finish();
+
+                return true;
+            }
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

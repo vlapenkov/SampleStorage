@@ -29,7 +29,7 @@ public class ShipmentItem implements Serializable{
         Rest=rest;
     }
 
-    public ShipmentItem(int id, String shipmentId, int rowNumber, int productId, String stockCell, String stockCellFact, int quantity, int quantityFact) {
+    public ShipmentItem(int id, String shipmentId, int rowNumber, int productId, String stockCell, String stockCellFact, int quantity, int quantityFact,int rest) {
         Id = id;
         ShipmentId = shipmentId;
         RowNumber = rowNumber;
@@ -38,6 +38,7 @@ public class ShipmentItem implements Serializable{
         StockCellFact = stockCellFact;
         Quantity = quantity;
         QuantityFact = quantityFact;
+        Rest=rest;
     }
 
     @Override
@@ -88,8 +89,9 @@ public class ShipmentItem implements Serializable{
         String stockcellFact= cursor.getString(cursor.getColumnIndexOrThrow(ProductsContract.ShipmentsItemEntry.COLUMN_STOCKCELL_FACT));
         Integer quantity= cursor.getInt(cursor.getColumnIndexOrThrow(ProductsContract.ShipmentsItemEntry.COLUMN_COUNT));
         Integer quantityFact= cursor.getInt(cursor.getColumnIndexOrThrow(ProductsContract.ShipmentsItemEntry.COLUMN_COUNT_FACT));
+        Integer rest= cursor.getInt(cursor.getColumnIndexOrThrow(ProductsContract.ShipmentsItemEntry.COLUMN_REST));
 
-        return new ShipmentItem(id,shipmentid,rownumber,productid,stockcell,stockcellFact,quantity,quantityFact);
+        return new ShipmentItem(id,shipmentid,rownumber,productid,stockcell,stockcellFact,quantity,quantityFact,rest);
 
     }
 }

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group android:checkableBehavior="single"
+        android:id="@+id/firstmenugroup"
+        >
         <item
             android:id="@+id/import_shipments"
             android:icon="@drawable/ic_menu_download"
@@ -31,6 +33,13 @@
             android:id="@+id/toPreferences"
             android:icon="@drawable/ic_menu_manage"
             android:title="@string/toPreferences" />
+    </group>
+    <group android:checkableBehavior="single"
+        android:id="@+id/secondmenugroup">
+        <item
+            android:id="@+id/exit"
+            android:icon="@drawable/ic_exit"
+            android:title="@string/exit" />
     </group>
 <!--
     <item android:title="@string/dictionaries">
