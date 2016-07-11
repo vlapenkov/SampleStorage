@@ -27,6 +27,7 @@ import java.io.InputStream;
 
 /*****
  * Created by user on 09.06.2016.
+ * Форма одного задания из списка заданий
  */
 public class OneShipmentActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,AdapterView.OnItemClickListener {
     SimpleCursorAdapter mAdapter=null;

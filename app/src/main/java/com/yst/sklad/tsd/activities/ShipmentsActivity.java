@@ -46,6 +46,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/*
+Список заданий на отгрузку
+*
+ *  */
+
 public class ShipmentsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, SearchView.OnQueryTextListener,AdapterView.OnItemClickListener,NavigationView.OnNavigationItemSelectedListener {
 
     private boolean mNewShipmentsWasAdded = false;

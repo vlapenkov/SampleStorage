@@ -28,6 +28,8 @@ import com.yst.sklad.tsd.services.UtilsConnectivityService;
 
 import java.io.IOException;
 
+/*Форма списка товаров*/
+
 public class ProductsActivity extends AppCompatActivity   implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener ,SearchView.OnQueryTextListener{
 
     private static final String TAG = "ProductsActivity";

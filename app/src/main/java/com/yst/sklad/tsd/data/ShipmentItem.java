@@ -67,6 +67,9 @@ public class ShipmentItem implements Serializable{
                 "<tran:stockcell>"+this.StockCellFact +"</tran:stockcell>" +
                 "<tran:quantity>"+this.Quantity+"</tran:quantity>" +
                 "<tran:quantityfact>"+this.QuantityFact+"</tran:quantityfact>" +
+                "<tran:rest>0</tran:rest>" +
+                "<tran:stockname></tran:stockname>" +
+
                 "</tran:Products>";
     }
 

@@ -12,6 +12,9 @@ import com.yst.sklad.tsd.data.ProductsDbHelper;
 import com.yst.sklad.tsd.dialogs.ProductPictureDialog;
 import com.yst.sklad.tsd.services.UtilsConnectivityService;
 
+/*
+* Форма одного товара из списка товаров
+* */
 public class OneProductActivity extends AppCompatActivity {
 
     //ProductsDbHelper dbhelper;

@@ -14,6 +14,7 @@ import com.yst.sklad.tsd.data.Product;
 
 /**
  * Created by user on 03.06.2016.
+ *
  */
 public class ProductsCursorAdapter extends CursorAdapter  {
 

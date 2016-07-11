@@ -20,6 +20,9 @@ import com.yst.sklad.tsd.services.UtilsConnectivityService;
 import me.sudar.zxingorient.ZxingOrient;
 import me.sudar.zxingorient.ZxingOrientResult;
 
+/*
+* Форма одной строки из задания
+* */
 public class OneShipmentItemActivity extends AppCompatActivity implements View.OnClickListener {
     ShipmentItem mShipmentItem;
     EditText et_Cell;
@@ -40,6 +43,7 @@ public class OneShipmentItemActivity extends AppCompatActivity implements View.O
         Product product =mDbHelper.getProductById(mShipmentItem.ProductId);
 
         String productName = product!=null?product.Name:"";
+        String productArticle = product!=null?product.Article:"";
 
         TextView tvRowNumber  = (TextView) findViewById(R.id.tv_RowNumber);
         TextView tvProductId = (TextView) findViewById(R.id.tv_ProductId);
@@ -56,7 +60,7 @@ public class OneShipmentItemActivity extends AppCompatActivity implements View.O
 
         tvRowNumber.setText(String.valueOf(mShipmentItem.RowNumber));
         tvProductId.setText(String.valueOf(mShipmentItem.ProductId));
-        tvArticle.setText(product.Article);
+        tvArticle.setText(productArticle);
 
         tvProductId.setOnClickListener(this);
 
