@@ -326,6 +326,7 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
                 Boolean hasItems= false;
                 NodeList nodeListProducts =e.getElementsByTagName("Products");
+
                 for(int k=0; k< nodeListProducts.getLength();k++) {
                     {
                         Element p = (Element) nodeListProducts.item(k);
@@ -371,7 +372,10 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
             for (ShipmentItem shipmentItem : listOfShipmentItems)
             {
-                if (dbHelper.checkIfShipmentExists(shipmentItem.ShipmentId) && !dbHelper.checkIfShipmentItemsExistByShipmentAndProduct(shipmentItem.ShipmentId,shipmentItem.ProductId))
+                if (dbHelper.checkIfShipmentExists(shipmentItem.ShipmentId)
+                //+++ 12.07.2016        && !dbHelper.checkIfShipmentItemsExistByShipmentAndProduct(shipmentItem.ShipmentId,shipmentItem.ProductId)
+                                        && !dbHelper.checkIfShipmentItemsExistByShipmentAndProductAndRow(shipmentItem.ShipmentId,shipmentItem.ProductId,shipmentItem.RowNumber)
+                        )
                     dbHelper.addShipmentItem(shipmentItem);
 
             }

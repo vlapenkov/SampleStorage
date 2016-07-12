@@ -168,19 +168,32 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
 
     }
 
-    public boolean checkIfShipmentItemsExistByShipmentAndProduct ( String shipmentId,int productid)
+
+//+++ 12.07.2016 - проверка старая только по заданию и товару - не пропускает дубли строк с одним товаром!
+    // public boolean checkIfShipmentItemsExistByShipmentAndProduct ( String shipmentId, int productid)
+    // {
+    //  SQLiteDatabase db = this.getReadableDatabase();
+//         Cursor res =  db.rawQuery( "select * from " + ProductsContract.ShipmentsItemEntry.TABLE_NAME+ " where shipmentid='"+shipmentId+"' and productid="+productid, null );
+//         if (res!=null && res.getCount()>0)
+//         {   res.moveToFirst();     return true;
+//         }
+//         return false;
+//     }
+
+
+//+++ 12.07.2016 по Заданию, товару и номеру строки
+    public boolean checkIfShipmentItemsExistByShipmentAndProductAndRow( String shipmentId, int productid, int rownumber)
     {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor res =  db.rawQuery( "select * from " + ProductsContract.ShipmentsItemEntry.TABLE_NAME+ " where shipmentid='"+shipmentId+"' and productid="+productid, null );
+        Cursor res =  db.rawQuery( "select * from " + ProductsContract.ShipmentsItemEntry.TABLE_NAME+ " where shipmentid='"+shipmentId+"' and productid="+productid
+                +" and rownumber="+rownumber, null );
         if (res!=null && res.getCount()>0)
         {   res.moveToFirst();     return true;
         }
         return false;
 
     }
-
-
 
     public boolean addShipment ( Shipment shipment)
     {
