@@ -374,7 +374,8 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
             {
                 if (dbHelper.checkIfShipmentExists(shipmentItem.ShipmentId)
                 //+++ 12.07.2016        && !dbHelper.checkIfShipmentItemsExistByShipmentAndProduct(shipmentItem.ShipmentId,shipmentItem.ProductId)
-                                        && !dbHelper.checkIfShipmentItemsExistByShipmentAndProductAndRow(shipmentItem.ShipmentId,shipmentItem.ProductId,shipmentItem.RowNumber)
+                 //                       && !dbHelper.checkIfShipmentItemsExistByShipmentAndProductAndRow(shipmentItem.ShipmentId,shipmentItem.ProductId,shipmentItem.RowNumber)
+                        && !dbHelper.checkIfShipmentItemsExistByShipmentAndRow(shipmentItem.ShipmentId,shipmentItem.RowNumber)
                         )
                     dbHelper.addShipmentItem(shipmentItem);
 

@@ -8,6 +8,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by user on 02.06.2016.
  */
@@ -186,8 +189,20 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
     {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor res =  db.rawQuery( "select * from " + ProductsContract.ShipmentsItemEntry.TABLE_NAME+ " where shipmentid='"+shipmentId+"' and productid="+productid
+        Cursor res =  db.rawQuery( "select * from " + ProductsContract.ShipmentsItemEntry.TABLE_NAME+ " where shipmentid='"+shipmentId+ "' and productid="+productid
                 +" and rownumber="+rownumber, null );
+        if (res!=null && res.getCount()>0)
+        {   res.moveToFirst();     return true;
+        }
+        return false;
+
+    }
+
+    public boolean checkIfShipmentItemsExistByShipmentAndRow( String shipmentId, int rownumber)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor res =  db.rawQuery( "select * from " + ProductsContract.ShipmentsItemEntry.TABLE_NAME+ " where shipmentid='"+shipmentId+"' and rownumber="+rownumber, null );
         if (res!=null && res.getCount()>0)
         {   res.moveToFirst();     return true;
         }
@@ -326,7 +341,7 @@ return true;
     public Product getProductById(int id){
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor res =  db.rawQuery( "select * from " + ProductsContract.ProductsEntry.TABLE_NAME+ " where _id="+id, null );
+        Cursor res =  db.rawQuery("select * from " + ProductsContract.ProductsEntry.TABLE_NAME + " where _id=" + id, null);
         if (res!=null && res.getCount()>0)
         {   res.moveToFirst();     return Product.fromCursor(res);
          }else return null;
@@ -336,7 +351,7 @@ return true;
     public Product getProductByBarCode(String barcode){
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor res =  db.rawQuery( "select * from " + ProductsContract.ProductsEntry.TABLE_NAME+ " where barcode="+barcode, null );
+        Cursor res =  db.rawQuery("select * from " + ProductsContract.ProductsEntry.TABLE_NAME + " where barcode=" + barcode, null);
         if (res!=null && res.getCount()>0)
         {   res.moveToFirst();     return Product.fromCursor(res);
         }else return null;
@@ -357,6 +372,33 @@ return true;
 
           return  db.query(ProductsContract.ProductsEntry.TABLE_NAME, null, "name like ? or _id like ?", new String[] { filter+"%",filter+"%"}, null, null, "_id desc");
         return db.query(ProductsContract.ProductsEntry.TABLE_NAME, null, null, null, null, null, "_id desc");
+    }
+
+/*
+* Возвращает все id товаров в базе
+* */
+    public List<Integer> getProductIds() {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor=  db.query(ProductsContract.ProductsEntry.TABLE_NAME, new String[]{"_id"}, null, null, null, null, "_id desc");
+
+        List<Integer> list= new ArrayList<>();
+        if (cursor!=null && cursor.getCount()>0) {
+            cursor.moveToFirst();
+
+            list.add(cursor.getInt(0));
+
+            while ( cursor.moveToNext())
+            {
+
+                list.add(cursor.getInt(0));
+
+            }
+
+        }
+        return list;
+
     }
 
     public Cursor getStockCells(String filter) {
