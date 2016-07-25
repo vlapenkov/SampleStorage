@@ -27,6 +27,7 @@ import com.yst.sklad.tsd.services.TextReaderFromHttp;
 import com.yst.sklad.tsd.services.UtilsConnectivityService;
 
 import java.io.IOException;
+import java.util.List;
 
 /*Форма списка товаров*/
 
@@ -201,7 +202,7 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
             String format = getString(R.string.products_sucсessfully_downloaded);
             String message=String.format(format,aLong);
             String title =getString(R.string.downloadcomplete);
-            AlertSuccess.show(ProductsActivity.this,title,message);
+            AlertSuccess.show(ProductsActivity.this, title, message);
 
             RefreshList();
 
@@ -220,11 +221,12 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
             }
 
             dbHelper = new ProductsDbHelper(getBaseContext());
-
-
-            dbHelper.clearTable(ProductsContract.ProductsEntry.TABLE_NAME);
+///
+            List<Integer> productIdsInDb=dbHelper.getProductIds();
+          //  dbHelper.clearTable(ProductsContract.ProductsEntry.TABLE_NAME);
 
             lines=   result.split(System.getProperty("line.separator"));
+
 
             int counter=0;
             for (String line:lines ){
@@ -237,8 +239,8 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
                 Log.d(TAG +"/import",arr[0]);
                 int id  = Integer.parseInt(arr[0]);
 
-               /* if (dbHelper.checkIfProductExists(id))
-                    continue; */
+                if(productIdsInDb.contains(id)) continue;
+
                 String name = arr[1];
                 String barcode = arr[2];
                 int productType = Integer.parseInt(arr[3]);
