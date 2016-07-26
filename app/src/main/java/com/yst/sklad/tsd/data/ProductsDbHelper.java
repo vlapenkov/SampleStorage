@@ -449,8 +449,10 @@ return true;
             cursor= db.query(ProductsContract.ShipmentsEntry.TABLE_NAME, null,"_id like ? or dateofshipment like ? or client like ?", new String[] { "%"+filter+"%","%"+filter+"%","%"+filter+"%"}, null, null, null);
         //    cursor= db.query(ProductsContract.ShipmentsEntry.TABLE_NAME, null, null, null, null, null, null);
 
-        String sql_select = "select _id,SUBSTR(dateofshipment,6,5) dateofshipment, client from "+ProductsContract.ShipmentsEntry.TABLE_NAME + " order by dateofshipment";
-        cursor =  db.rawQuery( sql_select, null );
+       // String sql_select = "select _id,SUBSTR(dateofshipment,6,5) dateofshipment, client from "+ProductsContract.ShipmentsEntry.TABLE_NAME + " order by dateofshipment";
+         String sql_select = " SELECT s.* , from (select _id,SUBSTR(dateofshipment,6,5) dateofshipment, client from "+ProductsContract.ShipmentsEntry.TABLE_NAME + ") s left join"+
+        " (select shipmentId, sum(IFNULL(quantityfact,0)) quantityfact,sum(IFNULL(quantity,0)) quantity from "+ProductsContract.ShipmentsItemEntry.TABLE_NAME +" group by shipmentId ) a on  ";
+                cursor =  db.rawQuery( sql_select, null );
 
         return  cursor;
         //Cursor res =  db.rawQuery( "select _id, name, storageid from " + ProductsContract.StockCellEntry.TABLE_NAME+ " inner join "+ProductsContract.StorageEntry.TABLE_NAME +" on stockcells.storageid= storages._id", null );
