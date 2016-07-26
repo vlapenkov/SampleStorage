@@ -236,6 +236,7 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
             cv.put(ProductsContract.ShipmentsItemEntry.COLUMN_PRODUCTID, shipmentItem.ProductId);
             cv.put(ProductsContract.ShipmentsItemEntry.COLUMN_STOCKCELL, shipmentItem.StockCell);
             cv.put(ProductsContract.ShipmentsItemEntry.COLUMN_COUNT, shipmentItem.Quantity);
+            cv.put(ProductsContract.ShipmentsItemEntry.COLUMN_COUNT_FACT, 0);
             cv.put(ProductsContract.ShipmentsItemEntry.COLUMN_ROWNUMBER, shipmentItem.RowNumber);
             cv.put(ProductsContract.ShipmentsItemEntry.COLUMN_REST, shipmentItem.Rest);
 
@@ -450,9 +451,10 @@ return true;
         //    cursor= db.query(ProductsContract.ShipmentsEntry.TABLE_NAME, null, null, null, null, null, null);
 
        // String sql_select = "select _id,SUBSTR(dateofshipment,6,5) dateofshipment, client from "+ProductsContract.ShipmentsEntry.TABLE_NAME + " order by dateofshipment";
-         String sql_select = " SELECT s.* , from (select _id,SUBSTR(dateofshipment,6,5) dateofshipment, client from "+ProductsContract.ShipmentsEntry.TABLE_NAME + ") s left join"+
-        " (select shipmentId, sum(IFNULL(quantityfact,0)) quantityfact,sum(IFNULL(quantity,0)) quantity from "+ProductsContract.ShipmentsItemEntry.TABLE_NAME +" group by shipmentId ) a on  ";
-                cursor =  db.rawQuery( sql_select, null );
+         String sql_select = " SELECT s.* , IFNULL(si.quantityfact,0) as quantityfact, IFNULL(si.quantity,0) as quantity  from (select _id,SUBSTR(dateofshipment,6,5) dateofshipment, client from "+ProductsContract.ShipmentsEntry.TABLE_NAME + ") s left join"+
+        " (select shipmentId, sum(quantityfact) quantityfact,sum(quantity) quantity from "+ProductsContract.ShipmentsItemEntry.TABLE_NAME +" group by shipmentId ) si on  s._id=si.shipmentId ";
+
+         cursor =  db.rawQuery( sql_select, null );
 
         return  cursor;
         //Cursor res =  db.rawQuery( "select _id, name, storageid from " + ProductsContract.StockCellEntry.TABLE_NAME+ " inner join "+ProductsContract.StorageEntry.TABLE_NAME +" on stockcells.storageid= storages._id", null );

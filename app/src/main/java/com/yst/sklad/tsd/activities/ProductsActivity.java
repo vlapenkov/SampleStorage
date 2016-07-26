@@ -20,7 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.yst.sklad.tsd.R;
-import com.yst.sklad.tsd.data.ProductsContract;
+import com.yst.sklad.tsd.adapters.ProductsCursorAdapter;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
 import com.yst.sklad.tsd.dialogs.AlertSuccess;
 import com.yst.sklad.tsd.services.TextReaderFromHttp;

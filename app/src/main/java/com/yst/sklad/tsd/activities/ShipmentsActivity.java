@@ -27,6 +27,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.yst.sklad.tsd.R;
+import com.yst.sklad.tsd.adapters.ProductsCursorAdapter;
+import com.yst.sklad.tsd.adapters.ShipmentsCursorAdapter;
 import com.yst.sklad.tsd.data.ProductsContract;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
 import com.yst.sklad.tsd.data.Shipment;
@@ -54,7 +56,7 @@ import java.util.Set;
 public class ShipmentsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, SearchView.OnQueryTextListener,AdapterView.OnItemClickListener,NavigationView.OnNavigationItemSelectedListener {
 
     private boolean mNewShipmentsWasAdded = false;
-   SimpleCursorAdapter mAdapter=null;
+    ShipmentsCursorAdapter mAdapter=null;
     ListView lvData =null;
 
     private static final String TAG = "ShipmentsActivity";
@@ -95,10 +97,12 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
 
 
-       mAdapter = new SimpleCursorAdapter(this,
+      /* mAdapter = new SimpleCursorAdapter(this,
                 R.layout.shipment_item, mDbHelper.getShipments(mCurFilter),
-                new String[] { "_id", "dateofshipment","client" },
-                new int[] { R.id.text1, R.id.text2,R.id.text3  }, 0);
+                new String[] { "_id", "dateofshipment","client","quantityfact","quantity" },
+                new int[] { R.id.text1, R.id.text2,R.id.text3,  }, 0); */
+
+        mAdapter = new ShipmentsCursorAdapter(this,null,0);
 
 
             lvData.setAdapter(mAdapter);

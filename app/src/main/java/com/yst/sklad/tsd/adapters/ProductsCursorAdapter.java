@@ -1,4 +1,4 @@
-package com.yst.sklad.tsd.activities;
+package com.yst.sklad.tsd.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
