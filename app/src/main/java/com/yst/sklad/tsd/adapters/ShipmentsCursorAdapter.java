@@ -44,6 +44,8 @@ public class ShipmentsCursorAdapter extends CursorAdapter{
         String client = cursor.getString(cursor.getColumnIndexOrThrow("client"));
         Integer quantityfact = cursor.getInt(cursor.getColumnIndexOrThrow("quantityfact"));
         Integer quantity = cursor.getInt(cursor.getColumnIndexOrThrow("quantity"));
+        Integer rows_count = cursor.getInt(cursor.getColumnIndexOrThrow("rows_count"));
+     //   Integer rows_count_processed = cursor.getInt(cursor.getColumnIndexOrThrow("rows_count_processed"));
 
 
         // Populate fields with extracted properties
@@ -53,7 +55,9 @@ public class ShipmentsCursorAdapter extends CursorAdapter{
 
         int resourcePicture = android.R.color.transparent;
 
+
         if(quantityfact>0 )  resourcePicture = R.drawable.checkbox_yes;
+    //    if(rows_count==rows_count_processed && rows_count>0 )  resourcePicture = R.drawable.ic_assignment_turned_in_black_24dp;
 
         tvImg.setImageResource(resourcePicture);
 

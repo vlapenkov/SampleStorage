@@ -160,13 +160,16 @@ public class OneShipmentActivity extends AppCompatActivity implements LoaderMana
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             pDialog.dismiss();
-            // Удалить задание после выгрузки в 1С если такая настрока установлена
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-            Boolean  delete_shipment_after_upload = preferences.getBoolean("delete_shipment_after_upload", false);
-            if (delete_shipment_after_upload)
-            { mDbHelper.deleteShipment(mShipmentId);
-            OneShipmentActivity.this.finish(); }
-
+     // Проверка что веб-сервис отработал без ошибок
+            if (s!=null) {
+                // Удалить задание после выгрузки в 1С если такая настрока установлена
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                Boolean delete_shipment_after_upload = preferences.getBoolean("delete_shipment_after_upload", false);
+                if (delete_shipment_after_upload) {
+                    mDbHelper.deleteShipment(mShipmentId);
+                    OneShipmentActivity.this.finish();
+                }
+            }
         }
 
         @Override
@@ -184,7 +187,10 @@ public class OneShipmentActivity extends AppCompatActivity implements LoaderMana
 
             InputStream stream = new SoapCallToWebService().sendShipment(ShipmentsActivity.StringUrlShipments,mShipmentId, chaine.toString());
 
-            return null;
+
+            if (stream==null) return null;
+             return stream.toString();
+            //return null;
         }
     }
 }

@@ -462,8 +462,8 @@ return true;
         //    cursor= db.query(ProductsContract.ShipmentsEntry.TABLE_NAME, null, null, null, null, null, null);
 
        // String sql_select = "select _id,SUBSTR(dateofshipment,6,5) dateofshipment, client from "+ProductsContract.ShipmentsEntry.TABLE_NAME + " order by dateofshipment";
-         String sql_select = " SELECT s.* , IFNULL(si.quantityfact,0) as quantityfact, IFNULL(si.quantity,0) as quantity  from (select _id,SUBSTR(dateofshipment,6,5) dateofshipment, client from "+ProductsContract.ShipmentsEntry.TABLE_NAME + ") s left join"+
-        " (select shipmentId, sum(quantityfact) quantityfact,sum(quantity) quantity from "+ProductsContract.ShipmentsItemEntry.TABLE_NAME +" group by shipmentId ) si on  s._id=si.shipmentId ";
+         String sql_select = " SELECT s.* , IFNULL(si.quantityfact,0) as quantityfact, IFNULL(si.quantity,0) as quantity,IFNULL(si.rows_count,0) as rows_count  from (select _id,SUBSTR(dateofshipment,6,5) dateofshipment, client from "+ProductsContract.ShipmentsEntry.TABLE_NAME + ") s left join"+
+        " (select shipmentId, sum(quantityfact) quantityfact,sum(quantity) quantity,count(*) rows_count from "+ProductsContract.ShipmentsItemEntry.TABLE_NAME +" group by shipmentId ) si on  s._id=si.shipmentId ";
 
          cursor =  db.rawQuery( sql_select, null );
 
