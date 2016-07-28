@@ -16,20 +16,22 @@ public class ShipmentItem implements Serializable{
     public int Quantity;
     public int QuantityFact;
     public int Rest;
+    public String Queue;
 
     public int getId()
     {return this.Id;};
 
-    public ShipmentItem(String shipmentId, int rowNumber, int productId, String stockCell, int quantity,int rest) {
+    public ShipmentItem(String shipmentId, int rowNumber, int productId, String stockCell, int quantity,int rest, String queue) {
         ShipmentId = shipmentId;
         RowNumber = rowNumber;
         ProductId = productId;
         StockCell = stockCell;
         Quantity = quantity;
         Rest=rest;
+        Queue=queue;
     }
 
-    public ShipmentItem(int id, String shipmentId, int rowNumber, int productId, String stockCell, String stockCellFact, int quantity, int quantityFact,int rest) {
+    public ShipmentItem(int id, String shipmentId, int rowNumber, int productId, String stockCell, String stockCellFact, int quantity, int quantityFact,int rest, String queue) {
         Id = id;
         ShipmentId = shipmentId;
         RowNumber = rowNumber;
@@ -39,6 +41,7 @@ public class ShipmentItem implements Serializable{
         Quantity = quantity;
         QuantityFact = quantityFact;
         Rest=rest;
+        Queue=queue;
     }
 
     @Override
@@ -69,7 +72,7 @@ public class ShipmentItem implements Serializable{
                 "<tran:quantityfact>"+this.QuantityFact+"</tran:quantityfact>" +
                 "<tran:rest>0</tran:rest>" +
                 "<tran:stockname></tran:stockname>" +
-
+                "<tran:queue>"+this.Queue+"</tran:queue>"+
                 "</tran:Products>";
     }
 
@@ -93,8 +96,9 @@ public class ShipmentItem implements Serializable{
         Integer quantity= cursor.getInt(cursor.getColumnIndexOrThrow(ProductsContract.ShipmentsItemEntry.COLUMN_COUNT));
         Integer quantityFact= cursor.getInt(cursor.getColumnIndexOrThrow(ProductsContract.ShipmentsItemEntry.COLUMN_COUNT_FACT));
         Integer rest= cursor.getInt(cursor.getColumnIndexOrThrow(ProductsContract.ShipmentsItemEntry.COLUMN_REST));
+        String queue= cursor.getString(cursor.getColumnIndexOrThrow(ProductsContract.ShipmentsItemEntry.COLUMN_QUEUE));
 
-        return new ShipmentItem(id,shipmentid,rownumber,productid,stockcell,stockcellFact,quantity,quantityFact,rest);
+        return new ShipmentItem(id,shipmentid,rownumber,productid,stockcell,stockcellFact,quantity,quantityFact,rest,queue);
 
     }
 }

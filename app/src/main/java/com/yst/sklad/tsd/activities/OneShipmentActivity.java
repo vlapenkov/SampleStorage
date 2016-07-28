@@ -2,9 +2,11 @@ package com.yst.sklad.tsd.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -12,6 +14,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,11 +35,16 @@ import java.io.InputStream;
 public class OneShipmentActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,AdapterView.OnItemClickListener {
     SimpleCursorAdapter mAdapter=null;
     ListView lvData =null;
+    String TAG = "OneShipmentActivity" ;
 
     public static String SHIPMENTITEM_ID_MESSAGE="shipmentItemID";
     ProductsDbHelper mDbHelper;
     String mCurFilter;
     String mShipmentId;
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,8 +64,8 @@ public class OneShipmentActivity extends AppCompatActivity implements LoaderMana
 
         mAdapter = new SimpleCursorAdapter(this,
                 R.layout.shipmentitem_item, mDbHelper.getShipmentItems(mShipmentId),
-                new String[] { "rownumber","productid","quantityfact" ,"stockcell","productname","storageid" },
-                new int[] { R.id.text1, R.id.text2,R.id.text3 ,R.id.text4,R.id.text5,R.id.text6 }, 0);
+                new String[] { "rownumber","productid","quantityfact" ,"stockcell","productname","storageid","queue" },
+                new int[] { R.id.text1, R.id.text2,R.id.text3 ,R.id.text4,R.id.text5,R.id.text6,R.id.text7  }, 0);
 
         lvData.setAdapter(mAdapter);
 
@@ -97,7 +105,7 @@ public class OneShipmentActivity extends AppCompatActivity implements LoaderMana
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.stockcellmenu, menu);
+        getMenuInflater().inflate(R.menu.oneshipment_menu, menu);
         MenuItem searchItem = menu.findItem(R.id.search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
 
@@ -107,7 +115,7 @@ public class OneShipmentActivity extends AppCompatActivity implements LoaderMana
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.refresh:{
+            case R.id.uploadto1s:{
                 new SendShipment().execute(ShipmentsActivity.StringUrlShipments) ;
             }
         }
@@ -152,6 +160,13 @@ public class OneShipmentActivity extends AppCompatActivity implements LoaderMana
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             pDialog.dismiss();
+            // Удалить задание после выгрузки в 1С если такая настрока установлена
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            Boolean  delete_shipment_after_upload = preferences.getBoolean("delete_shipment_after_upload", false);
+            if (delete_shipment_after_upload)
+            { mDbHelper.deleteShipment(mShipmentId);
+            OneShipmentActivity.this.finish(); }
+
         }
 
         @Override
@@ -168,7 +183,6 @@ public class OneShipmentActivity extends AppCompatActivity implements LoaderMana
 
 
             InputStream stream = new SoapCallToWebService().sendShipment(ShipmentsActivity.StringUrlShipments,mShipmentId, chaine.toString());
-
 
             return null;
         }

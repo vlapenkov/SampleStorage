@@ -115,6 +115,14 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
         getSupportLoaderManager().initLoader(0, null, this);
     }
 
+    @Override
+    protected void onRestart() {
+
+            super.onRestart();
+            getSupportLoaderManager().restartLoader(0, null, this);
+
+
+    }
 
     @Override
     public void onBackPressed() {
@@ -326,7 +334,8 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
                 String cleanId = Shipment.getCleanId(numberin1s);
                 Shipment shipmentToAdd =new Shipment(cleanId,dateofshipment,client,comment);
-
+                //--- {Lapenkov 27.07.2016 Не загружаем задания, которые есть в базе данных
+                if (dbHelper.checkIfShipmentExists(cleanId)) continue;
 
                 Boolean hasItems= false;
                 NodeList nodeListProducts =e.getElementsByTagName("Products");
@@ -337,9 +346,10 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
                         Integer rownumber = Integer.parseInt(parser.getValue(p, "rownumber"));
                         Integer productid = Integer.parseInt(parser.getValue(p, "productid"));
                         String stockcell = parser.getValue(p, "stockcell");
+                        String queue = parser.getValue(p, "queue");
                         if(onlySelectedStorages)
                         {   String storage=dbHelper.getStorageOfCell(stockcell);
-                        Log.d(TAG+"storage","|"+storage+"|");
+                        //Log.d(TAG+"storage","|"+storage+"|");
                         if (storage!=null ) {
                             if (!arrayOfStorages.contains(storage)) continue;
 
@@ -350,7 +360,7 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
                         }
                         Integer quantity = Integer.parseInt(parser.getValue(p, "quantity"));
                         Integer rest = Integer.parseInt(parser.getValue(p, "rest"));
-                        ShipmentItem shipmentItemToAdd =new ShipmentItem(cleanId,rownumber,productid,stockcell,quantity,rest);
+                        ShipmentItem shipmentItemToAdd =new ShipmentItem(cleanId,rownumber,productid,stockcell,quantity,rest,queue);
                         listOfShipmentItems.add(shipmentItemToAdd);
                         hasItems=true;
 
@@ -358,7 +368,8 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
                 if (hasItems)
                 {listOfShipments.add(shipmentToAdd);
                 Log.d(TAG+ "/shipment added", shipmentToAdd.toString());
-                Log.d(TAG +"/shipmentitems added", listOfShipmentItems.toString()); }
+                Log.d(TAG +"/shipmentitems added", listOfShipmentItems.toString());
+                }
 
             }
 
@@ -379,7 +390,8 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
                 if (dbHelper.checkIfShipmentExists(shipmentItem.ShipmentId)
                 //+++ 12.07.2016        && !dbHelper.checkIfShipmentItemsExistByShipmentAndProduct(shipmentItem.ShipmentId,shipmentItem.ProductId)
                  //                       && !dbHelper.checkIfShipmentItemsExistByShipmentAndProductAndRow(shipmentItem.ShipmentId,shipmentItem.ProductId,shipmentItem.RowNumber)
-                        && !dbHelper.checkIfShipmentItemsExistByShipmentAndRow(shipmentItem.ShipmentId,shipmentItem.RowNumber)
+                        // added Lapenkov 27.07.2016 Не загружаем задания которые есть
+                        //&& !dbHelper.checkIfShipmentItemsExistByShipmentAndRow(shipmentItem.ShipmentId,shipmentItem.RowNumber)
                         )
                     dbHelper.addShipmentItem(shipmentItem);
 

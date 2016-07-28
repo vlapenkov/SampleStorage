@@ -24,4 +24,9 @@
         android:summary=""
         android:key="storagesArray"
         />
+
+    <CheckBoxPreference android:title="@string/delete_shipment_after_upload"
+        android:defaultValue="false"
+        android:summary="@string/summary_delete_shipment_after_upload"
+        android:key="delete_shipment_after_upload" />
 </PreferenceScreen>

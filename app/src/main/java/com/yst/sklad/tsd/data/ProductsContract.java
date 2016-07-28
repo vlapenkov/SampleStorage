@@ -107,6 +107,7 @@ public class ProductsContract {
         public static final String COLUMN_COUNT_FACT = "quantityfact";
         public static final String COLUMN_COUNT = "quantity";
         public static final String COLUMN_REST = "rest";
+        public static final String COLUMN_QUEUE ="queue" ;
         //public static final String COLUMN_ISPROCESSED = "isprocessed";
 
 

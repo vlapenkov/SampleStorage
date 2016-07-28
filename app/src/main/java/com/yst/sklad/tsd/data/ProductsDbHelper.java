@@ -17,7 +17,7 @@ import java.util.List;
 public class ProductsDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 14;
+    private static final int DATABASE_VERSION = 15;
 
     static final String DATABASE_NAME = "products.db";
 
@@ -58,6 +58,7 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
                     ProductsContract.ShipmentsItemEntry.COLUMN_STOCKCELL_FACT +" text, "+
                     ProductsContract.ShipmentsItemEntry.COLUMN_COUNT_FACT +" integer, "+
                     ProductsContract.ShipmentsItemEntry.COLUMN_REST +" integer, "+
+                    ProductsContract.ShipmentsItemEntry.COLUMN_QUEUE +" text, "+
                     // специально удаляем внешний ключ по ProductId т.к. товары постоянно добавляются
                   // "FOREIGN KEY( "+ ProductsContract.ShipmentsItemEntry.COLUMN_PRODUCTID+") REFERENCES "+ ProductsContract.ProductsEntry.TABLE_NAME+" ("+COLUMN_ID+") ," +
                     "FOREIGN KEY( "+ ProductsContract.ShipmentsItemEntry.COLUMN_SHIPMENTID+") REFERENCES "+ProductsContract.ShipmentsEntry.TABLE_NAME +" ("+COLUMN_ID+")" + ");";
@@ -130,6 +131,15 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
     {
         SQLiteDatabase db =  this.getWritableDatabase();
         db.execSQL("delete from "+tableName);
+
+    }
+
+    public void deleteShipment(String shipmentid)
+    {
+        SQLiteDatabase db =  this.getWritableDatabase();
+
+        db.execSQL("delete from "+ ProductsContract.ShipmentsItemEntry.TABLE_NAME+ " where shipmentid="+shipmentid);
+        db.execSQL("delete from "+ ProductsContract.ShipmentsEntry.TABLE_NAME+ " where _id="+shipmentid);
 
     }
 
@@ -239,6 +249,7 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
             cv.put(ProductsContract.ShipmentsItemEntry.COLUMN_COUNT_FACT, 0);
             cv.put(ProductsContract.ShipmentsItemEntry.COLUMN_ROWNUMBER, shipmentItem.RowNumber);
             cv.put(ProductsContract.ShipmentsItemEntry.COLUMN_REST, shipmentItem.Rest);
+            cv.put(ProductsContract.ShipmentsItemEntry.COLUMN_QUEUE, shipmentItem.Queue);
 
             db.insert(ProductsContract.ShipmentsItemEntry.TABLE_NAME, null, cv);
         }
@@ -466,8 +477,8 @@ return true;
 
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String sql_select ="select shipmentitems._id, shipmentitems.rownumber, shipmentitems.productid,IFNULL(shipmentitems.stockcellfact,shipmentitems.stockcell) stockcell, shipmentitems.quantityfact, IFNULL(products.name,'---') as productname, IFNULL(stockcells.storageid,'---') storageid from shipmentitems  left outer join products on shipmentitems.productid=products._id" +
-                "  left join stockcells on shipmentitems.stockcell=stockcells._id  where shipmentitems.shipmentid="+shipmentId +" order by rownumber";
+        String sql_select ="select shipmentitems._id, shipmentitems.rownumber, shipmentitems.productid,IFNULL(shipmentitems.stockcellfact,shipmentitems.stockcell) stockcell, shipmentitems.quantityfact, shipmentitems.queue queue, IFNULL(products.name,'---') as productname, IFNULL(stockcells.storageid,'---') storageid from shipmentitems  left outer join products on shipmentitems.productid=products._id" +
+                "  left join stockcells on shipmentitems.stockcell=stockcells._id  where shipmentitems.shipmentid="+shipmentId +" order by shipmentitems._id";
        //     Cursor cur = db.query(ProductsContract.ShipmentsItemEntry.TABLE_NAME, null,"shipmentid = ?", new String[] { shipmentId}, null, null, null);
 
         Cursor res =  db.rawQuery( sql_select, null );

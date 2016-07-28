@@ -106,4 +106,7 @@
     <string name="akb">аккумулятор</string>
     <string name="accr">аксессуар</string>
     <string name="exit">Выйти</string>
+    <string name="uploadTo1S">Выгрузить в 1С</string>
+    <string name="delete_shipment_after_upload">Удалять задание после выгрузки в 1С</string>
+    <string name="summary_delete_shipment_after_upload">После нажатия кнопки \'Выгрузить\' задание будет автоматически удалено из терминала</string>
 </resources>
