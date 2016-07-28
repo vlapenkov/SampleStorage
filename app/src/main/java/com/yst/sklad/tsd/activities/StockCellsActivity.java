@@ -205,21 +205,17 @@ public class StockCellsActivity extends AppCompatActivity implements LoaderManag
 
 
     @Override
-    public boolean onQueryTextChange(String newText) {
-       /* String newFilter = !TextUtils.isEmpty(newText) ? newText : null;
-        // Don't do anything if the filter hasn't actually changed.
-        // Prevents restarting the loader when restoring state.
-        if (mCurFilter == null && newFilter == null) {
+    public boolean onQueryTextChange(String query) {
+        if (mCurFilter == null && query == null) {
             return true;
         }
-        if (mCurFilter != null && mCurFilter.equals(newFilter)) {
+        if (mCurFilter != null && mCurFilter.equals(query)) {
             return true;
         }
-        mCurFilter = newFilter;
+        mCurFilter = query;
 
         getSupportLoaderManager().restartLoader(0, null, this);
-        return true; */
-        return false;
+        return true;
     }
 
     @Override

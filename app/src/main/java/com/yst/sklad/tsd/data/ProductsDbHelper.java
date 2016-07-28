@@ -418,7 +418,7 @@ return true;
 
         SQLiteDatabase db = this.getReadableDatabase();
         if (filter!=null)
-         return db.query(ProductsContract.StockCellEntry.TABLE_NAME, null,"name like ? or _id like ? or storageid like ?", new String[] { "%"+filter+"%","%"+filter+"%","%"+filter+"%"}, null, null, null);
+         return db.query(ProductsContract.StockCellEntry.TABLE_NAME, null,"name like ? or _id like ? or storageid like ? COLLATE NOCASE", new String[] { "%"+filter+"%","%"+filter+"%","%"+filter+"%"}, null, null, null);
         return db.query(ProductsContract.StockCellEntry.TABLE_NAME, null, null, null, null, null, null);
         //Cursor res =  db.rawQuery( "select _id, name, storageid from " + ProductsContract.StockCellEntry.TABLE_NAME+ " inner join "+ProductsContract.StorageEntry.TABLE_NAME +" on stockcells.storageid= storages._id", null );
 

@@ -76,7 +76,7 @@
     <string name="doOKAndToNext">OK</string>
     <string name="refresh">Загрузить</string>
     <string name="loadtodatabase">Загрузить</string>
-    <string name="stockcells">Склады и ячейки</string>
+    <string name="stockcells">Ячейки</string>
     <string name="Products">Товары</string>
     <string name="downloadcomplete">Загрузка завершена</string>
     <string name="cell">Ячейка</string>
