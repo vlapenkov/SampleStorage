@@ -58,6 +58,10 @@ public class OneShipmentItemActivity extends AppCompatActivity implements View.O
         TextView tv_RestCaption = (TextView) findViewById(R.id.tv_RestCaption);
         TextView tv_Rest = (TextView) findViewById(R.id.tv_Rest);
 
+        TextView tv_Queue = (TextView) findViewById(R.id.tv_Queue);
+
+        tv_Queue.setText(mShipmentItem.Queue);
+
         tvRowNumber.setText(String.valueOf(mShipmentItem.RowNumber));
         tvProductId.setText(String.valueOf(mShipmentItem.ProductId));
         tvArticle.setText(productArticle);
