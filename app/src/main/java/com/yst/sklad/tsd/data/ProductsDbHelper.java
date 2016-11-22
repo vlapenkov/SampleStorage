@@ -13,6 +13,7 @@ import java.util.List;
 
 /**
  * Created by user on 02.06.2016.
+ * Updated on 22.11.2016
  */
 public class ProductsDbHelper extends SQLiteOpenHelper {
 
@@ -75,6 +76,43 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
                     ProductsContract.StockCellEntry.COLUMN_NAME + " text, " +
                     ProductsContract.StockCellEntry.COLUMN_STORAGEID+ " text, " +
                     "FOREIGN KEY( "+ ProductsContract.StockCellEntry.COLUMN_STORAGEID+") REFERENCES "+ProductsContract.StorageEntry.TABLE_NAME +" ("+COLUMN_ID+")" + ");";
+
+
+    //
+    // заказы поставщикам
+    //
+    private static final String SQL_CREATE_ORDERTOSUPPLIER_TABLE =
+            "create table " + ProductsContract.OrdersToSupplierEntry.TABLE_NAME + "(" +
+                    ProductsContract.OrdersToSupplierEntry._ID + " text primary key, " +
+                    ProductsContract.OrdersToSupplierEntry.COLUMN_CLIENT+ " text, " +
+                    ProductsContract.OrdersToSupplierEntry.COLUMN_COMMENTS+ " text );";
+
+
+    //
+    // заказы поставщикам таболичная часть
+    //
+    private static final String SQL_CREATE_ORDERTOSUPPLIER_ITEMS_TABLE =
+            "create table " + ProductsContract.OrdersToSupplierItemEntry.TABLE_NAME + "(" +
+                    ProductsContract.OrdersToSupplierItemEntry._ID + " integer primary key autoincrement, " +
+                    ProductsContract.OrdersToSupplierItemEntry.COLUMN_ORDERTOSUPPLIERID + " text, " +
+                    ProductsContract.OrdersToSupplierItemEntry.COLUMN_PRODUCTID+ "  integer,  " +
+                    ProductsContract.OrdersToSupplierItemEntry.COLUMN_COUNT+ "  integer );";
+
+
+
+    //
+    // заказы поставщикам таболичная часть с разбивкой по ячейкам
+    //
+    private static final String SQL_CREATE_ORDERTOSUPPLIER_ITEMSDETAILED_TABLE =
+            "create table " + ProductsContract.OrdersToSupplierItemDetailedEntry.TABLE_NAME + "(" +
+                    ProductsContract.OrdersToSupplierItemDetailedEntry._ID + " integer primary key autoincrement, " +
+                    ProductsContract.OrdersToSupplierItemDetailedEntry.COLUMN_ORDERTOSUPPLIERID + " text, " +
+                    ProductsContract.OrdersToSupplierItemDetailedEntry.COLUMN_PRODUCTID+ "  integer,  " +
+                    ProductsContract.OrdersToSupplierItemDetailedEntry.COLUMN_COUNT_FACT+ "  integer, " +
+                    ProductsContract.OrdersToSupplierItemDetailedEntry.COLUMN_STOCKCELL+ "  text " +
+                    ");";
+
+
 
 
     public ProductsDbHelper(Context context)

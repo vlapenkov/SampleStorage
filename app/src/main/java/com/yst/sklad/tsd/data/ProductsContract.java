@@ -136,5 +136,46 @@ public class ProductsContract {
 
     }
 
+    /*
+   Заказы поставщикам _id = номер заказа поставщику (СП003101)
+*/
+    public static final class OrdersToSupplierEntry implements BaseColumns {
+
+        // Table name
+        public static final String TABLE_NAME = "orderstosuppliers";
+        public static final String COLUMN_CLIENT = "client";
+        public static final String COLUMN_COMMENTS = "comments";
+
+    }
+
+    /*
+   Заказы поставщикам табличная часть
+*/
+    public static final class OrdersToSupplierItemEntry implements BaseColumns {
+
+        // Table name
+        public static final String TABLE_NAME = "orderstosuppliersitems";
+        public static final String COLUMN_ROWNUMBER = "rownumber";
+        public static final String COLUMN_PRODUCTID = "productid";
+        public static final String COLUMN_ORDERTOSUPPLIERID = "ordertosupplierid" ;// внешний ключ
+        public static final String COLUMN_COUNT = "quantity";
+
+    }
+
+    /*
+  Заказы поставщикам табличная часть с разбивкой по ячейкам
+*/
+    public static final class OrdersToSupplierItemDetailedEntry implements BaseColumns {
+
+        // Table name
+        public static final String TABLE_NAME = "orderstosuppliersitemsdetailed";
+        public static final String COLUMN_ROWNUMBER = "rownumber";
+        public static final String COLUMN_PRODUCTID = "productid";
+        public static final String COLUMN_ORDERTOSUPPLIERID = "ordertosupplierid" ;// внешний ключ
+        public static final String COLUMN_COUNT_FACT = "quantityfact";
+        public static final String COLUMN_STOCKCELL = "stockcell";
+
+    }
+
 
 }
