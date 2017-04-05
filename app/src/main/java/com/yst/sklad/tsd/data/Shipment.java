@@ -27,7 +27,8 @@ public class Shipment {
 
   public  static String getCleanId(String oldId )
   {
-      Pattern p = Pattern.compile("[1-9][0-9]+");
+   //   Pattern p = Pattern.compile("[1-9][0-9]+");
+      Pattern p = Pattern.compile("[1-9][0-9]*");
       Matcher m = p.matcher(oldId);
       m.find();
       return m.group(0);
