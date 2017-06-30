@@ -1,5 +1,5 @@
 package com.yst.sklad.tsd.activities;
-
+/* --- */
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;

@@ -30,7 +30,8 @@ private static HashMap<String,String> mHeaders = new HashMap<>();
         mHeaders.put("Host", "37.1.84.50:8080");
         mHeaders.put("Connection", "Keep-Alive");
         mHeaders.put("User-Agent","AndroidApp");
-        mHeaders.put("Authorization","Basic Q2xpZW50NTkzMzppMjR4N2U=");
+        //mHeaders.put("Authorization","Basic Q2xpZW50NTkzMzppMjR4N2U=");
+        mHeaders.put("Authorization","Basic Q2xpZW50UmF6dW1vdjpqczRuSG5ZOA==");
 
     }
 
