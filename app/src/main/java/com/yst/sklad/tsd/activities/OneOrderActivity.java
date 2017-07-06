@@ -39,11 +39,17 @@ public class OneOrderActivity extends AppCompatActivity  implements LoaderManage
         mDbHelper = new ProductsDbHelper(this);
         lvData = (ListView) findViewById(R.id.lvData);
 
-
+/*
         mAdapter = new SimpleCursorAdapter(this,
-                R.layout.stockcell_item, null,
+                R.layout.orderitem_item, mDbHelper.getOrderItems(String.valueOf(CurrentOrderId)),
                 new String[] { "rownumber", "productid","quantity" },
                 new int[] { R.id.text1, R.id.text2,R.id.text3  }, 0);
+*/
+
+        mAdapter = new SimpleCursorAdapter(this,
+                R.layout.orderitem_item, /*mDbHelper.getOrderItems(String.valueOf(CurrentOrderId))*/ null,
+                new String[] { "rownumber","productid","quantity" ,"quantityfact","productname" },
+                new int[] { R.id.text1, R.id.text2,R.id.text3 ,R.id.text4,R.id.text5}, 0);
 
         lvData.setAdapter(mAdapter);
 

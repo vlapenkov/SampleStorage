@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Debug;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -586,8 +587,32 @@ return true;
      */
     public Cursor getOrderItems(String orderId) {
         SQLiteDatabase db = this.getReadableDatabase();
-        String whereCond= ProductsContract.OrdersToSupplierItemEntry.COLUMN_ORDERTOSUPPLIERID +"="+orderId;
-        return db.query(ProductsContract.OrdersToSupplierItemEntry.TABLE_NAME, null, whereCond, null, null, null, null);
+
+       String query = "SELECT rownumber, productId, quantity, IFNULL(quantityfact,0) quantityfact ,IFNULL(products.name,'---') productname  from orderstosuppliersitems " +
+               "LEFT JOIN Products ON orderstosuppliersitems.ProductId=Products._id LEFT JOIN (SELECT ProductId, SUM(quantityfact) quantityfact from arrivalitems GROUP BY ProductId) aitems "+
+                        "ON orderstosuppliersitems.ProductId=aitems.ProductId "+
+               "WHERE orderstosuppliersitems._id="+orderId;
+
+
+         query = "SELECT orderstosuppliersitems._id, rownumber, orderstosuppliersitems.productid productid, quantity, aitems.quantityfact ,IFNULL(products.name,'---') productname  from orderstosuppliersitems " +
+                "LEFT JOIN products ON orderstosuppliersitems.productid=products._id " +
+                "LEFT JOIN (SELECT productid, SUM( quantityfact) quantityfact from arrivalitems " +
+                 "WHERE ordertosupplierid="+ orderId +                 " GROUP BY ProductId) aitems "+
+                "ON orderstosuppliersitems.productid=aitems.productid "+
+                "WHERE orderstosuppliersitems._id="+orderId;
+
+        Cursor cursor=null;
+try {
+     cursor = db.rawQuery(query, null);
+}
+catch (Exception e)
+{
+    Log.d("SQL failed", e.getMessage());
+}
+
+        return cursor;
+
+
 
     }
 
