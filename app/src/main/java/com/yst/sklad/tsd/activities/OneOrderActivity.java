@@ -20,6 +20,9 @@ import android.widget.ListView;
 import com.yst.sklad.tsd.R;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
 
+/*
+
+ */
 public class OneOrderActivity extends AppCompatActivity  implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener{
     ProductsDbHelper mDbHelper;
     public static String ORDER_ID_MESSAGE="OrderID";
