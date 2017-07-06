@@ -33,7 +33,7 @@
     </string-array>
 
     <!-- Example settings for Data & Sync -->
-   <!-- <string name="pref_header_data_sync">Data &amp; sync</string>
+    <!-- <string name="pref_header_data_sync">Data &amp; sync</string>
 
     <string name="pref_title_sync_frequency">Sync frequency</string>
     <string-array name="pref_sync_frequency_titles">
@@ -110,4 +110,7 @@
     <string name="uploadTo1S">Выгрузить в 1С</string>
     <string name="delete_shipment_after_upload">Удалять задание после выгрузки в 1С</string>
     <string name="summary_delete_shipment_after_upload">После нажатия кнопки \'Выгрузить\' задание будет автоматически удалено из терминала</string>
+    <string name="ordersToSuppliers">Заказы поставщикам</string>
+    <string name="itemsInOrder">Товары в заказе</string>
+    <string name="ProductCode">Код товара</string>
 </resources>

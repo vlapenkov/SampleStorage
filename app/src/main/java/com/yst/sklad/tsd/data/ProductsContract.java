@@ -144,8 +144,11 @@ public class ProductsContract {
         // Table name
         public static final String TABLE_NAME = "orderstosuppliers";
         public static final String COLUMN_CLIENT = "client";
+        public static final String COLUMN_ARRIVALNUMBER = "arrivalnumber";
         public static final String COLUMN_COMMENTS = "comments";
 
+        public static final String COLUMN_DATE = "dateoforder";
+        public static final String COLUMN_ORDERTYPE ="ordertype" ; // 0 - заказ поставщику, 1- перемещение
     }
 
     /*
@@ -165,15 +168,15 @@ public class ProductsContract {
     /*
   Заказы поставщикам табличная часть с разбивкой по ячейкам
 */
-    public static final class OrdersToSupplierItemDetailedEntry implements BaseColumns {
+    public static final class ArrivalItemsEntry implements BaseColumns {
 
         // Table name
-        public static final String TABLE_NAME = "orderstosuppliersitemsdetailed";
-        public static final String COLUMN_ROWNUMBER = "rownumber";
+        public static final String TABLE_NAME = "arrivalitems";
+     //   public static final String COLUMN_ROWNUMBER = "rownumber";
         public static final String COLUMN_PRODUCTID = "productid";
         public static final String COLUMN_ORDERTOSUPPLIERID = "ordertosupplierid" ;// внешний ключ
         public static final String COLUMN_COUNT_FACT = "quantityfact";
-        public static final String COLUMN_STOCKCELL = "stockcell";
+        public static final String COLUMN_STOCKCELL_FACT = "stockcell";
 
     }
 

@@ -171,6 +171,14 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
                 return true;
             }
 
+            case R.id.orders: {
+
+                Intent intent = new Intent(this, OrdersActivity.class);
+
+                startActivity(intent);
+                return true;
+            }
+
             case R.id.toPreferences: {
                 Intent intent = new Intent(this, MyPreferencesActivity.class);
 

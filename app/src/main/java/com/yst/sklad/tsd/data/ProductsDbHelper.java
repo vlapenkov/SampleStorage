@@ -18,7 +18,7 @@ import java.util.List;
 public class ProductsDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 15;
+    private static final int DATABASE_VERSION = 17;
 
     static final String DATABASE_NAME = "products.db";
 
@@ -84,8 +84,13 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_ORDERTOSUPPLIER_TABLE =
             "create table " + ProductsContract.OrdersToSupplierEntry.TABLE_NAME + "(" +
                     ProductsContract.OrdersToSupplierEntry._ID + " text primary key, " +
+                    ProductsContract.OrdersToSupplierEntry.COLUMN_DATE + " text, " +
+                    ProductsContract.OrdersToSupplierEntry.COLUMN_ORDERTYPE + " integer, " + // вид документа
                     ProductsContract.OrdersToSupplierEntry.COLUMN_CLIENT+ " text, " +
+                    ProductsContract.OrdersToSupplierEntry.COLUMN_ARRIVALNUMBER + " text, " +
                     ProductsContract.OrdersToSupplierEntry.COLUMN_COMMENTS+ " text );";
+
+
 
 
     //
@@ -95,21 +100,22 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
             "create table " + ProductsContract.OrdersToSupplierItemEntry.TABLE_NAME + "(" +
                     ProductsContract.OrdersToSupplierItemEntry._ID + " integer primary key autoincrement, " +
                     ProductsContract.OrdersToSupplierItemEntry.COLUMN_ORDERTOSUPPLIERID + " text, " +
+                    ProductsContract.OrdersToSupplierItemEntry.COLUMN_ROWNUMBER +" integer, "+
                     ProductsContract.OrdersToSupplierItemEntry.COLUMN_PRODUCTID+ "  integer,  " +
                     ProductsContract.OrdersToSupplierItemEntry.COLUMN_COUNT+ "  integer );";
 
 
 
     //
-    // заказы поставщикам таболичная часть с разбивкой по ячейкам
+    //  приход относящийся к заказы поставщикам таболичная часть с разбивкой по ячейкам
     //
-    private static final String SQL_CREATE_ORDERTOSUPPLIER_ITEMSDETAILED_TABLE =
-            "create table " + ProductsContract.OrdersToSupplierItemDetailedEntry.TABLE_NAME + "(" +
-                    ProductsContract.OrdersToSupplierItemDetailedEntry._ID + " integer primary key autoincrement, " +
-                    ProductsContract.OrdersToSupplierItemDetailedEntry.COLUMN_ORDERTOSUPPLIERID + " text, " +
-                    ProductsContract.OrdersToSupplierItemDetailedEntry.COLUMN_PRODUCTID+ "  integer,  " +
-                    ProductsContract.OrdersToSupplierItemDetailedEntry.COLUMN_COUNT_FACT+ "  integer, " +
-                    ProductsContract.OrdersToSupplierItemDetailedEntry.COLUMN_STOCKCELL+ "  text " +
+    private static final String SQL_CREATE_ARRIVAL_ITEMS_TABLE =
+            "create table " + ProductsContract.ArrivalItemsEntry.TABLE_NAME + "(" +
+                    ProductsContract.ArrivalItemsEntry._ID + " integer primary key autoincrement, " +
+                    ProductsContract.ArrivalItemsEntry.COLUMN_ORDERTOSUPPLIERID + " text, " +
+                    ProductsContract.ArrivalItemsEntry.COLUMN_PRODUCTID+ "  integer,  " +
+                    ProductsContract.ArrivalItemsEntry.COLUMN_COUNT_FACT+ "  integer, " +
+                    ProductsContract.ArrivalItemsEntry.COLUMN_STOCKCELL_FACT+ "  text " +
                     ");";
 
 
@@ -139,6 +145,11 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
             db.execSQL(SQL_CREATE_STORAGE_TABLE);
             db.execSQL(SQL_CREATE_STOCKCELLS_TABLE);
 
+            // --- таблицы для поступлений
+            db.execSQL(SQL_CREATE_ORDERTOSUPPLIER_TABLE);
+            db.execSQL(SQL_CREATE_ORDERTOSUPPLIER_ITEMS_TABLE);
+            db.execSQL(SQL_CREATE_ARRIVAL_ITEMS_TABLE);
+
         //    initializeData(db);
         } catch (Exception e)
         {
@@ -162,6 +173,11 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_DROPTABLE_IFEXISTS+ProductsContract.ShipmentsItemEntry.TABLE_NAME);
         db.execSQL(SQL_DROPTABLE_IFEXISTS+ProductsContract.StorageEntry.TABLE_NAME);
         db.execSQL(SQL_DROPTABLE_IFEXISTS + ProductsContract.StockCellEntry.TABLE_NAME);
+        // --- таблицы для поступлений
+        db.execSQL(SQL_DROPTABLE_IFEXISTS + ProductsContract.ArrivalItemsEntry.TABLE_NAME);
+        db.execSQL(SQL_DROPTABLE_IFEXISTS + ProductsContract.OrdersToSupplierItemEntry.TABLE_NAME);
+        db.execSQL(SQL_DROPTABLE_IFEXISTS + ProductsContract.OrdersToSupplierEntry.TABLE_NAME);
+
 
     }
 
@@ -233,6 +249,8 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
 
 
 //+++ 12.07.2016 по Заданию, товару и номеру строки
+
+    /*
     public boolean checkIfShipmentItemsExistByShipmentAndProductAndRow( String shipmentId, int productid, int rownumber)
     {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -257,6 +275,82 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
         return false;
 
     }
+*/
+
+
+    /*
+    Добавляет заказ поставщика в базу
+     */
+    public boolean addOrderToSupplier ( OrderToSupplier order)
+    {
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues cv = new ContentValues();
+
+            cv.put(ProductsContract.OrdersToSupplierEntry._ID, order.Id);
+            cv.put(ProductsContract.OrdersToSupplierEntry.COLUMN_DATE, order.DateOfOrder);
+            cv.put(ProductsContract.OrdersToSupplierEntry.COLUMN_ORDERTYPE, order.OrderType);
+            cv.put(ProductsContract.OrdersToSupplierEntry.COLUMN_COMMENTS, order.Comments);
+            cv.put(ProductsContract.OrdersToSupplierEntry.COLUMN_CLIENT, order.Client);
+            //cv.put(ProductsContract.ShipmentsEntry.COLUMN_COMMENTS, shipment.comments);
+            db.insert(ProductsContract.OrdersToSupplierEntry.TABLE_NAME, null, cv);
+        }
+        catch (Exception e) {return false;}
+
+        return true;
+
+    }
+
+
+
+
+
+    /*
+    Добавляет строку заказа поставщику в базу
+     */
+    public boolean addOrderToSupplierItem ( OrderToSupplierItem orderItem)
+    {
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues cv = new ContentValues();
+
+            cv.put(ProductsContract.OrdersToSupplierItemEntry.COLUMN_ORDERTOSUPPLIERID, orderItem.OrderId);
+            cv.put(ProductsContract.OrdersToSupplierItemEntry.COLUMN_ROWNUMBER, orderItem.RowNumber);
+            cv.put(ProductsContract.OrdersToSupplierItemEntry.COLUMN_PRODUCTID, orderItem.ProductId);
+            cv.put(ProductsContract.OrdersToSupplierItemEntry.COLUMN_COUNT, orderItem.Quantity);
+            db.insert(ProductsContract.OrdersToSupplierItemEntry.TABLE_NAME, null, cv);
+        }
+        catch (Exception e) {return false;}
+
+        return true;
+
+    }
+
+
+    /*
+    Добавляет строку поступления в базу
+     */
+
+    public boolean addArrivalItem ( ArrivalItem item)
+    {
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues cv = new ContentValues();
+
+            cv.put(ProductsContract.ArrivalItemsEntry.COLUMN_ORDERTOSUPPLIERID, item.OrderId);
+            cv.put(ProductsContract.ArrivalItemsEntry.COLUMN_PRODUCTID, item.ProductId);
+            cv.put(ProductsContract.ArrivalItemsEntry.COLUMN_COUNT_FACT, item.Quantity);
+            cv.put(ProductsContract.ArrivalItemsEntry.COLUMN_STOCKCELL_FACT, item.StockCell);
+
+            db.insert(ProductsContract.ArrivalItemsEntry.TABLE_NAME, null, cv);
+        }
+        catch (Exception e) {return false;}
+
+        return true;
+
+    }
+
+
 
     public boolean addShipment ( Shipment shipment)
     {
@@ -450,6 +544,49 @@ return true;
         return list;
 
     }
+
+    public Cursor getOrders() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.query(ProductsContract.OrdersToSupplierEntry.TABLE_NAME, null, null, null, null, null, null);
+    }
+
+    /*
+    Получить строки заказов
+     */
+    public Cursor getOrderItems(String orderId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String whereCond= ProductsContract.OrdersToSupplierItemEntry.COLUMN_ORDERTOSUPPLIERID +"="+orderId;
+        return db.query(ProductsContract.OrdersToSupplierItemEntry.TABLE_NAME, null, whereCond, null, null, null, null);
+
+    }
+
+/*
+Получить список ячеек для данного заказа и товара
+ */
+    public Cursor getArrivalItems(String orderId, int productId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String whereCond= ProductsContract.ArrivalItemsEntry.COLUMN_ORDERTOSUPPLIERID +"="+orderId +" and "+ProductsContract.ArrivalItemsEntry.COLUMN_PRODUCTID+"="+Integer.toString(productId);
+        return db.query(ProductsContract.ArrivalItemsEntry.TABLE_NAME, null, whereCond, null, null, null, null);
+
+    }
+
+    /*
+    Получить код товара по Id, -1 если не найден
+     */
+    public int getProductIdInOrderItemById (long id)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor= db.rawQuery("SELECT productid from " + ProductsContract.OrdersToSupplierItemEntry.TABLE_NAME + " where _id=" + Long.toString(id), null);
+        if (cursor!=null && cursor.getCount()>0)
+        {   cursor.moveToFirst();
+            return cursor.getInt(0);
+
+        }
+        return -1;
+    }
+
+
 
     public Cursor getStockCells(String filter) {
 

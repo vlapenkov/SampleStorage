@@ -2,6 +2,7 @@ package com.yst.sklad.tsd.services;
 
 /**
  * Created by lapenkov on 14.04.2016.
+ *
  */
 public class BarCodeUtils {
     public static boolean isInteger(String s) {
