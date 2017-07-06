@@ -1,35 +1,27 @@
 package com.yst.sklad.tsd.activities;
 
-import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
-import android.database.Cursor;
-import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.zxing.common.StringUtils;
 import com.yst.sklad.tsd.R;
 import com.yst.sklad.tsd.data.ArrivalItem;
+import com.yst.sklad.tsd.data.OrderToSupplierItem;
 import com.yst.sklad.tsd.data.Product;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
-import com.yst.sklad.tsd.data.ShipmentItem;
+import com.yst.sklad.tsd.services.BarCodeUtils;
 
 import java.io.Serializable;
+
+import me.sudar.zxingorient.ZxingOrient;
+import me.sudar.zxingorient.ZxingOrientResult;
 
 
 public class OneOrderOneCellActivity extends AppCompatActivity {
@@ -134,8 +126,9 @@ public class OneOrderOneCellActivity extends AppCompatActivity {
         int quantity=0;
         String cell="";
       String errorMessage="";
+        int productId=0;
         try {
-          int productId= Integer.parseInt(etProductId.getText().toString());
+           productId= Integer.parseInt(etProductId.getText().toString());
            Product product = mDbHelper.getProductById(productId);
 
              cell= et_Cell.getText().toString();
@@ -174,8 +167,70 @@ public class OneOrderOneCellActivity extends AppCompatActivity {
 
 
         else {
-            mDbHelper.addArrivalItem(new ArrivalItem(String.valueOf(CurrentOrderId), CurrentProductId, quantity, cell));
+            mDbHelper.addArrivalItem(new ArrivalItem(String.valueOf(CurrentOrderId), productId, quantity, cell));
+            if (!mDbHelper.orderHasProductId(String.valueOf(CurrentOrderId),productId)) {
+                int rNumber = mDbHelper.getLastRowNumberOfOrder(String.valueOf(CurrentOrderId));
+                rNumber++;
+                mDbHelper.addOrderToSupplierItem(new OrderToSupplierItem(String.valueOf(CurrentOrderId),rNumber,productId,quantity));
+            }
+
+
             finish();
+        }
+    }
+
+
+    public void scanBarCode(View v)
+    {
+
+        new ZxingOrient(OneOrderOneCellActivity.this).initiateScan();
+    }
+
+
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+
+        String cellRead="";
+        String nameOfProduct = "";
+        TextView tvProductName = (TextView)findViewById(R.id.tvProductName);
+        EditText et_Cell = (EditText) findViewById(R.id.et_Cell);
+
+//retrieve scan result
+        ZxingOrientResult scanningResult = ZxingOrient.parseActivityResult(requestCode, resultCode, intent);
+        if (scanningResult != null) {
+
+            String contents= scanningResult.getContents(); if (contents==null) return;
+
+            boolean productIsFound = false;
+            int productId = BarCodeUtils.getProductIdFromBarCode(contents);
+            Product productFound = null;
+
+
+            //RefreshProductTexts(productId)
+            if (productId==0) {
+                productFound = mDbHelper.getProductByBarCode(contents);
+                if (productFound!=null) productId=productFound.Id;
+            }
+            if (productId>0)
+            {
+                RefreshProductTexts(productId,true);
+
+            }
+
+
+
+            //  это ячейка
+            if (productId==0 && contents!=null &&contents.length()==8) { cellRead =BarCodeUtils.getCellFromBarCode(contents);}
+
+            Log.d(TAG + "/product", String.valueOf(productId));
+            Log.d(TAG + "/cell", cellRead);
+            if (!cellRead.isEmpty()) {
+                et_Cell.setText(cellRead);
+                TextView tv_CellName = (TextView) findViewById(R.id.tv_Storage);
+                tv_CellName.setText(mDbHelper.getNameOfCell(cellRead));
+             //   Toast.makeText(OneShipmentItemActivity.this,R.string.cell_read, Toast.LENGTH_LONG).show();
+            }
+
+
         }
     }
 }

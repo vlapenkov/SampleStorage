@@ -67,11 +67,11 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.refresh:
-       /*        mDbHelper.addOrderToSupplier( new OrderToSupplier("2","21-03-2017","Петров",0,null));
+             mDbHelper.addOrderToSupplier( new OrderToSupplier("2","21-03-2017","Петров",0,null));
                 mDbHelper.addOrderToSupplierItem(new OrderToSupplierItem("2",1,9160850,10));
                 mDbHelper.addOrderToSupplierItem(new OrderToSupplierItem("2",2,9160849,15));
 
-                //mDbHelper.addOrderToSupplier( new OrderToSupplierItem("1","20-02-2016","Иванов",0,null)); */
+                //mDbHelper.addOrderToSupplier( new OrderToSupplierItem("1","20-02-2016","Иванов",0,null));
 
                 mDbHelper.addArrivalItem(new ArrivalItem("2",9160850,1,"123123"));
                 mDbHelper.addArrivalItem(new ArrivalItem("2",9160850,1,"123124"));

@@ -550,6 +550,37 @@ return true;
         return db.query(ProductsContract.OrdersToSupplierEntry.TABLE_NAME, null, null, null, null, null, null);
     }
 
+
+    /*
+    Получить таблицы товаров и
+     */
+    public boolean orderHasProductId(String orderId, int productId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String whereCond= ProductsContract.OrdersToSupplierItemEntry.COLUMN_ORDERTOSUPPLIERID +"="+orderId +
+                " and "+ProductsContract.OrdersToSupplierItemEntry.COLUMN_PRODUCTID +"="+productId;
+        Cursor cursor= db.query(ProductsContract.OrdersToSupplierItemEntry.TABLE_NAME, null, whereCond, null, null, null, null);
+
+        if (cursor!=null && cursor.getCount()>0) return true;
+        return false;
+
+    }
+
+    /*
+    * Получить последний номер строки по коду
+    */
+    public int getLastRowNumberOfOrder (String orderId)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor= db.rawQuery("SELECT max(rownumber) rownumber from " + ProductsContract.OrdersToSupplierItemEntry.TABLE_NAME + " where ordertosupplierid=" + orderId, null);
+
+        if (cursor!=null && cursor.getCount()>0)
+        { cursor.moveToFirst();
+        return cursor.getInt(0); }
+        return 0;
+
+    }
+
+
     /*
     Получить строки заказов
      */
