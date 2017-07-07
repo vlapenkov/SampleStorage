@@ -23,4 +23,13 @@
         <item>Ангар-6</item>
         <item>Ангар-7</item>
     </string-array>
+
+
+    <string-array name="producttypesArray">
+        <item>шины</item>
+        <item>диски</item>
+        <item>АКБ</item>
+        <item>аксессуары</item>
+        <item>прочее</item>
+    </string-array>
 </resources>

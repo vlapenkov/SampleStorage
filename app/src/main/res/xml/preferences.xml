@@ -29,4 +29,13 @@
         android:defaultValue="false"
         android:summary="@string/summary_delete_shipment_after_upload"
         android:key="delete_shipment_after_upload" />
+
+
+    <MultiSelectListPreference
+        android:title="@string/multiselectProductTypes"
+        android:entries="@array/producttypesArray"
+        android:entryValues="@array/producttypesArray"
+        android:summary=""
+        android:key="producttypesArray"
+        />
 </PreferenceScreen>

@@ -4,14 +4,19 @@
     <group android:checkableBehavior="single"
         android:id="@+id/firstmenugroup"
         >
+
         <item
+            android:id="@+id/shipments"
+            android:icon="@drawable/ic_menu_download"
+            android:title="@string/shipments" />
+        <!--<item
             android:id="@+id/import_shipments"
             android:icon="@drawable/ic_menu_download"
             android:title="@string/importShipments" />
         <item
             android:id="@+id/clear"
             android:icon="@drawable/ic_menu_clear"
-            android:title="@string/clear" />
+            android:title="@string/clear" /> -->
         <item
             android:id="@+id/orders"
             android:icon="@drawable/ic_menu_slideshow"

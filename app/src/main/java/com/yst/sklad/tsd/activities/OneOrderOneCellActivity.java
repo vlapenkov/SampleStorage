@@ -167,7 +167,12 @@ public class OneOrderOneCellActivity extends AppCompatActivity {
 
 
         else {
+            // добавить запись в таблицу поступлений
             mDbHelper.addArrivalItem(new ArrivalItem(String.valueOf(CurrentOrderId), productId, quantity, cell));
+
+
+            // если товара нет в таблице заказов (пересорт)
+            // то получить номер последней строки rNumber и запись туда
             if (!mDbHelper.orderHasProductId(String.valueOf(CurrentOrderId),productId)) {
                 int rNumber = mDbHelper.getLastRowNumberOfOrder(String.valueOf(CurrentOrderId));
                 rNumber++;

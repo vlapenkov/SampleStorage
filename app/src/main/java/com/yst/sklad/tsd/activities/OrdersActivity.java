@@ -56,7 +56,7 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.stockcellmenu, menu);
+        getMenuInflater().inflate(R.menu.shipmentsmenu, menu);
        // MenuItem searchItem = menu.findItem(R.id.search);
      //   SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
       //  searchView.setOnQueryTextListener(this);
@@ -67,7 +67,7 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.refresh:
-             mDbHelper.addOrderToSupplier( new OrderToSupplier("2","21-03-2017","Петров",0,null));
+        /*     mDbHelper.addOrderToSupplier( new OrderToSupplier("2","21-03-2017","Петров",0,null));
                 mDbHelper.addOrderToSupplierItem(new OrderToSupplierItem("2",1,9160850,10));
                 mDbHelper.addOrderToSupplierItem(new OrderToSupplierItem("2",2,9160849,15));
 
@@ -75,7 +75,7 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
 
                 mDbHelper.addArrivalItem(new ArrivalItem("2",9160850,1,"123123"));
                 mDbHelper.addArrivalItem(new ArrivalItem("2",9160850,1,"123124"));
-                getSupportLoaderManager().getLoader(0).forceLoad();
+                getSupportLoaderManager().getLoader(0).forceLoad(); */
 
 
         }

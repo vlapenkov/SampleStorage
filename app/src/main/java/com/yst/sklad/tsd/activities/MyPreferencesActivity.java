@@ -23,6 +23,7 @@ public class MyPreferencesActivity extends PreferenceActivity /*implements Share
     private EditTextPreference catName;
     private SharedPreferences preferences;
     private MultiSelectListPreference catArrayOfStorages;
+    private MultiSelectListPreference catArrayOfpTypes;
     @Override
     @SuppressWarnings("deprecation")
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +33,11 @@ public class MyPreferencesActivity extends PreferenceActivity /*implements Share
         preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String value = preferences.getString("username", "");
         Set<String> arrayOfStorages = preferences.getStringSet("storagesArray", new HashSet<String>());
+        Set<String> arrayOfPTypes = preferences.getStringSet("producttypesArray", new HashSet<String>());
+
         catName = (EditTextPreference) findPreference("username");
+
+
         catArrayOfStorages= (MultiSelectListPreference) findPreference("storagesArray");
 
         catArrayOfStorages.setTitle(arrayOfStorages.toString());
@@ -44,6 +49,24 @@ public class MyPreferencesActivity extends PreferenceActivity /*implements Share
                                               Object newValue) {
 
                preference.setTitle(newValue.toString());
+                return true;
+            }
+
+
+        });
+
+
+        catArrayOfpTypes= (MultiSelectListPreference) findPreference("producttypesArray");
+
+        catArrayOfpTypes.setTitle(arrayOfPTypes.toString());
+
+        catArrayOfpTypes.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+
+            @Override
+            public boolean onPreferenceChange(Preference preference,
+                                              Object newValue) {
+
+                preference.setTitle(newValue.toString());
                 return true;
             }
 

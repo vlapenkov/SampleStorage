@@ -21,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -135,6 +136,51 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
     }
 
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.shipmentsmenu, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.import_shipments:
+            { if (new UtilsConnectivityService(ShipmentsActivity.this).checkConnectivity()) {
+                new DownloadAndImportShipments().execute(StringUrlShipments);
+                getSupportLoaderManager().getLoader(0).forceLoad();
+            }
+
+                return true;}
+
+            case R.id.clear:
+            {
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+                                new ClearAllShipments().execute();
+                                break;
+                        }
+                    }
+
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(R.string.clear_shipments_message).setPositiveButton(R.string.yes, dialogClickListener)
+                        .setNegativeButton(R.string.no, dialogClickListener).show();
+
+                return true;
+            }
+
+
+        }
+        return true;
+    }
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -142,7 +188,14 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
         int id = item.getItemId();
 
         switch(id) {
-            case R.id.import_shipments: {
+
+            case R.id.shipments: {
+                Intent intent = new Intent(this, ShipmentsActivity.class);
+
+                startActivity(intent);
+                return true;
+            }
+        /*    case R.id.import_shipments: {
                 if (new UtilsConnectivityService(ShipmentsActivity.this).checkConnectivity()) {
                     new DownloadAndImportShipments().execute(StringUrlShipments);
                     getSupportLoaderManager().getLoader(0).forceLoad();
@@ -170,7 +223,7 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
                 return true;
             }
-
+*/
             case R.id.orders: {
 
                 Intent intent = new Intent(this, OrdersActivity.class);
