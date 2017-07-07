@@ -17,7 +17,6 @@ import java.util.Set;
  * Created by user on 05.06.2016.
  * Настройки
  *
- *
  */
 public class MyPreferencesActivity extends PreferenceActivity /*implements SharedPreferences.OnSharedPreferenceChangeListener*/  {
     private SharedPreferences.OnSharedPreferenceChangeListener listener;

@@ -51,7 +51,6 @@ import java.util.Set;
 
 /*
 Список заданий на отгрузку
-*
  *  */
 
 public class ShipmentsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, SearchView.OnQueryTextListener,AdapterView.OnItemClickListener,NavigationView.OnNavigationItemSelectedListener {

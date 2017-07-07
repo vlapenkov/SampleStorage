@@ -26,6 +26,7 @@ import com.yst.sklad.tsd.services.UtilsConnectivityService;
 
 /*
 Заказы поставщикам и перемещения (для поступлений)
+*
  */
 
 public class OrdersActivity extends AppCompatActivity  implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener{
