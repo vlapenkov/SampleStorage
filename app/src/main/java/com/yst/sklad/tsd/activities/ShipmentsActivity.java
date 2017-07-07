@@ -96,8 +96,6 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
         mDbHelper = new ProductsDbHelper(this);
         lvData = (ListView) findViewById(R.id.lvData);
 
-
-
       /* mAdapter = new SimpleCursorAdapter(this,
                 R.layout.shipment_item, mDbHelper.getShipments(mCurFilter),
                 new String[] { "_id", "dateofshipment","client","quantityfact","quantity" },
@@ -195,35 +193,7 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
                 startActivity(intent);
                 return true;
             }
-        /*    case R.id.import_shipments: {
-                if (new UtilsConnectivityService(ShipmentsActivity.this).checkConnectivity()) {
-                    new DownloadAndImportShipments().execute(StringUrlShipments);
-                    getSupportLoaderManager().getLoader(0).forceLoad();
-                }
 
-                return true; }
-
-            case R.id.clear: {
-
-                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which){
-                            case DialogInterface.BUTTON_POSITIVE:
-                                new ClearAllShipments().execute();
-                                break;
-                        }
-                    }
-
-                };
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(R.string.clear_shipments_message).setPositiveButton(R.string.yes, dialogClickListener)
-                        .setNegativeButton(R.string.no, dialogClickListener).show();
-
-                return true;
-            }
-*/
             case R.id.orders: {
 
                 Intent intent = new Intent(this, OrdersActivity.class);

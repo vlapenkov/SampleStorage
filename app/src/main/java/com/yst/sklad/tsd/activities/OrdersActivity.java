@@ -24,6 +24,10 @@ import com.yst.sklad.tsd.data.ProductsDbHelper;
 import com.yst.sklad.tsd.data.ShipmentItem;
 import com.yst.sklad.tsd.services.UtilsConnectivityService;
 
+/*
+Заказы поставщикам и перемещения (для поступлений)
+ */
+
 public class OrdersActivity extends AppCompatActivity  implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener{
 
     ProductsDbHelper mDbHelper;
@@ -67,17 +71,7 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.refresh:
-        /*     mDbHelper.addOrderToSupplier( new OrderToSupplier("2","21-03-2017","Петров",0,null));
-                mDbHelper.addOrderToSupplierItem(new OrderToSupplierItem("2",1,9160850,10));
-                mDbHelper.addOrderToSupplierItem(new OrderToSupplierItem("2",2,9160849,15));
-
-                //mDbHelper.addOrderToSupplier( new OrderToSupplierItem("1","20-02-2016","Иванов",0,null));
-
-                mDbHelper.addArrivalItem(new ArrivalItem("2",9160850,1,"123123"));
-                mDbHelper.addArrivalItem(new ArrivalItem("2",9160850,1,"123124"));
-                getSupportLoaderManager().getLoader(0).forceLoad(); */
-
-
+                addOrdersToDb();
         }
         return true;
     }
@@ -119,5 +113,20 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
         intent.putExtra(OneOrderActivity.ORDER_ID_MESSAGE, id);
        // intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+    }
+
+    private void addOrdersToDb () {
+           mDbHelper.addOrderToSupplier( new OrderToSupplier("2","21-03-2017","Петров",0,null));
+                mDbHelper.addOrderToSupplierItem(new OrderToSupplierItem("2",1,9160850,10));
+                mDbHelper.addOrderToSupplierItem(new OrderToSupplierItem("2",2,9160849,15));
+
+                //mDbHelper.addOrderToSupplier( new OrderToSupplierItem("1","20-02-2016","Иванов",0,null));
+
+                mDbHelper.addArrivalItem(new ArrivalItem("2",9160850,1,"123123"));
+                mDbHelper.addArrivalItem(new ArrivalItem("2",9160850,1,"123124"));
+                getSupportLoaderManager().getLoader(0).forceLoad();
+
+
+
     }
 }
