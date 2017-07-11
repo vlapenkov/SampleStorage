@@ -55,7 +55,7 @@ import java.util.Set;
 
 public class ShipmentsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, SearchView.OnQueryTextListener,AdapterView.OnItemClickListener,NavigationView.OnNavigationItemSelectedListener {
 
-    private boolean mNewShipmentsWasAdded = false;
+
     ShipmentsCursorAdapter mAdapter=null;
     ListView lvData =null;
 
@@ -302,7 +302,7 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
     private class DownloadAndImportShipments extends AsyncTask<String, Integer, Long> {
         ProgressDialog pDialog;
-
+        private boolean mNewShipmentsWasAdded = false;
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);

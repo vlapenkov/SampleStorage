@@ -66,6 +66,65 @@ private static HashMap<String,String> mHeaders = new HashMap<>();
 
 
 
+    public final static InputStream receiveOrderByNumber(String stringUrlShipments)
+    {
+        int status=0;
+        String xmlstring= "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:ser=\"http://37.1.84.50:8080/ServiceTransfer\">\n" +
+                "   <soap:Header/>\n" +
+                "   <soap:Body>\n" +
+                "      <ser:GetOrderOfArrivalByNumber>\n" +
+                "        <ser:Number>ТК006519</ser:Number>\n" +
+                "        <ser:Type>0</ser:Type>\n" +
+                "      </ser:GetOrderOfArrivalByNumber>\n" +
+                "   </soap:Body>\n" +
+                "</soap:Envelope>";
+        StringBuffer chaine = new StringBuffer("");
+
+        HttpURLConnection connection = null;
+        try {
+            URL url = new URL(stringUrlShipments);
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestProperty("Content-Length", xmlstring.getBytes().length + "");
+            connection.setRequestProperty("SOAPAction", "http://37.1.84.50:8080/ServiceTransfer/GetOrderOfArrivalByNumber");
+
+            for(Map.Entry<String, String> entry : mHeaders.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                connection.setRequestProperty(key,value);
+
+            }
+
+            connection.setRequestMethod("POST");
+            connection.setDoInput(true);
+
+            OutputStream outputStream = connection.getOutputStream();
+            outputStream.write(xmlstring.getBytes("UTF-8"));
+            outputStream.close();
+
+            connection.connect();
+            status = connection.getResponseCode();
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+
+            Log.i("HTTP Client", "HTTP status code : " + status);
+        }
+
+        InputStream inputStream = null;
+        try {
+            inputStream = connection.getInputStream();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return inputStream;
+    }
+
+
     public final static InputStream receiveCurrentShipments(String stringUrlShipments)
     {
         int status=0;

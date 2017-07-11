@@ -198,6 +198,15 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
 
     }
 
+    public void deleteOrder(String orderid)
+    {
+        SQLiteDatabase db =  this.getWritableDatabase();
+
+        db.execSQL("delete from "+ ProductsContract.OrdersToSupplierItemEntry.TABLE_NAME+ " where ordertosupplierid="+orderid);
+        db.execSQL("delete from "+ ProductsContract.OrdersToSupplierEntry.TABLE_NAME+ " where _id="+orderid);
+
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         final String SQL_DROPTABLE_IFEXISTS ="drop table if exists ";
@@ -593,10 +602,20 @@ String        query = "SELECT orderstosuppliersitems._id, rownumber, orderstosup
                 "LEFT JOIN (SELECT productid, SUM( quantityfact) quantityfact from arrivalitems " +
                  "WHERE ordertosupplierid="+ orderId +                 " GROUP BY ProductId) aitems "+
                 "ON orderstosuppliersitems.productid=aitems.productid "+
-                "WHERE orderstosuppliersitems._id="+orderId;
-return  db.rawQuery(query, null);
+                "WHERE orderstosuppliersitems.ordertosupplierid="+orderId;
+
+        Cursor cursor= db.rawQuery(query, null);
+        if (cursor!=null && cursor.getCount()>0)
+        {
+            return cursor;
+
+        }
+        return null;
 
     }
+
+
+
 
 /*
 Получить список ячеек для данного заказа и товара

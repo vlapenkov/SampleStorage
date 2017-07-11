@@ -69,4 +69,14 @@ public class XMLDOMParser {
         }
         return "";
     }
+
+
+    /*
+    From root get top element values
+     */
+    public String getTopElementValue(Document doc, String name)
+    {
+     return   this.getValue((Element) doc.getDocumentElement(),name);
+
+    }
 }
