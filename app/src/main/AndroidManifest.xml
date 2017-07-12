@@ -23,14 +23,11 @@
         <activity
             android:name=".activities.ShipmentsActivity"
             android:theme="@style/AppTheme.NoActionBar">
-
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
         <activity android:name=".activities.OneProductActivity" />
         <activity android:name=".activities.OneShipmentActivity" />
@@ -46,13 +43,17 @@
         <activity android:name=".activities.OneOrderActivity" />
         <activity android:name=".activities.OneOrderCellsListActivity" />
         <activity android:name=".activities.OrdersActivity">
-        <!--    <intent-filter>
+
+            <!--
+                <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter> -->
+            </intent-filter>
+            -->
         </activity>
-        <activity android:name=".activities.OneOrderOneCellActivity"></activity>
+        <activity android:name=".activities.OneOrderOneCellActivity" />
+
     </application>
 
 </manifest>

@@ -242,11 +242,19 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
                 if(productIdsInDb.contains(id)) continue;
 
                 String name = arr[1];
-                String barcode = arr[2];
+                String barcodes = arr[2];
+
+                String[] arraybarcodes = barcodes.split("|");
+                String barcode = (arraybarcodes.length>0) ? arraybarcodes[0]  :"";
+
                 int productType = Integer.parseInt(arr[3]);
                 String article = arr[4];
                 dbHelper.addProduct(id,name,barcode,"",productType,article);
 
+                for (int i=1;i<arraybarcodes.length; i++)
+                {
+                    dbHelper.addProductBarcode(id,arraybarcodes[i]);
+                }
             }
             return (long)lines.length;
         }

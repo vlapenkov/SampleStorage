@@ -56,6 +56,18 @@ public class ProductsContract {
     }
 
     /*
+    Штрихкоды товаров
+     */
+    public static final class ProductBarcodesEntry implements BaseColumns {
+
+        // Table name
+        public static final String TABLE_NAME = "productbarcodes";
+        public static final String COLUMN_PRODUCTID = "productid";
+        public static final String COLUMN_BARCODE = "barcode";
+
+    }
+
+    /*
         Задание на отгрузку
      */
     public static final class ShipmentsEntry implements BaseColumns {

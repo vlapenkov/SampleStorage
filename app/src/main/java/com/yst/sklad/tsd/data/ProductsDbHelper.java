@@ -36,6 +36,14 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
                     ProductsContract.ProductsEntry.COLUMN_COMMENTS +" text "+
                     ");";
 
+
+    private static final String SQL_CREATE_PRODUCT_BARCODES =
+            "create table " + ProductsContract.ProductBarcodesEntry.TABLE_NAME + "(" +
+                    ProductsContract.ProductBarcodesEntry._ID + " integer primary key autoincrement , " +
+                    ProductsContract.ProductBarcodesEntry.COLUMN_PRODUCTID + " integer, " +
+                    ProductsContract.ProductBarcodesEntry.COLUMN_BARCODE + " text "+
+                    ");";
+
 // _id = guid задания на отгрузку
     private static final String SQL_CREATE_SHIPMENTS_TABLE =
             "create table " + ProductsContract.ShipmentsEntry.TABLE_NAME + "(" +
@@ -150,6 +158,7 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
             db.execSQL(SQL_CREATE_ORDERTOSUPPLIER_TABLE);
             db.execSQL(SQL_CREATE_ORDERTOSUPPLIER_ITEMS_TABLE);
             db.execSQL(SQL_CREATE_ARRIVAL_ITEMS_TABLE);
+            db.execSQL(SQL_CREATE_PRODUCT_BARCODES);
 
         //    initializeData(db);
         } catch (Exception e)
@@ -159,7 +168,16 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
         }
     }
 
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        final String SQL_DROPTABLE_IFEXISTS ="drop table if exists ";
+        if (newVersion>4) {
+            dropAllTables(db);
 
+            onCreate(db);
+        }
+
+    }
 
     @Override
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -178,6 +196,7 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_DROPTABLE_IFEXISTS + ProductsContract.ArrivalItemsEntry.TABLE_NAME);
         db.execSQL(SQL_DROPTABLE_IFEXISTS + ProductsContract.OrdersToSupplierItemEntry.TABLE_NAME);
         db.execSQL(SQL_DROPTABLE_IFEXISTS + ProductsContract.OrdersToSupplierEntry.TABLE_NAME);
+        db.execSQL(SQL_DROPTABLE_IFEXISTS + ProductsContract.ProductBarcodesEntry.TABLE_NAME);
 
 
     }
@@ -207,16 +226,7 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
 
     }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        final String SQL_DROPTABLE_IFEXISTS ="drop table if exists ";
-        if (newVersion>4) {
-            dropAllTables(db);
 
-           onCreate(db);
-        }
-
-    }
 
     public boolean doesTableExist( String tableName) {
         SQLiteDatabase db =  this.getReadableDatabase();
@@ -311,6 +321,24 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
 
     }
 
+    /*
+    Добавляет дополнительные штрихкоды товара  в базу
+     */
+    public boolean addProductBarcode ( int productId, String barcode)
+    {
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues cv = new ContentValues();
+
+            cv.put(ProductsContract.ProductBarcodesEntry.COLUMN_PRODUCTID, productId);
+            cv.put(ProductsContract.ProductBarcodesEntry.COLUMN_BARCODE, barcode);
+            db.insert(ProductsContract.ProductBarcodesEntry.TABLE_NAME, null, cv);
+        }
+        catch (Exception e) {return false;}
+
+        return true;
+
+    }
 
 
 
