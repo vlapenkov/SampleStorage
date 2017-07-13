@@ -7,7 +7,9 @@ import android.os.AsyncTask;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
@@ -21,6 +23,7 @@ import android.widget.ListView;
 
 import com.yst.sklad.tsd.R;
 import com.yst.sklad.tsd.adapters.ProductsCursorAdapter;
+import com.yst.sklad.tsd.data.ProductsContract;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
 import com.yst.sklad.tsd.dialogs.AlertSuccess;
 import com.yst.sklad.tsd.services.TextReaderFromHttp;
@@ -86,10 +89,15 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.refresh:
-                if (new UtilsConnectivityService(ProductsActivity.this).checkConnectivity())
+            { if (new UtilsConnectivityService(ProductsActivity.this).checkConnectivity())
                     new DownloadAndImportProducts().execute(stringUrlProducts);
                 getSupportLoaderManager().getLoader(0).forceLoad();
-                return true;
+                break;
+                 }
+            case R.id.clear: {
+            new ClearAllProducts().execute();
+            }
+
         }
         return true;
     }
@@ -222,11 +230,13 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
 
             dbHelper = new ProductsDbHelper(getBaseContext());
 ///
-            List<Integer> productIdsInDb=dbHelper.getProductIds();
+      //      List<Integer> productIdsInDb=dbHelper.getProductIds();
           //  dbHelper.clearTable(ProductsContract.ProductsEntry.TABLE_NAME);
 
             lines=   result.split(System.getProperty("line.separator"));
 
+            dbHelper.clearTable(ProductsContract.ProductsEntry.TABLE_NAME);
+            dbHelper.clearTable(ProductsContract.ProductBarcodesEntry.TABLE_NAME);
 
             int counter=0;
             for (String line:lines ){
@@ -236,10 +246,10 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
                 if (counter%10==0) publishProgress((int) ((counter / (float) lines.length) * 100));
                 String[] arr=line.split(";");
 
-                Log.d(TAG +"/import",arr[0]);
+          //      Log.d(TAG +"/import",arr[0]);
                 int id  = Integer.parseInt(arr[0]);
 
-                if(productIdsInDb.contains(id)) continue;
+            //    if(productIdsInDb.contains(id)) continue;
 
                 String name = arr[1];
                 String barcodes = arr[2];
@@ -267,8 +277,26 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
     }
 
 
+
     private String downloadUrl(String url) throws IOException {
         return  TextReaderFromHttp.readTextArrayFromUrl(url);
     }
 
-}
+    /*
+    Удаляет все товары
+     */
+    private class ClearAllProducts extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            mDbHelper.clearTable(ProductsContract.ProductsEntry.TABLE_NAME);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            getSupportLoaderManager().getLoader(0).forceLoad();
+        }
+
+}}

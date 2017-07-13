@@ -114,8 +114,12 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
             }
 
             case R.id.clear: {
+
+
                 mDbHelper.clearTable(ProductsContract.OrdersToSupplierEntry.TABLE_NAME);
                 mDbHelper.clearTable(ProductsContract.OrdersToSupplierItemEntry.TABLE_NAME);
+                mDbHelper.clearTable(ProductsContract.ArrivalItemsEntry.TABLE_NAME);
+
                 RefreshList();
             }
         }
@@ -188,7 +192,10 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
             int typeofarrival= Integer.parseInt( parser.getTopElementValue(doc, "typeofarrival"));
            String numberin1s=  parser.getTopElementValue(doc, "numberin1s");
             String cleanId = OrderToSupplier.getCleanId(numberin1s);
-            if  (numberin1s!=null &&  !numberin1s.isEmpty()) mDbHelper.deleteOrder(cleanId);
+            // при загрузке этот же старый заказ удаляется
+            if  (numberin1s!=null &&  !numberin1s.isEmpty())    mDbHelper.deleteOrder(cleanId);
+
+
             String arrivalnumber=  parser.getTopElementValue(doc, "arrivalnumber");
             String dateoforder=  parser.getTopElementValue(doc, "dateoforder");
             String client=  parser.getTopElementValue(doc, "client");
