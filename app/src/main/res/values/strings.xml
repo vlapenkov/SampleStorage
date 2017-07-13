@@ -84,6 +84,7 @@
     <string name="Rest">Остаток</string>
     <string name="Queue">Очередь</string>
     <string name="newShipmentsWereAdded">Новые задания были загружены</string>
+    <string name="newOrderWasAdded">Новый заказ был загружен</string>
     <string name="ShipmentNumber">Задание №</string>
     <string name="cell_read">Ячейка считана</string>
     <string name="product_read">Товар считан</string>
@@ -112,7 +113,8 @@
     <string name="summary_delete_shipment_after_upload">После нажатия кнопки \'Выгрузить\' задание будет автоматически удалено из терминала</string>
     <string name="ordersToSuppliers">Заказы поставщикам</string>
     <string name="itemsInOrder">Товары в заказе</string>
+    <string name="itemsInCells">Товар по ячейкам в заказе</string>
     <string name="ProductCode">Код товара</string>
     <string name="multiselectProductTypes">Типы товаров</string>
-    <string name="title_activity_main2">Main2Activity</string>
+    <string name="orderWasUploaded">Заказ был выгружен</string>
 </resources>

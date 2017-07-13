@@ -7,9 +7,6 @@ import android.os.AsyncTask;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -57,8 +54,6 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
     ListView lvData = null;
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,9 +64,9 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
 
 
         mAdapter = new SimpleCursorAdapter(this,
-                R.layout.shipment_item, null,
-                new String[]{"_id", "dateoforder", "client"},
-                new int[]{R.id.text1, R.id.text2, R.id.text3}, 0);
+                R.layout.order_item, null,
+                new String[]{"_id", "dateoforder", "client","ordertype"},
+                new int[]{R.id.text1, R.id.text2, R.id.text3,R.id.text4}, 0);
 
         lvData.setAdapter(mAdapter);
 
@@ -98,7 +93,7 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
          //   Toast.makeText(this,orderNumber, Toast.LENGTH_LONG).show();
 
             if (new UtilsConnectivityService(OrdersActivity.this).checkConnectivity()) {
-                new DownloadAndImportOrders().execute(ShipmentsActivity.StringUrlShipments);
+                new DownloadAndImportOrders().execute(orderNumber);
 
         }
 
@@ -168,18 +163,7 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
         getSupportLoaderManager().restartLoader(0, null, this);
 
     }
-    /*
-    private void addOrdersToDb2 () {
-           mDbHelper.addOrderToSupplier( new OrderToSupplier("2","21-03-2017","Петров",0,null));
-                mDbHelper.addOrderToSupplierItem(new OrderToSupplierItem("2",1,9160850,10));
-                mDbHelper.addOrderToSupplierItem(new OrderToSupplierItem("2",2,9160849,15));
 
-                //mDbHelper.addOrderToSupplier( new OrderToSupplierItem("1","20-02-2016","Иванов",0,null));
-
-                mDbHelper.addArrivalItem(new ArrivalItem("2",9160850,1,"123123"));
-                mDbHelper.addArrivalItem(new ArrivalItem("2",9160850,1,"123124"));
-                getSupportLoaderManager().getLoader(0).forceLoad();
-    } */
 
     private class DownloadAndImportOrders extends AsyncTask<String, Integer, Long> {
         ProgressDialog pDialog;
@@ -193,7 +177,9 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
 
         @Override
         protected Long doInBackground(String... params) {
-            InputStream stream = SoapCallToWebService.receiveOrderByNumber(ShipmentsActivity.StringUrlShipments);
+            InputStream stream = SoapCallToWebService.receiveOrderByNumber(params[0]);
+
+            List<Integer> listOfProductToAdd = new ArrayList<>();
 
             XMLDOMParser parser = new XMLDOMParser();
 
@@ -213,24 +199,66 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
 
             OrderToSupplier  orderToSupplier=new OrderToSupplier(cleanId,dateoforder,client,typeofarrival,comments);
 
+
             mDbHelper.addOrderToSupplier(orderToSupplier);
 
-            NodeList nodeListProducts = doc.getElementsByTagName("Products");
+            // 1. Добавляем строки
+            NodeList nodeListRows = doc.getElementsByTagName("Row");
 
-            for(int j=0; j< nodeListProducts.getLength();j++) {
+            for(int j=0; j< nodeListRows.getLength();j++) {
 
 
-                Element p = (Element) nodeListProducts.item(j);
+                Element p = (Element) nodeListRows.item(j);
                 Integer rownumber = Integer.parseInt(parser.getValue(p, "rownumber"));
                 Integer productid = Integer.parseInt(parser.getValue(p, "productid"));
                 Integer quantity = Integer.parseInt(parser.getValue(p, "quantity"));
-                Integer producttype = Integer.parseInt(parser.getValue(p, "producttype"));
+             //   Integer producttype = Integer.parseInt(parser.getValue(p, "producttype"));
 
                 mDbHelper.addOrderToSupplierItem(new OrderToSupplierItem(cleanId,rownumber,productid,quantity));
 
+                if (!mDbHelper.checkIfProductExists(productid)) listOfProductToAdd.add(productid);
 
+                    /*
                 Log.d("rownumber", rownumber.toString());
-                Log.d("productid", productid.toString());
+                Log.d("productid", productid.toString()); */
+
+
+            }
+
+            //2. Если нужно добавить товары то добавляем
+            if (!listOfProductToAdd.isEmpty())
+            {
+                NodeList nodeListProducts = doc.getElementsByTagName("Product");
+
+            for(int j=0; j< nodeListProducts.getLength();j++) {
+                Element p = (Element) nodeListProducts.item(j);
+                Integer productid = Integer.parseInt(parser.getValue(p, "productid"));
+
+                if (listOfProductToAdd.contains(productid) && !mDbHelper.checkIfProductExists(productid)) {
+
+                    String name = parser.getValue(p, "name");
+                    String barcode = parser.getValue(p, "barcode");
+                    String article = parser.getValue(p, "article");
+                    Integer producttype = Integer.parseInt(parser.getValue(p, "producttype"));
+                    mDbHelper.addProduct(productid,name,barcode,"",producttype,article);
+                }
+            }
+            }
+
+
+
+            // 3. Добавляем товары по ячейкая
+            NodeList nodeListCells = doc.getElementsByTagName("Cell");
+
+            for(int j=0; j< nodeListCells.getLength();j++) {
+
+                Element p = (Element) nodeListCells.item(j);
+
+                Integer productid = Integer.parseInt(parser.getValue(p, "productid"));
+                String stockcell = parser.getValue(p, "stockcell");
+                Integer quantityfact = Integer.parseInt(parser.getValue(p, "quantityfact"));
+
+                mDbHelper.addArrivalItem(new ArrivalItem(cleanId,productid,quantityfact,stockcell));
 
             }
 
@@ -252,7 +280,7 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
             super.onPostExecute(aLong);
             pDialog.dismiss();
             if (mNewOrdersWasAdded) {
-                String text = getString(R.string.newShipmentsWereAdded);
+                String text = getString(R.string.newOrderWasAdded);
                 String title = getString(R.string.downloadcomplete);
                 AlertSuccess.show(OrdersActivity.this, title, text);
                 //alertView(title,text);

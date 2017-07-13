@@ -217,12 +217,16 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
 
     }
 
+    /*
+    Удаляет информацию из заказа со всеми связанными таблицами (строки и приходы)
+     */
     public void deleteOrder(String orderid)
     {
         SQLiteDatabase db =  this.getWritableDatabase();
 
         db.execSQL("delete from "+ ProductsContract.OrdersToSupplierItemEntry.TABLE_NAME+ " where ordertosupplierid="+orderid);
         db.execSQL("delete from "+ ProductsContract.OrdersToSupplierEntry.TABLE_NAME+ " where _id="+orderid);
+        db.execSQL("delete from "+ ProductsContract.ArrivalItemsEntry.TABLE_NAME+ " where ordertosupplierid="+orderid);
 
     }
 
@@ -585,7 +589,9 @@ return true;
 
     public Cursor getOrders() {
         SQLiteDatabase db = this.getReadableDatabase();
-        return db.query(ProductsContract.OrdersToSupplierEntry.TABLE_NAME, null, null, null, null, null, null);
+        String  query= "select _id,  SUBSTR(dateoforder,6,5) dateoforder,ordertype,client from "+ProductsContract.OrdersToSupplierEntry.TABLE_NAME;
+        return db.rawQuery(query,null);
+        //return db.query(ProductsContract.OrdersToSupplierEntry.TABLE_NAME, null, null, null, null, null, null);
     }
 
 
@@ -655,6 +661,33 @@ String        query = "SELECT orderstosuppliersitems._id, rownumber, orderstosup
 
     }
 
+
+    /*
+Получить список ячеек для данного заказа
+ */
+    public Cursor getArrivalItemsByOrderId(long orderId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String whereCond= ProductsContract.ArrivalItemsEntry.COLUMN_ORDERTOSUPPLIERID +"="+orderId ;
+        return db.query(ProductsContract.ArrivalItemsEntry.TABLE_NAME, null, whereCond, null, null, null, null);
+
+    }
+
+    public int getOrderTypeByOrderId (long orderId)
+
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor= db.rawQuery("select ordertype from orderstosuppliers where _id="+orderId,null);
+        if (cursor!=null && cursor.getCount()>0)
+        {   cursor.moveToFirst();
+            return cursor.getInt(0);
+
+        }
+        return -1;
+
+    }
+
+
     /*
     Получить код товара по Id, -1 если не найден
      */
@@ -670,6 +703,7 @@ String        query = "SELECT orderstosuppliersitems._id, rownumber, orderstosup
         }
         return -1;
     }
+
 
 
 

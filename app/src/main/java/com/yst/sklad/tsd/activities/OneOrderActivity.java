@@ -1,11 +1,13 @@
 package com.yst.sklad.tsd.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -16,9 +18,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.yst.sklad.tsd.R;
+import com.yst.sklad.tsd.data.ArrivalItem;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
+import com.yst.sklad.tsd.services.SoapCallToWebService;
+import com.yst.sklad.tsd.services.TextReaderFromHttp;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /*
 
@@ -28,7 +37,9 @@ public class OneOrderActivity extends AppCompatActivity  implements LoaderManage
     public static String ORDER_ID_MESSAGE="OrderID";
     SimpleCursorAdapter mAdapter=null;
     ListView lvData =null;
-    long CurrentOrderId;
+    long mCurrentOrderId;
+
+
 
 
     @Override
@@ -37,9 +48,10 @@ public class OneOrderActivity extends AppCompatActivity  implements LoaderManage
         setContentView(R.layout.activity_one_order);
         final Intent[] intent = {getIntent()};
 
-        CurrentOrderId = (long) intent[0].getSerializableExtra(ORDER_ID_MESSAGE);
+        mCurrentOrderId = (long) intent[0].getSerializableExtra(ORDER_ID_MESSAGE);
 
         mDbHelper = new ProductsDbHelper(this);
+
         lvData = (ListView) findViewById(R.id.lvData);
 
         mAdapter = new SimpleCursorAdapter(this,
@@ -58,9 +70,9 @@ public class OneOrderActivity extends AppCompatActivity  implements LoaderManage
 
                 Intent   intent = new Intent(OneOrderActivity.this, OneOrderOneCellActivity.class);
 
-                intent.putExtra(ORDER_ID_MESSAGE, CurrentOrderId);
+                intent.putExtra(ORDER_ID_MESSAGE, mCurrentOrderId);
 
-                // intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
         });
@@ -70,21 +82,29 @@ public class OneOrderActivity extends AppCompatActivity  implements LoaderManage
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.stockcellmenu, menu);
+        getMenuInflater().inflate(R.menu.oneshipment_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.refresh:
-         //mDbHelper.addOrderToSupplier( new OrderToSupplierItem("1","20-02-2016","Иванов",0,null));
-                getSupportLoaderManager().getLoader(0).forceLoad();
+            case R.id.uploadto1s: {
+                new SendOrder().execute();
+             //   getSupportLoaderManager().getLoader(0).forceLoad();
+            }
         }
+
         return true;
     }
 
 
+    @Override
+    public void onRestart() {
+        super.onRestart();
+        getSupportLoaderManager().restartLoader(0, null, this);
+
+    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -95,7 +115,7 @@ public class OneOrderActivity extends AppCompatActivity  implements LoaderManage
             @Override
             public Cursor loadInBackground()
             {
-                return mDbHelper.getOrderItems(String.valueOf(CurrentOrderId));
+                return mDbHelper.getOrderItems(String.valueOf(mCurrentOrderId));
 
             }
         };
@@ -122,7 +142,7 @@ public class OneOrderActivity extends AppCompatActivity  implements LoaderManage
 
 
         int ProductId =  mDbHelper.getProductIdInOrderItemById(id);
-        Cursor cur= mDbHelper.getArrivalItems(String.valueOf(CurrentOrderId),ProductId);
+        Cursor cur= mDbHelper.getArrivalItems(String.valueOf(mCurrentOrderId),ProductId);
 
         // если уже был ввод товара в ячейки то переключаемся туда
         if (cur!=null && cur.getCount()>0)  intent = new Intent(this, OneOrderCellsListActivity.class);
@@ -130,9 +150,75 @@ public class OneOrderActivity extends AppCompatActivity  implements LoaderManage
         else intent = new Intent(this, OneOrderOneCellActivity.class);
 
 
-        intent.putExtra(ORDER_ID_MESSAGE, CurrentOrderId);
+        intent.putExtra(ORDER_ID_MESSAGE, mCurrentOrderId);
         intent.putExtra(OneOrderCellsListActivity.PRODUCT_ID_MESSAGE, ProductId);
-       // intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+    }
+
+
+    private class SendOrder extends AsyncTask<String,Void,String> {
+
+        ProgressDialog pDialog;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(OneOrderActivity.this);
+
+            pDialog.setMessage(getString(R.string.shipment_is_being_uploaded));
+            pDialog.show();
+
+        }
+
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            pDialog.dismiss();
+
+
+            // Проверка что веб-сервис отработал без ошибок
+            if (s!=null && s.contains(SoapCallToWebService.ResultOk)) {
+
+                Toast.makeText(OneOrderActivity.this,R.string.orderWasUploaded, Toast.LENGTH_LONG).show();
+
+                // Удалить задание после выгрузки в 1С если такая настрока установлена
+               // SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+               // Boolean delete_shipment_after_upload = preferences.getBoolean("delete_shipment_after_upload", false);
+               /* if (delete_shipment_after_upload)
+                {
+                    mDbHelper.deleteOrder(mShipmentId);
+                    OneOrderActivity.this.finish();
+                }
+                */
+            }
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            StringBuffer chaine = new StringBuffer("");
+
+
+            Cursor cursor=mDbHelper.getArrivalItemsByOrderId(mCurrentOrderId);
+
+            if (cursor!=null && cursor.getCount()>0)
+                cursor.moveToFirst();
+            do{
+
+                ArrivalItem item =ArrivalItem.fromCursor(cursor);
+             chaine.append(item.toXML()); }
+            while (cursor.moveToNext());
+
+
+           int orderType = mDbHelper.getOrderTypeByOrderId(mCurrentOrderId);
+            SoapCallToWebService service= new SoapCallToWebService();
+            InputStream stream = service.sendOrder(mCurrentOrderId,orderType, chaine.toString());
+
+
+            if (stream!=null) { String result = TextReaderFromHttp.GetStringFromStream(stream);
+
+                return result;}
+            return null;
+        }
     }
 }

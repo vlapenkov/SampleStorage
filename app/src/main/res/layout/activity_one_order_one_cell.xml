@@ -14,14 +14,14 @@
         android:orientation="horizontal"
         android:id="@+id/caption"
         android:layout_marginBottom="10dp">
-        <TextView
+       <!-- <TextView
             android:id="@+id/tv_RowNumber"
             android:layout_width="0dp"
             android:textSize="@dimen/textview_height"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="num"
-            />
+            /> -->
       <!--  <TextView
             android:id="@+id/tv_ProductId"
             android:layout_width="0dp"
@@ -136,7 +136,7 @@
             android:text=""
             android:layout_weight="1"/>
     </LinearLayout>
-    <LinearLayout
+  <!--  <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:orientation="horizontal"
@@ -156,7 +156,7 @@
             android:layout_gravity="center_vertical"
             android:text=""
             android:layout_weight="1"/>
-    </LinearLayout>
+    </LinearLayout> -->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -164,7 +164,7 @@
         android:orientation="horizontal"
         android:id="@+id/linButtons"
         android:layout_marginTop="50dp"
-        android:layout_below="@id/cellRest">
+        android:layout_below="@id/cellQuantity">
         <Button android:layout_height="60dp"
             android:id="@+id/btnScanBarCode"
             android:layout_width="0dp"

@@ -55,7 +55,7 @@
      android:layout_gravity="center_vertical"
      android:layout_marginLeft="10dp"
      android:text=""
-     android:textSize="14sp"
+     android:textSize="18sp"
      android:layout_weight="4">
  </TextView>
 </LinearLayout>
@@ -75,7 +75,7 @@
        android:textSize="14sp"
        android:layout_weight="8">
    </TextView>
-   <TextView
+  <!-- <TextView
        android:id="@+id/text6"
        android:layout_width="0dp"
        android:layout_height="fill_parent"
@@ -83,8 +83,8 @@
        android:text=""
        android:textSize="14sp"
        android:layout_weight="3">
-   </TextView>
-      <TextView
+   </TextView> -->
+     <!-- <TextView
           android:id="@+id/text7"
           android:layout_width="0dp"
           android:layout_height="fill_parent"
@@ -92,7 +92,7 @@
           android:text="queue"
           android:textSize="14sp"
           android:layout_weight="3">
-      </TextView>
+      </TextView> -->
 
   </LinearLayout>
 

@@ -336,7 +336,7 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
         @Override
         protected Long doInBackground(String... params) {
 
-            InputStream stream = SoapCallToWebService.receiveCurrentShipments(StringUrlShipments);
+            InputStream stream = SoapCallToWebService.receiveCurrentShipments();
 
             XMLDOMParser parser = new XMLDOMParser();
 

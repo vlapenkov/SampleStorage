@@ -25,6 +25,7 @@ import com.yst.sklad.tsd.R;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
 import com.yst.sklad.tsd.data.ShipmentItem;
 import com.yst.sklad.tsd.services.SoapCallToWebService;
+import com.yst.sklad.tsd.services.TextReaderFromHttp;
 
 import java.io.InputStream;
 
@@ -116,7 +117,7 @@ public class OneShipmentActivity extends AppCompatActivity implements LoaderMana
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.uploadto1s:{
-                new SendShipment().execute(ShipmentsActivity.StringUrlShipments) ;
+                new SendShipment().execute() ;
             }
         }
         return true;
@@ -185,12 +186,13 @@ public class OneShipmentActivity extends AppCompatActivity implements LoaderMana
             while (cursor.moveToNext());
 
 
-            InputStream stream = new SoapCallToWebService().sendShipment(ShipmentsActivity.StringUrlShipments,mShipmentId, chaine.toString());
+            InputStream stream = new SoapCallToWebService().sendShipment(mShipmentId, chaine.toString());
 
 
-            if (stream==null) return null;
-             return stream.toString();
-            //return null;
+            if (stream!=null) { String result = TextReaderFromHttp.GetStringFromStream(stream);
+                return result;}
+
+            return null;
         }
     }
 }

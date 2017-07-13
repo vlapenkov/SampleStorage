@@ -98,7 +98,7 @@ public class OneOrderCellsListActivity extends AppCompatActivity  implements Loa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mAdapter.swapCursor(data);
-        this.setTitle(getResources().getString(R.string.itemsInOrder) + " ("+String.valueOf(data.getCount()) +")");
+        this.setTitle(getResources().getString(R.string.itemsInCells) + " ("+String.valueOf(data.getCount()) +")");
     }
 
     @Override
@@ -111,12 +111,6 @@ public class OneOrderCellsListActivity extends AppCompatActivity  implements Loa
 
         Log.d("item clicked", String.valueOf(id));
 
-        //ShipmentItem shipmentItem= mDbHelper.getShipmentItemById(id);
 
-     /*   Intent intent = new Intent(this, OneShipmentItemActivity.class);
-
-        intent.putExtra(SHIPMENTITEM_ID_MESSAGE, shipmentItem);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent); */
     }
 }
