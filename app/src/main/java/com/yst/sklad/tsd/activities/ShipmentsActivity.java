@@ -295,10 +295,11 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
         getSupportLoaderManager().restartLoader(0, null, this);
 
     }
-
+/*
     public void doPositiveClick() {
         Log.i(TAG, "Positive click");
     }
+    */
 
     private class DownloadAndImportShipments extends AsyncTask<String, Integer, Long> {
         ProgressDialog pDialog;

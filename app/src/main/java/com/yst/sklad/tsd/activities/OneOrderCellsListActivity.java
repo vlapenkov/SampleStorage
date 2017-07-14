@@ -1,8 +1,10 @@
 package com.yst.sklad.tsd.activities;
 
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -18,8 +20,13 @@ import android.widget.ListView;
 import com.yst.sklad.tsd.R;
 import com.yst.sklad.tsd.data.Product;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
+import com.yst.sklad.tsd.dialogs.YesNoDialogFragment;
+import com.yst.sklad.tsd.services.YesNoInterface;
 
-public class OneOrderCellsListActivity extends AppCompatActivity  implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener{
+/*
+Список считанных ячеек и количество  для контрентного заказа и товара
+ */
+public class OneOrderCellsListActivity extends AppCompatActivity  implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener,YesNoInterface{
     ProductsDbHelper mDbHelper;
        public static String PRODUCT_ID_MESSAGE="ProductID";
     SimpleCursorAdapter mAdapter=null;
@@ -43,8 +50,6 @@ public class OneOrderCellsListActivity extends AppCompatActivity  implements Loa
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.refresh:
-
-
                 //mDbHelper.addOrderToSupplier( new OrderToSupplierItem("1","20-02-2016","Иванов",0,null));
                 getSupportLoaderManager().getLoader(0).forceLoad();
 
@@ -109,7 +114,17 @@ public class OneOrderCellsListActivity extends AppCompatActivity  implements Loa
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-        Log.d("item clicked", String.valueOf(id));
+        YesNoDialogFragment.show(this,getString(R.string.deleteRow),new Object[]{id});
+
+
+    }
+
+    @Override
+    public void ProcessIfYes(Object[] params) {
+      Long l = (Long )params[0];
+        Log.i("Value is", String.valueOf(l));
+        mDbHelper.deleteArrivalItem(l);
+        finish();
 
 
     }

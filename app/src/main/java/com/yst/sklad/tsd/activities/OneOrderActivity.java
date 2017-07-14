@@ -1,12 +1,11 @@
 package com.yst.sklad.tsd.activities;
 
+import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -23,18 +22,21 @@ import android.widget.Toast;
 import com.yst.sklad.tsd.R;
 import com.yst.sklad.tsd.data.ArrivalItem;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
+import com.yst.sklad.tsd.dialogs.YesNoDialogFragment;
+import com.yst.sklad.tsd.services.YesNoInterface;
 import com.yst.sklad.tsd.services.SoapCallToWebService;
 import com.yst.sklad.tsd.services.TextReaderFromHttp;
 
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
 /*
-
+Один заказ/перемещение, в нем
+список строк которые надо обработать
  */
-public class OneOrderActivity extends AppCompatActivity  implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener{
+public class OneOrderActivity extends AppCompatActivity  implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener,YesNoInterface {
     ProductsDbHelper mDbHelper;
     public static String ORDER_ID_MESSAGE="OrderID";
+    private static String TAG="OneOrderActivity";
     SimpleCursorAdapter mAdapter=null;
     ListView lvData =null;
     long mCurrentOrderId;
@@ -82,7 +84,7 @@ public class OneOrderActivity extends AppCompatActivity  implements LoaderManage
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.oneshipment_menu, menu);
+        getMenuInflater().inflate(R.menu.oneorder_menu, menu);
         return true;
     }
 
@@ -90,13 +92,21 @@ public class OneOrderActivity extends AppCompatActivity  implements LoaderManage
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.uploadto1s: {
-                new SendOrder().execute();
+                new SendOrder().execute(); break;
              //   getSupportLoaderManager().getLoader(0).forceLoad();
+            }
+            case R.id.clear: {
+                YesNoDialogFragment.show(this,getString(R.string.deleteOrder),null);
+          /*      DialogFragment newFragment = YesNoDialogFragment.newInstance(
+                        R.string.deleteOrder,null);
+                newFragment.show(getFragmentManager(), "dialog"); */
             }
         }
 
         return true;
     }
+
+
 
 
     @Override
@@ -156,6 +166,12 @@ public class OneOrderActivity extends AppCompatActivity  implements LoaderManage
         startActivity(intent);
     }
 
+    @Override
+    public void ProcessIfYes(Object[] params) {
+        mDbHelper.deleteOrder(String.valueOf(mCurrentOrderId));
+        finish();
+    }
+
 
     private class SendOrder extends AsyncTask<String,Void,String> {
 
@@ -179,8 +195,9 @@ public class OneOrderActivity extends AppCompatActivity  implements LoaderManage
 
             // Проверка что веб-сервис отработал без ошибок
             if (s!=null && s.contains(SoapCallToWebService.ResultOk)) {
-
-                Toast.makeText(OneOrderActivity.this,R.string.orderWasUploaded, Toast.LENGTH_LONG).show();
+             int numberStart=s.indexOf(SoapCallToWebService.ResultOk)+3;
+             String number1S=   s.substring(numberStart,numberStart+8); // строка - номер поступления который вернул 1С
+                Toast.makeText(OneOrderActivity.this, getString(R.string.orderWasUploaded)+" №" +number1S, Toast.LENGTH_LONG).show();
 
                 // Удалить задание после выгрузки в 1С если такая настрока установлена
                // SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());

@@ -19,7 +19,7 @@ import java.util.List;
 public class ProductsDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 17;
+    private static final int DATABASE_VERSION = 18;
 
     static final String DATABASE_NAME = "products.db";
 
@@ -227,6 +227,17 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
         db.execSQL("delete from "+ ProductsContract.OrdersToSupplierItemEntry.TABLE_NAME+ " where ordertosupplierid="+orderid);
         db.execSQL("delete from "+ ProductsContract.OrdersToSupplierEntry.TABLE_NAME+ " where _id="+orderid);
         db.execSQL("delete from "+ ProductsContract.ArrivalItemsEntry.TABLE_NAME+ " where ordertosupplierid="+orderid);
+
+    }
+/*
+Удаляет конкретную запись БД
+ */
+    public void deleteArrivalItem(Long id)
+    {
+        SQLiteDatabase db =  this.getWritableDatabase();
+
+        db.execSQL("delete from "+ ProductsContract.ArrivalItemsEntry.TABLE_NAME+ " where _id="+id);
+
 
     }
 
@@ -534,21 +545,35 @@ return true;
 
     }
 
+    /*
+    Ищет товар по штрихкоду сперва в таблице товаров, затем в таблице штрихкодов (в те штрихкоды, если у товара их несколько)
+     */
     public Product getProductByBarCode(String barcode){
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor res =  db.rawQuery("select * from " + ProductsContract.ProductsEntry.TABLE_NAME + " where barcode=" + barcode, null);
         if (res!=null && res.getCount()>0)
         {   res.moveToFirst();     return Product.fromCursor(res);
-        }else return null;
+        }else
+        {
+
+             res =  db.rawQuery("select productid from " + ProductsContract.ProductBarcodesEntry.TABLE_NAME + " where barcode=" + barcode, null);
+            if (res!=null && res.getCount()>0)
+            {   res.moveToFirst();
+               int productId= res.getInt(0);
+
+               return this.getProductById(productId);
+
+            }
+
+        }
+
+
+
+            return null;
 
     }
-/*
-    public Cursor getAllProducts() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        return db.query(ProductsContract.ProductsEntry.TABLE_NAME, null, null, null, null, null, null);
-    }
-*/
+
     public Cursor getProducts(String filter) {
 
         SQLiteDatabase db = this.getReadableDatabase();

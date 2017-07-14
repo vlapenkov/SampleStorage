@@ -2,22 +2,21 @@ package com.yst.sklad.tsd.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.yst.sklad.tsd.R;
 import com.yst.sklad.tsd.data.ArrivalItem;
@@ -25,10 +24,9 @@ import com.yst.sklad.tsd.data.OrderToSupplier;
 import com.yst.sklad.tsd.data.OrderToSupplierItem;
 import com.yst.sklad.tsd.data.ProductsContract;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
-import com.yst.sklad.tsd.data.Shipment;
-import com.yst.sklad.tsd.data.ShipmentItem;
 import com.yst.sklad.tsd.dialogs.AlertEnterString;
 import com.yst.sklad.tsd.dialogs.AlertSuccess;
+import com.yst.sklad.tsd.services.YesNoInterface;
 import com.yst.sklad.tsd.services.SoapCallToWebService;
 import com.yst.sklad.tsd.services.UtilsConnectivityService;
 import com.yst.sklad.tsd.services.XMLDOMParser;
@@ -38,15 +36,20 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /*
 Заказы поставщикам и перемещения (для поступлений)
 *
  */
 
-public class OrdersActivity extends AppCompatActivity  implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
+public class OrdersActivity extends AppCompatActivity  implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener , YesNoInterface {
 
     ProductsDbHelper mDbHelper;
 
@@ -168,6 +171,11 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
 
     }
 
+    @Override
+    public void ProcessIfYes(Object[] params) {
+        DownloadAndExportOrders( ((String) params[0]));
+    }
+
 
     private class DownloadAndImportOrders extends AsyncTask<String, Integer, Long> {
         ProgressDialog pDialog;
@@ -185,6 +193,30 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
 
             List<Integer> listOfProductToAdd = new ArrayList<>();
 
+
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+
+            Set<String> arrayOfProductTypes = preferences.getStringSet("producttypesArray", new HashSet<String>());
+
+            HashSet<Integer> filterProductTypesSet = new HashSet<Integer>();
+
+            List<String> resourceList = Arrays.asList(getResources().getStringArray( R.array.producttypesArray));
+
+
+            //HashMap<String, String> map = new HashMap<String, String>();
+
+            for (String item:arrayOfProductTypes)
+            {
+
+                int index=resourceList.indexOf(item);
+                if (index>0)  filterProductTypesSet.add(index+1);
+            }
+            boolean flagAllProductTypes = arrayOfProductTypes.isEmpty();
+
+
+
+
+
             XMLDOMParser parser = new XMLDOMParser();
 
             Document doc = parser.getDocument(stream);
@@ -196,7 +228,7 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
             if  (numberin1s!=null &&  !numberin1s.isEmpty())    mDbHelper.deleteOrder(cleanId);
 
 
-            String arrivalnumber=  parser.getTopElementValue(doc, "arrivalnumber");
+      //      String arrivalnumber=  parser.getTopElementValue(doc, "arrivalnumber");
             String dateoforder=  parser.getTopElementValue(doc, "dateoforder");
             String client=  parser.getTopElementValue(doc, "client");
             String comments=  parser.getTopElementValue(doc, "comment");
@@ -205,6 +237,22 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
 
 
             OrderToSupplier  orderToSupplier=new OrderToSupplier(cleanId,dateoforder,client,typeofarrival,comments);
+
+/*
+В listOfProductToAdd добавляем товары которые должны быть добавлены в таблицы (если фильтр включен)
+ */
+
+  if (!flagAllProductTypes) {
+      NodeList nodeListProducts = doc.getElementsByTagName("Product");
+
+      for (int j = 0; j < nodeListProducts.getLength(); j++) {
+          Element p = (Element) nodeListProducts.item(j);
+          Integer productid = Integer.parseInt(parser.getValue(p, "productid"));
+          Integer producttype = Integer.parseInt(parser.getValue(p, "producttype"));
+        if ( filterProductTypesSet.contains(producttype)) listOfProductToAdd.add(productid);
+
+          }
+      }
 
 
             mDbHelper.addOrderToSupplier(orderToSupplier);
@@ -219,29 +267,29 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
                 Integer rownumber = Integer.parseInt(parser.getValue(p, "rownumber"));
                 Integer productid = Integer.parseInt(parser.getValue(p, "productid"));
                 Integer quantity = Integer.parseInt(parser.getValue(p, "quantity"));
+
+
              //   Integer producttype = Integer.parseInt(parser.getValue(p, "producttype"));
 
+                if (flagAllProductTypes || listOfProductToAdd.contains(productid))
                 mDbHelper.addOrderToSupplierItem(new OrderToSupplierItem(cleanId,rownumber,productid,quantity));
 
-                if (!mDbHelper.checkIfProductExists(productid)) listOfProductToAdd.add(productid);
-
-                    /*
-                Log.d("rownumber", rownumber.toString());
-                Log.d("productid", productid.toString()); */
-
+            //    if (!mDbHelper.checkIfProductExists(productid)) listOfProductToAdd.add(productid);
 
             }
 
+
+
             //2. Если нужно добавить товары то добавляем
-            if (!listOfProductToAdd.isEmpty())
-            {
+
+
                 NodeList nodeListProducts = doc.getElementsByTagName("Product");
 
             for(int j=0; j< nodeListProducts.getLength();j++) {
                 Element p = (Element) nodeListProducts.item(j);
                 Integer productid = Integer.parseInt(parser.getValue(p, "productid"));
 
-                if (listOfProductToAdd.contains(productid) && !mDbHelper.checkIfProductExists(productid)) {
+                if (flagAllProductTypes || listOfProductToAdd.contains(productid) && !mDbHelper.checkIfProductExists(productid)) {
 
                     String name = parser.getValue(p, "name");
                     String barcode = parser.getValue(p, "barcode");
@@ -250,7 +298,7 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
                     mDbHelper.addProduct(productid,name,barcode,"",producttype,article);
                 }
             }
-            }
+
 
 
 
@@ -264,7 +312,7 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
                 Integer productid = Integer.parseInt(parser.getValue(p, "productid"));
                 String stockcell = parser.getValue(p, "stockcell");
                 Integer quantityfact = Integer.parseInt(parser.getValue(p, "quantityfact"));
-
+                if (flagAllProductTypes || listOfProductToAdd.contains(productid))
                 mDbHelper.addArrivalItem(new ArrivalItem(cleanId,productid,quantityfact,stockcell));
 
             }

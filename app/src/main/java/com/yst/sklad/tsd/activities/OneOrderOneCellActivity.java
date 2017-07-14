@@ -23,7 +23,9 @@ import java.io.Serializable;
 import me.sudar.zxingorient.ZxingOrient;
 import me.sudar.zxingorient.ZxingOrientResult;
 
-
+/*
+Форма в которой есть товар ячейка и количество  для считывания данных
+ */
 public class OneOrderOneCellActivity extends AppCompatActivity {
 
     EditText etProductId;

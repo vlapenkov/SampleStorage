@@ -3,18 +3,57 @@ package com.yst.sklad.tsd.dialogs;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.widget.EditText;
 
 import com.yst.sklad.tsd.R;
-import com.yst.sklad.tsd.activities.ShipmentsActivity;
+import com.yst.sklad.tsd.services.YesNoInterface;
 
 /**
  * Created by lapenkov on 16.06.2016.
  */
 public  class YesNoDialogFragment extends DialogFragment {
+    public static void show(final Context context, String title, final Object[] params)
+    {
 
-    public static YesNoDialogFragment newInstance(int title) {
+        android.support.v7.app.AlertDialog.Builder dialog = new android.support.v7.app.AlertDialog.Builder(context);
+
+        dialog.setTitle( title)
+                .setIcon(R.drawable.ic_launcher);
+        //        .setMessage(message);
+
+        // final EditText finalInput = input;
+        dialog.setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialoginterface, int i) {
+                //   ((OrdersActivity)context).mOrderNumber= input.getText().toString();
+                //  ((OrdersActivity)context).DownloadAndExportOrders( input.getText().toString());
+
+                ((YesNoInterface)context).ProcessIfYes(params);
+                dialoginterface.dismiss();
+            }
+        });
+
+        dialog.setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialoginterface, int i) {
+                dialoginterface.dismiss();
+            }
+        });
+
+
+        dialog.show();
+
+    }
+}
+/*
+
+
+
+public  class YesNoDialogFragment extends DialogFragment {
+    Object[] _params;
+    public static YesNoDialogFragment newInstance(int title,Object[] params) {
+//        _params=params;
         YesNoDialogFragment frag = new YesNoDialogFragment();
         Bundle args = new Bundle();
         args.putInt("title", title);
@@ -32,19 +71,16 @@ public  class YesNoDialogFragment extends DialogFragment {
                 .setPositiveButton(R.string.yes,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                ((ShipmentsActivity) getActivity()).doPositiveClick();
+
+                                ((YesNoInterface) getActivity()).ProcessIfYes( params);
                             }
                         }
                 )
                 .setNegativeButton(R.string.no, null
-                    /*    new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                ((ShipmentsActivity)getActivity()).doNegativeClick();
-                            }
-                        }*/
+
                 )
                 .create();
     }
 
 
-}
+}*/

@@ -254,7 +254,7 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
                 String name = arr[1];
                 String barcodes = arr[2];
 
-                String[] arraybarcodes = barcodes.split("|");
+                String[] arraybarcodes = barcodes.split("\\|");
                 String barcode = (arraybarcodes.length>0) ? arraybarcodes[0]  :"";
 
                 int productType = Integer.parseInt(arr[3]);

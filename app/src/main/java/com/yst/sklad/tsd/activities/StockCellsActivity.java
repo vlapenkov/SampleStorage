@@ -29,6 +29,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+Список ячеек (складов) скаждый склад если в нем нет ячеек кодируется в ячейку
+ */
 public class StockCellsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, SearchView.OnQueryTextListener,AdapterView.OnItemClickListener{
 
    SimpleCursorAdapter mAdapter=null;
@@ -91,7 +94,7 @@ public class StockCellsActivity extends AppCompatActivity implements LoaderManag
             super.onPostExecute(aLong);
             //pDialog.setProgress(100);
             pDialog.dismiss();
-            String message = getResources().getString(R.string.products_sucсessfully_downloaded);
+            String message = getResources().getString(R.string.cells_sucсessfully_downloaded);
             String title =getResources().getString(R.string.downloadcomplete);
             AlertSuccess.show(StockCellsActivity.this,title,message);
             //      getLoaderManager().getLoader(0).forceLoad();

@@ -6,7 +6,8 @@ import android.support.v7.app.AlertDialog;
 import android.widget.EditText;
 
 import com.yst.sklad.tsd.R;
-import com.yst.sklad.tsd.activities.OrdersActivity;
+//import com.yst.sklad;
+import com.yst.sklad.tsd.services.YesNoInterface;
 
 /**
  * Created by lapenkov on 11.07.2017.
@@ -27,7 +28,12 @@ public class AlertEnterString {
         dialog.setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialoginterface, int i) {
                      //   ((OrdersActivity)context).mOrderNumber= input.getText().toString();
-                        ((OrdersActivity)context).DownloadAndExportOrders( input.getText().toString());
+                      //  ((OrdersActivity)context).DownloadAndExportOrders( input.getText().toString());
+
+                        String text = input.getText()!=null?input.getText().toString():null;
+
+                        ((YesNoInterface)context).ProcessIfYes(new String[]{text});
+                        dialoginterface.dismiss();
                     }
                 });
 
