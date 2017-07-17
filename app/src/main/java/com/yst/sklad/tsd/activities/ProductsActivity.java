@@ -7,9 +7,7 @@ import android.os.AsyncTask;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
@@ -26,11 +24,11 @@ import com.yst.sklad.tsd.adapters.ProductsCursorAdapter;
 import com.yst.sklad.tsd.data.ProductsContract;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
 import com.yst.sklad.tsd.dialogs.AlertSuccess;
+import com.yst.sklad.tsd.services.BarCodeUtils;
 import com.yst.sklad.tsd.services.TextReaderFromHttp;
 import com.yst.sklad.tsd.services.UtilsConnectivityService;
 
 import java.io.IOException;
-import java.util.List;
 
 /*Форма списка товаров*/
 
@@ -254,17 +252,19 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
                 String name = arr[1];
                 String barcodes = arr[2];
 
-                String[] arraybarcodes = barcodes.split("\\|");
-                String barcode = (arraybarcodes.length>0) ? arraybarcodes[0]  :"";
+             String firstBarcode=   BarCodeUtils.importAdditionalBarcodesToDb(id,barcodes,dbHelper);
+            //    String[] arraybarcodes = barcodes.split("\\|");
+            //    String barcode = (arraybarcodes.length>0) ? arraybarcodes[0]  :"";
 
                 int productType = Integer.parseInt(arr[3]);
                 String article = arr[4];
-                dbHelper.addProduct(id,name,barcode,"",productType,article);
+                dbHelper.addProduct(id,name,firstBarcode,"",productType,article);
 
-                for (int i=1;i<arraybarcodes.length; i++)
+           /*     for (int i=1;i<arraybarcodes.length; i++)
                 {
                     dbHelper.addProductBarcode(id,arraybarcodes[i]);
                 }
+                */
             }
             return (long)lines.length;
         }

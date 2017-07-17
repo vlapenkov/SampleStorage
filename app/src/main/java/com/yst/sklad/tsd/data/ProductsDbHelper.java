@@ -614,7 +614,7 @@ return true;
 
     public Cursor getOrders() {
         SQLiteDatabase db = this.getReadableDatabase();
-        String  query= "select _id,  SUBSTR(dateoforder,6,5) dateoforder,ordertype,client from "+ProductsContract.OrdersToSupplierEntry.TABLE_NAME;
+        String  query= "select _id,  SUBSTR(dateoforder,6,5) dateoforder,  ( case  ordertype when 0 then 'з' else 'п' end) ordertype ,client from "+ProductsContract.OrdersToSupplierEntry.TABLE_NAME;
         return db.rawQuery(query,null);
         //return db.query(ProductsContract.OrdersToSupplierEntry.TABLE_NAME, null, null, null, null, null, null);
     }

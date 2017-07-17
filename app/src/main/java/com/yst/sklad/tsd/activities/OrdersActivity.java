@@ -26,6 +26,7 @@ import com.yst.sklad.tsd.data.ProductsContract;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
 import com.yst.sklad.tsd.dialogs.AlertEnterString;
 import com.yst.sklad.tsd.dialogs.AlertSuccess;
+import com.yst.sklad.tsd.services.BarCodeUtils;
 import com.yst.sklad.tsd.services.YesNoInterface;
 import com.yst.sklad.tsd.services.SoapCallToWebService;
 import com.yst.sklad.tsd.services.UtilsConnectivityService;
@@ -292,10 +293,12 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
                 if (flagAllProductTypes || listOfProductToAdd.contains(productid) && !mDbHelper.checkIfProductExists(productid)) {
 
                     String name = parser.getValue(p, "name");
-                    String barcode = parser.getValue(p, "barcode");
+                    String barcodes = parser.getValue(p, "barcode");
+
+                    String firstBarcode=BarCodeUtils.importAdditionalBarcodesToDb(productid,barcodes,mDbHelper);
                     String article = parser.getValue(p, "article");
                     Integer producttype = Integer.parseInt(parser.getValue(p, "producttype"));
-                    mDbHelper.addProduct(productid,name,barcode,"",producttype,article);
+                    mDbHelper.addProduct(productid,name,firstBarcode,"",producttype,article);
                 }
             }
 

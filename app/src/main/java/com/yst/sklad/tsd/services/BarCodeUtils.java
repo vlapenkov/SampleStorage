@@ -1,5 +1,7 @@
 package com.yst.sklad.tsd.services;
 
+import com.yst.sklad.tsd.data.ProductsDbHelper;
+
 /**
  * Created by lapenkov on 14.04.2016.
  *
@@ -46,7 +48,22 @@ public class BarCodeUtils {
     {
         return barCode;
 
+    }
 
+    /*
+    Добавляет дополнительные штрихкоды в базу
+     */
+    public  static String importAdditionalBarcodesToDb(int productId, String barcodes, ProductsDbHelper helper)
+    {
 
+        String[] arraybarcodes = barcodes.split("\\|");
+        String barcode = (arraybarcodes.length>0) ? arraybarcodes[0]  :"";
+
+        for (int i=1;i<arraybarcodes.length; i++)
+        {
+            helper.addProductBarcode(productId,arraybarcodes[i]);
+        }
+
+        return barcode;
     }
 }

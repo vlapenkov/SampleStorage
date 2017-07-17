@@ -74,7 +74,7 @@ public class OneOrderCellsListActivity extends AppCompatActivity  implements Loa
 
 
         mAdapter = new SimpleCursorAdapter(this,
-                R.layout.stockcell_item, null,
+                R.layout.oneordercells_item, null,
                 new String[] { "stockcell", "productid","quantityfact" },
                 new int[] { R.id.text1, R.id.text2,R.id.text3  }, 0);
 
