@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -26,6 +28,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.yst.sklad.tsd.R;
 import com.yst.sklad.tsd.adapters.ProductsCursorAdapter;
@@ -82,8 +85,23 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
         //Initializing NavigationView
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
+        // { добавляем номер версии в навигационное меню
+
+        PackageInfo pInfo = null;
+        try {
+            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        String version = pInfo.versionName;
+
+        TextView tv_app=(TextView) navigationView.getHeaderView(0).findViewById(R.id.app_name);
+        tv_app.setText( tv_app.getText() +" "+version);
+
         //Setting Navigation View Item Selected Listener to handle the item click of the navigation menu
         navigationView.setNavigationItemSelectedListener(this);
+
+        // }
 
         drawer.setDrawerListener(toggle);
         toggle.syncState();
@@ -223,9 +241,11 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
                 //YesNoDialogFragment.newInstance(R.string.history_title).show(getFragmentManager(), "dialog");
                 return true;
             }
+
             case R.id.exit: {
 
-               finish();
+
+                  finish();
 
                 return true;
             }

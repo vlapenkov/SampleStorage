@@ -20,8 +20,8 @@
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:textAppearance="?attr/textAppearanceListItem"
-        android:layout_weight="1"
-        android:text="5277"
+        android:layout_weight="2"
+        android:text="52778"
         android:gravity="center_vertical|center_horizontal" />
     <TextView android:id="@+id/text2"
         android:layout_width="0dp"
@@ -34,7 +34,7 @@
     <TextView android:id="@+id/text3"
         android:layout_width="0dp"
         android:layout_height="fill_parent"
-        android:layout_weight="3"
+        android:layout_weight="4"
         android:layout_marginLeft="10px"
         android:gravity="center_vertical|center_horizontal" />
 

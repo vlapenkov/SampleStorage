@@ -16,13 +16,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <TextView android:id="@+id/text1"
+                <TextView
+                    android:id="@+id/text1"
                     android:layout_width="0dp"
                     android:layout_height="fill_parent"
-                    android:textAppearance="?attr/textAppearanceListItem"
                     android:layout_weight="1"
+                    android:gravity="center_vertical|center_horizontal"
                     android:text="5277"
-                    android:gravity="center_vertical|center_horizontal" />
+                    android:textAppearance="?attr/textAppearanceListItem" />
+
                 <TextView android:id="@+id/text2"
                     android:layout_width="0dp"
                     android:layout_height="fill_parent"

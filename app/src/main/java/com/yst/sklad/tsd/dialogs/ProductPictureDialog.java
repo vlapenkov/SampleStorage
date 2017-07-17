@@ -26,7 +26,7 @@ public class ProductPictureDialog extends DialogFragment implements View.OnClick
     Bitmap bitmap;
     String mProductId ;
     ImageView mImg;
-String mUrlPrefix ="http://store.yst.ru/customforpartners/productpicture.ashx?productid=";
+String mUrlPrefix ="http://terminal.yst.ru/customforpartners/productpicture.ashx?productid=";
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
