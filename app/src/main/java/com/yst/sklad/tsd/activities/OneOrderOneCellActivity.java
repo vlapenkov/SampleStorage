@@ -7,6 +7,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,7 +27,7 @@ import me.sudar.zxingorient.ZxingOrientResult;
 /*
 Форма в которой есть товар ячейка и количество  для считывания данных
  */
-public class OneOrderOneCellActivity extends AppCompatActivity {
+public class OneOrderOneCellActivity extends BaseScanActivity {
 
     EditText etProductId;
     EditText etQuantity;
@@ -75,6 +76,10 @@ public class OneOrderOneCellActivity extends AppCompatActivity {
         tvArticle =(TextView) findViewById(R.id.tv_Article);
         et_Cell = (EditText) findViewById(R.id.et_Cell);
 
+        //  { если SMART DROID то скрываем кнопку SCAN
+        Button btnScanBarCode = (Button) findViewById(R.id.btnScanBarCode);
+        if (android.os.Build.MANUFACTURER.compareToIgnoreCase("pitech")==0)   btnScanBarCode.setVisibility(View.INVISIBLE);
+        // }
         CurrentOrderId = (long)intent.getSerializableExtra(OneOrderActivity.ORDER_ID_MESSAGE);
         //CurrentProductId =
         Serializable serProductId=  intent.getSerializableExtra(OneOrderCellsListActivity.PRODUCT_ID_MESSAGE);
@@ -186,6 +191,52 @@ public class OneOrderOneCellActivity extends AppCompatActivity {
         }
     }
 
+    /*
+       1. Обработка считывания для сканера
+        */
+    @Override
+    public void onBarcodeScanned(String mBarcode) {
+
+        String cellRead="";
+        EditText et_Cell = (EditText) findViewById(R.id.et_Cell);
+
+        String contents=mBarcode;
+
+        Log.d(TAG + "/scanned result: ", mBarcode);
+
+
+        int productId = BarCodeUtils.getProductIdFromBarCode(contents);
+        Product productFound = null;
+
+        //RefreshProductTexts(productId)
+        if (productId==0) {
+            productFound = mDbHelper.getProductByBarCode(contents);
+            if (productFound!=null) productId=productFound.Id;
+        }
+        if (productId>0)
+        {
+            RefreshProductTexts(productId,true);
+
+        }
+
+
+
+        //  это ячейка
+        if (productId==0 && contents!=null &&contents.length()==8) { cellRead =BarCodeUtils.getCellFromBarCode(contents);}
+
+        Log.d(TAG + "/product", String.valueOf(productId));
+        Log.d(TAG + "/cell", cellRead);
+        if (!cellRead.isEmpty()) {
+            et_Cell.setText(cellRead);
+            TextView tv_CellName = (TextView) findViewById(R.id.tv_Storage);
+            tv_CellName.setText(mDbHelper.getNameOfCell(cellRead));
+            //   Toast.makeText(OneShipmentItemActivity.this,R.string.cell_read, Toast.LENGTH_LONG).show();
+        }
+
+
+    }
+
+
 
     public void scanBarCode(View v)
     {
@@ -194,7 +245,11 @@ public class OneOrderOneCellActivity extends AppCompatActivity {
     }
 
 
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+  /*
+    2. Обработка считывания для камеры
+     */
+
+        public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 
         String cellRead="";
         String nameOfProduct = "";
