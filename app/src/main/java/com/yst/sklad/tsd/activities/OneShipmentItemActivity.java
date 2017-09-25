@@ -1,6 +1,9 @@
 package com.yst.sklad.tsd.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Paint;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,10 +16,24 @@ import android.widget.Toast;
 import com.yst.sklad.tsd.R;
 import com.yst.sklad.tsd.data.Product;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
+import com.yst.sklad.tsd.data.Shipment;
 import com.yst.sklad.tsd.data.ShipmentItem;
+import com.yst.sklad.tsd.dialogs.ProductOnRestsDialog;
 import com.yst.sklad.tsd.dialogs.ProductPictureDialog;
 import com.yst.sklad.tsd.services.BarCodeUtils;
+import com.yst.sklad.tsd.services.SoapCallToWebService;
 import com.yst.sklad.tsd.services.UtilsConnectivityService;
+import com.yst.sklad.tsd.services.XMLDOMParser;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import me.sudar.zxingorient.ZxingOrient;
 import me.sudar.zxingorient.ZxingOrientResult;
@@ -24,7 +41,7 @@ import me.sudar.zxingorient.ZxingOrientResult;
 /*
 * Форма одной строки из задания
 * */
-public class OneShipmentItemActivity extends BaseScanActivity implements View.OnClickListener {
+public class OneShipmentItemActivity extends BaseScanActivity  implements View.OnClickListener  {
     ShipmentItem mShipmentItem;
     EditText et_Cell;
     public static String TAG="OneShipmentItemActivity";
@@ -55,6 +72,9 @@ public class OneShipmentItemActivity extends BaseScanActivity implements View.On
 
         TextView tvRowNumber  = (TextView) findViewById(R.id.tv_RowNumber);
         TextView tvProductId = (TextView) findViewById(R.id.tv_ProductId);
+        TextView tvBtnShowProductOnStocks = (TextView) findViewById(R.id.btnShowProductOnStocks);
+
+        tvBtnShowProductOnStocks.setPaintFlags(tvBtnShowProductOnStocks.getPaintFlags() |   Paint.UNDERLINE_TEXT_FLAG);
         TextView tvProductName =(TextView) findViewById(R.id.tvProductName);
         TextView tvArticle =(TextView) findViewById(R.id.tv_Article);
         //TextView tv_CellPlanCaption = (TextView) findViewById(R.id.tv_CellPlanCaption);
@@ -75,6 +95,7 @@ public class OneShipmentItemActivity extends BaseScanActivity implements View.On
         tvArticle.setText(productArticle);
 
         tvProductId.setOnClickListener(this);
+
 
 
         String stock_cell ="";
@@ -235,4 +256,18 @@ String cell = et_Cell.getText().toString();
             pDialog.setArguments(bundle);
             pDialog.show(getFragmentManager(), "Заголовок");
     }
-}}
+}
+
+    public void showProductOnStocks(View v) {
+        if (new UtilsConnectivityService(OneShipmentItemActivity.this).checkConnectivity()) {
+            TextView tvId = (TextView) findViewById(R.id.tv_ProductId);
+            String productId = tvId.getText().toString();
+            ProductOnRestsDialog pDialog = new ProductOnRestsDialog();
+            Bundle bundle = new Bundle();
+            bundle.putString("productId", tvId.getText().toString());
+            pDialog.setArguments(bundle);
+            pDialog.show(getFragmentManager(), "Заголовок");
+
+        }
+    }}
+

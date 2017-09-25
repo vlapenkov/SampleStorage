@@ -89,6 +89,24 @@ private static HashMap<String,String> mHeaders = new HashMap<>();
 
     }
 
+/*
+Получить остатки конкретного товара productId
+ */
+    public final static InputStream getRestOfOneProduct(String productId)
+    {
+        String xmlstring= "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:ser=\"http://37.1.84.50:8080/ServiceTransfer\">\n" +
+                "   <soap:Header/>\n" +
+                "   <soap:Body>\n" +
+               " <ser:GetRestOfOneProduct>\n" +
+         "<ser:productid>"+productId+"</ser:productid>\n"+
+         "<ser:CodeOfBranch>00005</ser:CodeOfBranch>\n"+
+      "</ser:GetRestOfOneProduct>\n"+
+   "</soap:Body>\n" +
+"</soap:Envelope>";
+
+        return SendDataTo1SService(xmlstring,"http://37.1.84.50:8080/ServiceTransfer/GetRestOfOneProduct");
+    }
+
     /*
     Получить текущие задания из 1С
      */

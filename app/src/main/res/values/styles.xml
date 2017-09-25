@@ -7,6 +7,22 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
+    <style name="AppTheme.BtnPrimary"  parent="Widget.AppCompat.Button.Colored">
+        <item name="colorButtonNormal">@color/colorPrimary</item>
+        <item name="android:textColor">#FFF</item>
+    </style>
+
+    <style name="AppTheme.BtnBlue"  parent="Widget.AppCompat.Button.Colored">
+        <item name="colorButtonNormal">@color/colorBlue</item>
+        <item name="android:textColor">#FFF</item>
+    </style>
+
+    <style name="AppTheme.BtnGreen"  parent="Widget.AppCompat.Button.Colored">
+        <item name="colorButtonNormal">@color/colorGreen</item>
+        <item name="android:textColor">#FFF</item>
+    </style>
+
     <!-- Main activity theme. -->
     <style name="ForecastTheme" parent="AppTheme">
         <item name="actionBarStyle">@style/ActionBar.Solid.Sunshine.NoTitle</item>

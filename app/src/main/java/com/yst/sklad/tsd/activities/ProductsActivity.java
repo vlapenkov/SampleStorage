@@ -44,6 +44,7 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
     String mCurFilter;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

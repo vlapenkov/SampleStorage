@@ -74,6 +74,7 @@
     <string name="importShipments">Загрузить задания</string>
     <string name="shipments">Задания на отгрузку</string>
     <string name="btnScanBarCode">Scan</string>
+    <string name="btnShowProductOnStocks">показать на складах</string>
     <string name="doOKAndToNext">OK</string>
     <string name="refresh">Загрузить</string>
     <string name="loadtodatabase">Загрузить</string>

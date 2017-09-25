@@ -157,18 +157,53 @@
         android:id="@+id/linButtons"
         android:layout_below="@id/cellQueue"
         android:layout_marginTop="50dp">
-        <Button android:layout_height="60dp"
+
+        <Button
             android:id="@+id/btnScanBarCode"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="0dp"
-            android:text="@string/btnScanBarCode"
-            android:onClick="scanBarCode"
+            android:layout_height="60dp"
             android:layout_weight="1"
-            />
-        <Button android:layout_height="60dp"
+            android:onClick="scanBarCode"
+            android:text="@string/btnScanBarCode" />
+
+        <Button
             android:id="@+id/btnOKAndToNext"
+            android:theme="@style/AppTheme.BtnPrimary"
             android:layout_width="0dp"
-            android:text="@string/doOKAndToNext"
+            android:layout_height="60dp"
+            android:layout_weight="1"
             android:onClick="doOKAndToNext"
-            android:layout_weight="1"/>
-        </LinearLayout>
+            android:text="@string/doOKAndToNext" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/linWhereIsProduct"
+        android:layout_below="@id/linButtons"
+        android:layout_marginTop="50dp">
+      <!--  <Button android:layout_height="60dp"
+            android:id="@+id/btnShowProductOnStocks"
+            android:layout_width="0dp"
+            android:text="@string/btnShowProductOnStocks"
+            android:onClick="showProductOnStocks"
+            android:layout_weight="1"
+            /> -->
+
+        <TextView
+            android:id="@+id/btnShowProductOnStocks"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:autoLink="all"
+            android:linksClickable="false"
+            android:onClick="showProductOnStocks"
+            android:text="@string/btnShowProductOnStocks"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimary"
+            android:textColorLink="@color/colorPrimary"
+            android:textSize="@dimen/textview_height" />
+
+    </LinearLayout>
 </RelativeLayout>
