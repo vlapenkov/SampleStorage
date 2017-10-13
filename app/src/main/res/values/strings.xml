@@ -92,7 +92,7 @@
     <string name="product_read">Товар считан</string>
     <string name="products_shouldbe_equal">Считанный код товара и код в задании должны быть одинаковы</string>
     <string name="shipments_are_being_downloaded">Идет загрузка заданий ...</string>
-    <string name="shipment_is_being_uploaded">Задание выгружается в 1С ...</string>
+        <string name="shipment_is_being_uploaded">Задание выгружается в 1С ...</string>
     <string name="products_are_being_downloaded">Идет загрузка товаров ...</string>
     <string name="stockcells_are_being_downloaded">Идет загрузка ячеек и складов ...</string>
     <string name="clear">Очистить</string>

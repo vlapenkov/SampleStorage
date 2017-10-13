@@ -37,6 +37,7 @@ public class OneOrderOneCellActivity extends BaseScanActivity {
 
 
     public static String TAG="OneOrderOneCellActivity";
+    public static int INITIALPRODUCTID=9000001;
     long  CurrentOrderId ;
     Integer CurrentProductId ;
 
@@ -140,9 +141,19 @@ public class OneOrderOneCellActivity extends BaseScanActivity {
 
              cell= et_Cell.getText().toString();
 
+            /*
             if ( product==null)
-            { errorMessage= "Отсутствует товар с данным кодом"; etProductId.requestFocus(); }
+            {
+               errorMessage= "Отсутствует товар с данным кодом"; etProductId.requestFocus();
 
+            }
+*/
+
+            if (productId<INITIALPRODUCTID)
+            {
+                errorMessage= "Отсутствует товар с данным кодом"; etProductId.requestFocus();
+
+            }
              else if (cell==null || cell.isEmpty())
             { errorMessage= "Заполните поле ячейка"; et_Cell.requestFocus(); }
             else

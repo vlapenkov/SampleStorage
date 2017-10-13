@@ -29,7 +29,7 @@ public class BarCodeUtils {
     }
 
     /*
-        Прочитать товар
+        получить код товара из штрихкода
      */
     public static int getProductIdFromBarCode(String barCode)
     {

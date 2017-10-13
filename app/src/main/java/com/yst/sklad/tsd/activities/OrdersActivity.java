@@ -110,11 +110,6 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
 
                 AlertEnterString.show(this,"Введите номер поступления","Номер");
 
-           /*     if (new UtilsConnectivityService(OrdersActivity.this).checkConnectivity()) {
-                    new DownloadAndImportOrders().execute(ShipmentsActivity.StringUrlShipments);
-                    getSupportLoaderManager().getLoader(0).forceLoad();
-                }
-                */
             }
 
             case R.id.clear: {
@@ -224,8 +219,9 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
 
             int typeofarrival= Integer.parseInt( parser.getTopElementValue(doc, "typeofarrival"));
            String numberin1s=  parser.getTopElementValue(doc, "numberin1s");
-            String cleanId = OrderToSupplier.getCleanId(numberin1s);
+            String cleanId = OrderToSupplier.getCleanId( numberin1s);
             // при загрузке этот же старый заказ удаляется
+
             if  (numberin1s!=null &&  !numberin1s.isEmpty())    mDbHelper.deleteOrder(cleanId);
 
 
@@ -237,7 +233,7 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
 
 
 
-            OrderToSupplier  orderToSupplier=new OrderToSupplier(cleanId,dateoforder,client,typeofarrival,comments);
+            OrderToSupplier  orderToSupplier=new OrderToSupplier(cleanId,numberin1s,dateoforder,client,typeofarrival,comments);
 
 /*
 В listOfProductToAdd добавляем товары которые должны быть добавлены в таблицы (если фильтр включен)

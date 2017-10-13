@@ -59,6 +59,7 @@
         android:autoLink="web"
         android:layout_gravity="center_vertical"
         android:text="">
+
     </TextView>
 
 </LinearLayout>

@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.yst.sklad.tsd.R;
 import com.yst.sklad.tsd.data.ArrivalItem;
+import com.yst.sklad.tsd.data.OrderToSupplier;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
 import com.yst.sklad.tsd.dialogs.YesNoDialogFragment;
 import com.yst.sklad.tsd.services.YesNoInterface;
@@ -41,7 +42,7 @@ public class OneOrderActivity extends AppCompatActivity  implements LoaderManage
     ListView lvData =null;
     long mCurrentOrderId;
 
-
+    OrderToSupplier mCurrentOrder;
 
 
     @Override
@@ -53,6 +54,8 @@ public class OneOrderActivity extends AppCompatActivity  implements LoaderManage
         mCurrentOrderId = (long) intent[0].getSerializableExtra(ORDER_ID_MESSAGE);
 
         mDbHelper = new ProductsDbHelper(this);
+
+        mCurrentOrder = mDbHelper.getOrderToSupplier(mCurrentOrderId);
 
         lvData = (ListView) findViewById(R.id.lvData);
 
@@ -172,7 +175,9 @@ public class OneOrderActivity extends AppCompatActivity  implements LoaderManage
         finish();
     }
 
-
+/*
+Отправить поступление/перемещение  в 1С
+ */
     private class SendOrder extends AsyncTask<String,Void,String> {
 
         ProgressDialog pDialog;
@@ -208,7 +213,8 @@ public class OneOrderActivity extends AppCompatActivity  implements LoaderManage
                     OneOrderActivity.this.finish();
                 }
                 */
-            }
+            }else
+                Toast.makeText(OneOrderActivity.this, "Ошибка! Поступление/перемещение не было выгружено", Toast.LENGTH_LONG).show();
         }
 
         @Override
@@ -227,9 +233,10 @@ public class OneOrderActivity extends AppCompatActivity  implements LoaderManage
             while (cursor.moveToNext());
 
 
-           int orderType = mDbHelper.getOrderTypeByOrderId(mCurrentOrderId);
+           int orderType = mCurrentOrder.OrderType; //mDbHelper.getOrderTypeByOrderId(mCurrentOrderId);
+
             SoapCallToWebService service= new SoapCallToWebService();
-            InputStream stream = service.sendOrder(mCurrentOrderId,orderType, chaine.toString());
+            InputStream stream = service.sendOrder(mCurrentOrder.NumberIn1S,orderType, chaine.toString());
 
 
             if (stream!=null) { String result = TextReaderFromHttp.GetStringFromStream(stream);

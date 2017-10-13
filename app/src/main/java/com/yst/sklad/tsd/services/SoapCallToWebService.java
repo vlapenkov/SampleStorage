@@ -122,52 +122,7 @@ private static HashMap<String,String> mHeaders = new HashMap<>();
                 "   </soap:Body>\n" +
                 "</soap:Envelope>";
         return SendDataTo1SService(xmlstring,"http://37.1.84.50:8080/ServiceTransfer/GetAllOrdersOfShipment");
-        /*
-        StringBuffer chaine = new StringBuffer("");
 
-        HttpURLConnection connection = null;
-        try {
-            URL url = new URL(StringServiceUrl);
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestProperty("Content-Length", xmlstring.getBytes().length + "");
-            connection.setRequestProperty("SOAPAction", "http://37.1.84.50:8080/ServiceTransfer/GetAllOrdersOfShipment");
-
-            for(Map.Entry<String, String> entry : mHeaders.entrySet()) {
-                String key = entry.getKey();
-                String value = entry.getValue();
-                connection.setRequestProperty(key,value);
-
-            }
-
-            connection.setRequestMethod("POST");
-            connection.setDoInput(true);
-
-            OutputStream outputStream = connection.getOutputStream();
-            outputStream.write(xmlstring.getBytes("UTF-8"));
-            outputStream.close();
-
-            connection.connect();
-            status = connection.getResponseCode();
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-
-            Log.i("HTTP Client", "HTTP status code : " + status);
-        }
-
-        InputStream inputStream = null;
-        try {
-            inputStream = connection.getInputStream();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return inputStream;
-        */
     }
 
 /*
@@ -187,53 +142,7 @@ private static HashMap<String,String> mHeaders = new HashMap<>();
                 "   </soapenv:Body>\n" +
                 "</soapenv:Envelope>";
 return SendDataTo1SService(xmlstring,"http://37.1.84.50:8080/ServiceTransfer/ChangeOrder");
-/*
-        HttpURLConnection connection = null;
-        try {
-            URL url = new URL(StringServiceUrl);
-            connection = (HttpURLConnection) url.openConnection();
 
-            connection.setRequestProperty("Content-Length", xmlstring.getBytes().length + "");
-            connection.setRequestProperty("SOAPAction", "http://37.1.84.50:8080/ServiceTransfer/ChangeOrder");
-
-            for(Map.Entry<String, String> entry : mHeaders.entrySet()) {
-                String key = entry.getKey();
-                String value = entry.getValue();
-                connection.setRequestProperty(key,value);
-
-            }
-
-            connection.setRequestMethod("POST");
-            connection.setDoInput(true);
-
-            OutputStream outputStream = connection.getOutputStream();
-            outputStream.write(xmlstring.getBytes("UTF-8"));
-            outputStream.close();
-
-            connection.connect();
-            status = connection.getResponseCode();
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-
-            Log.d("HTTP Client", "HTTP status code : " + status);
-        }
-
-        InputStream inputStream = null;
-        try {
-            inputStream = connection.getInputStream();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return inputStream;
-        */
     }
 
 /*
@@ -292,14 +201,14 @@ return SendDataTo1SService(xmlstring,"http://37.1.84.50:8080/ServiceTransfer/Cha
 /*
 Отправка заказа в 1С
  */
-    public final static InputStream sendOrder(long orderId, int orderType,String innerStr)
+    public final static InputStream sendOrder(String orderIn1S, int orderType,String innerStr)
     {
 
         String xmlstring= "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ser=\"http://37.1.84.50:8080/ServiceTransfer\" xmlns:tran=\"http://37.1.84.50:8080/TransferArrival\">\n" +
                 "   <soapenv:Header/>\n" +
                 "   <soapenv:Body>\n" +
                 "      <ser:ChangeOrderOfArrival>\n" +
-                "         <ser:Number>"+orderId+"</ser:Number>\n" +
+                "         <ser:Number>"+orderIn1S+"</ser:Number>\n" +
                 "         <ser:Type>"+orderType+"</ser:Type>\n" +
                 "         <ser:ArrayOfCells>\n" + innerStr+
                 "         </ser:ArrayOfCells>\n" +

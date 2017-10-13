@@ -154,7 +154,10 @@ public class ProductsContract {
     public static final class OrdersToSupplierEntry implements BaseColumns {
 
         // Table name
+
+
         public static final String TABLE_NAME = "orderstosuppliers";
+        public static final String COLUMN_NUMBERIN1S="numberin1s";
         public static final String COLUMN_CLIENT = "client";
         public static final String COLUMN_ARRIVALNUMBER = "arrivalnumber";
         public static final String COLUMN_COMMENTS = "comments";

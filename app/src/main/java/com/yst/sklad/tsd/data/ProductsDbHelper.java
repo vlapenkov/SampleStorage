@@ -19,7 +19,7 @@ import java.util.List;
 public class ProductsDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 18;
+    private static final int DATABASE_VERSION = 19;
 
     static final String DATABASE_NAME = "products.db";
 
@@ -93,6 +93,7 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_ORDERTOSUPPLIER_TABLE =
             "create table " + ProductsContract.OrdersToSupplierEntry.TABLE_NAME + "(" +
                     ProductsContract.OrdersToSupplierEntry._ID + " text primary key, " +
+                    ProductsContract.OrdersToSupplierEntry.COLUMN_NUMBERIN1S + " text, " +
                     ProductsContract.OrdersToSupplierEntry.COLUMN_DATE + " text, " +
                     ProductsContract.OrdersToSupplierEntry.COLUMN_ORDERTYPE + " integer, " + // вид документа
                     ProductsContract.OrdersToSupplierEntry.COLUMN_CLIENT+ " text, " +
@@ -325,6 +326,7 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
             cv.put(ProductsContract.OrdersToSupplierEntry._ID, order.Id);
             cv.put(ProductsContract.OrdersToSupplierEntry.COLUMN_DATE, order.DateOfOrder);
             cv.put(ProductsContract.OrdersToSupplierEntry.COLUMN_ORDERTYPE, order.OrderType);
+            cv.put(ProductsContract.OrdersToSupplierEntry.COLUMN_NUMBERIN1S, order.NumberIn1S);
             cv.put(ProductsContract.OrdersToSupplierEntry.COLUMN_COMMENTS, order.Comments);
             cv.put(ProductsContract.OrdersToSupplierEntry.COLUMN_CLIENT, order.Client);
             //cv.put(ProductsContract.ShipmentsEntry.COLUMN_COMMENTS, shipment.comments);
@@ -664,12 +666,12 @@ String        query = "SELECT orderstosuppliersitems._id, rownumber, orderstosup
                 "WHERE orderstosuppliersitems.ordertosupplierid="+orderId;
 
         Cursor cursor= db.rawQuery(query, null);
-        if (cursor!=null && cursor.getCount()>0)
+ //       if (cursor!=null && cursor.getCount()>0)
         {
             return cursor;
 
         }
-        return null;
+  //      return null;
 
     }
 
@@ -697,6 +699,19 @@ String        query = "SELECT orderstosuppliersitems._id, rownumber, orderstosup
 
     }
 
+
+    public OrderToSupplier getOrderToSupplier(long orderId){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor res =  db.rawQuery("select * from " + ProductsContract.OrdersToSupplierEntry.TABLE_NAME + " where _id=" + orderId, null);
+        if (res!=null && res.getCount()>0)
+        {   res.moveToFirst();
+            return OrderToSupplier.fromCursor(res);
+
+        }else return null;
+
+    }
+    /*
     public int getOrderTypeByOrderId (long orderId)
 
     {
@@ -711,7 +726,7 @@ String        query = "SELECT orderstosuppliersitems._id, rownumber, orderstosup
         return -1;
 
     }
-
+*/
 
     /*
     Получить код товара по Id, -1 если не найден

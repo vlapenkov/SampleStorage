@@ -2,6 +2,7 @@ package com.yst.sklad.tsd.dialogs;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -39,6 +41,7 @@ public class ProductOnRestsDialog extends DialogFragment implements View.OnClick
     String mProductId ;
     ArrayAdapter<StockAndRest> mAdapter;
     private List<StockAndRest> items= new   ArrayList<>();
+    ProgressDialog loading ;
 
     private static class StockAndRest {
         public final String stock;
@@ -79,6 +82,8 @@ public class ProductOnRestsDialog extends DialogFragment implements View.OnClick
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(STYLE_NO_FRAME, android.R.style.Theme_Holo_Light);
+
+
         //items.add("Пусто");
 
     }
@@ -96,6 +101,9 @@ public class ProductOnRestsDialog extends DialogFragment implements View.OnClick
         mAdapter = new StockAndRestAdapter(getActivity());
 
         lvData.setAdapter(mAdapter);
+        loading= new ProgressDialog(v.getContext());
+        loading.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        loading.setMessage(getString(R.string.stockcells_are_being_downloaded));
 
         return v;
     }
@@ -120,20 +128,26 @@ public class ProductOnRestsDialog extends DialogFragment implements View.OnClick
         /*
         Асинхронная задача получения остатктов с web-сервиса
          */
-   private class RestsGetter extends AsyncTask<String, String, InputStream> {
+   private class RestsGetter extends AsyncTask<String, String, Document> {
 
-        protected InputStream doInBackground(String... args) {
+        protected Document doInBackground(String... args) {
             InputStream stream = SoapCallToWebService.getRestOfOneProduct(mProductId);
-
-            return stream;
+            XMLDOMParser parser = new XMLDOMParser();
+            Document doc = parser.getDocument(stream);
+            return doc;
         }
 
-        protected void onPostExecute(InputStream result) {
-            super.onPostExecute(result);
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                loading.show();
+            }
 
+            protected void onPostExecute(Document result) {
+            super.onPostExecute(result);
             XMLDOMParser parser = new XMLDOMParser();
-            Document doc = parser.getDocument(result);
-            NodeList nodeListProducts = doc.getElementsByTagName("Products");
+
+            NodeList nodeListProducts = result.getElementsByTagName("Products");
 if (nodeListProducts.getLength()>0)
             for (int j = 0; j < nodeListProducts.getLength(); j++) {
                 Element e = (Element) nodeListProducts.item(j);
@@ -148,9 +162,15 @@ if (nodeListProducts.getLength()>0)
                 strToAdd=stockcell+" / "+stockname;
 
                 items.add(new StockAndRest(strToAdd,rest));
+
             }
 else
     items.add(new StockAndRest("Остатки по данному товару отсутствуют",""));
+
+            mAdapter.notifyDataSetChanged();
+               loading.dismiss();
+
     }
+
 }
 }
