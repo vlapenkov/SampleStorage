@@ -21,3 +21,8 @@
 13.10.17
 1. Загружать и выгружать заказ с префиксом +
 2. Если нет товара то игнорировать в поступлении +
+
+16.10.17
+1. Вываливается с ошибкой при загрузке заданий - закрываю курсор в getStorageOfCell
+
+https://stackoverflow.com/questions/21219039/android-database-cursorwindowallocationexception-when-moving-a-cursor

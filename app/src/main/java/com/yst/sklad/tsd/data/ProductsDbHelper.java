@@ -261,13 +261,17 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
 
     public boolean checkIfShipmentExists ( String shipmentId)
     {
+        boolean result = false;
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor res =  db.rawQuery( "select * from " + ProductsContract.ShipmentsEntry.TABLE_NAME+ " where _id='"+shipmentId+"'", null );
         if (res!=null && res.getCount()>0)
-        {   res.moveToFirst();     return true;
+        {  // res.moveToFirst();
+            res.close();
+            result=true;
+
         }
-        return false;
+        return result;
 
     }
 
@@ -761,16 +765,19 @@ String        query = "SELECT orderstosuppliersitems._id, rownumber, orderstosup
 
     public String getStorageOfCell(String cell) {
 
-
+ String result="";
         SQLiteDatabase db = this.getReadableDatabase();
 
          Cursor cursor= db.rawQuery("SELECT storageid from " + ProductsContract.StockCellEntry.TABLE_NAME + " where _id=" + cell, null);
+
         if (cursor!=null && cursor.getCount()>0)
         {   cursor.moveToFirst();
-            return cursor.getString(0);
-
+            result= cursor.getString(0);
+            cursor.close();
         }
-    return "";
+
+        if(cursor!=null) cursor.close();
+    return result;
     }
 
     public String getNameOfCell(String cell) {

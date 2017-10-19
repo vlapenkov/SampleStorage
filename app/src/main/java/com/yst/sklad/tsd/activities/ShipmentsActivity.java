@@ -436,18 +436,20 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
             }
 
-            for (ShipmentItem shipmentItem : listOfShipmentItems)
+           for (ShipmentItem shipmentItem : listOfShipmentItems)
             {
                 if (dbHelper.checkIfShipmentExists(shipmentItem.ShipmentId)
-                //+++ 12.07.2016        && !dbHelper.checkIfShipmentItemsExistByShipmentAndProduct(shipmentItem.ShipmentId,shipmentItem.ProductId)
-                 //                       && !dbHelper.checkIfShipmentItemsExistByShipmentAndProductAndRow(shipmentItem.ShipmentId,shipmentItem.ProductId,shipmentItem.RowNumber)
-                        // added Lapenkov 27.07.2016 Не загружаем задания которые есть
-                        //&& !dbHelper.checkIfShipmentItemsExistByShipmentAndRow(shipmentItem.ShipmentId,shipmentItem.RowNumber)
+                    //+++ 12.07.2016        && !dbHelper.checkIfShipmentItemsExistByShipmentAndProduct(shipmentItem.ShipmentId,shipmentItem.ProductId)
+                    //                       && !dbHelper.checkIfShipmentItemsExistByShipmentAndProductAndRow(shipmentItem.ShipmentId,shipmentItem.ProductId,shipmentItem.RowNumber)
+                    // added Lapenkov 27.07.2016 Не загружаем задания которые есть
+                    //&& !dbHelper.checkIfShipmentItemsExistByShipmentAndRow(shipmentItem.ShipmentId,shipmentItem.RowNumber)
                         )
+
                     dbHelper.addShipmentItem(shipmentItem);
 
             }
             return null;
+
         }
     }
 
