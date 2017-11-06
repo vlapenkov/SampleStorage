@@ -1,5 +1,6 @@
 package com.yst.sklad.tsd.activities;
 
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
@@ -25,6 +26,7 @@ import com.yst.sklad.tsd.data.ProductsContract;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
 import com.yst.sklad.tsd.dialogs.AlertSuccess;
 import com.yst.sklad.tsd.services.BarCodeUtils;
+import com.yst.sklad.tsd.services.ProductsDownloadIntentService;
 import com.yst.sklad.tsd.services.TextReaderFromHttp;
 import com.yst.sklad.tsd.services.UtilsConnectivityService;
 
@@ -42,7 +44,7 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
     public static String PRODUCT_ID_MESSAGE="productID";
     ProductsDbHelper mDbHelper;
     String mCurFilter;
-
+    private static final int REQUEST_CODE = 0;
 
 
     @Override
@@ -89,8 +91,8 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
         switch (item.getItemId()) {
             case R.id.refresh:
             { if (new UtilsConnectivityService(ProductsActivity.this).checkConnectivity())
-                    new DownloadAndImportProducts().execute(stringUrlProducts);
-                getSupportLoaderManager().getLoader(0).forceLoad();
+                importAllProducts();
+
                 break;
                  }
             case R.id.clear: {
@@ -134,13 +136,10 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Log.i(TAG, "Item selected "+ Long.toString(id));
 
-        Intent intent = new Intent(this, OneProductActivity.class);
-
-        intent.putExtra(PRODUCT_ID_MESSAGE, Long.toString(id));
-
-        startActivity(intent);
+         Intent intent = new Intent(this, OneProductActivity.class);
+         intent.putExtra(PRODUCT_ID_MESSAGE, Long.toString(id));
+         startActivity(intent);
 
 
     }
@@ -169,14 +168,37 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
     }
 
 
-    public void importAllProducts(View v)
+    public void importAllProducts()
     {
-        if (new UtilsConnectivityService(ProductsActivity.this).checkConnectivity())
-            new DownloadAndImportProducts().execute(stringUrlProducts);
+
+        PendingIntent pendingIntent = createPendingResult(REQUEST_CODE, new Intent(), 0);
+
+        Intent intent = new Intent(this, ProductsDownloadIntentService.class);
+        intent.putExtra(ProductsDownloadIntentService.PENDING_RESULT, pendingIntent); // pendingIntent - передается в IntentService
+        intent.putExtra("url", stringUrlProducts);
+        startService(intent);
 
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode==REQUEST_CODE && resultCode==ProductsDownloadIntentService.RESULT_CODE)
+        {
+            int result = data.getIntExtra(ProductsDownloadIntentService.RESULT, -1);
+            // Update UI View with the result
+
+           // String format = getString(R.string.products_sucсessfully_downloaded);
+         //   String message = format;
+            String message=String.format("Товары в количестве %1$s успешно загружены",result);
+            String title =getString(R.string.downloadcomplete);
+            AlertSuccess.show(ProductsActivity.this, title, message);
+            getSupportLoaderManager().restartLoader(0, null, this);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    /*
     private class DownloadAndImportProducts extends AsyncTask<String, Integer, Long> {
 
         ProgressDialog pDialog;
@@ -261,11 +283,7 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
                 String article = arr[4];
                 dbHelper.addProduct(id,name,firstBarcode,"",productType,article);
 
-           /*     for (int i=1;i<arraybarcodes.length; i++)
-                {
-                    dbHelper.addProductBarcode(id,arraybarcodes[i]);
-                }
-                */
+
             }
             return (long)lines.length;
         }
@@ -279,10 +297,8 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
 
 
 
-    private String downloadUrl(String url) throws IOException {
-        return  TextReaderFromHttp.readTextArrayFromUrl(url);
-    }
 
+*/
     /*
     Удаляет все товары
      */

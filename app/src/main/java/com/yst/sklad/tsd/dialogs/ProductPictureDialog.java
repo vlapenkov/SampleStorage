@@ -18,7 +18,8 @@ import java.io.InputStream;
 import java.net.URL;
 
 /**
- * Created by lapenkov on 16.06.2016.
+ *
+ * Диалог показывает товар из урл
  */
 public class ProductPictureDialog extends DialogFragment implements View.OnClickListener {
     private static final String TAG="ProductPictureDialog";

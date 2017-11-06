@@ -584,10 +584,9 @@ return true;
 
         SQLiteDatabase db = this.getReadableDatabase();
         if (filter != null)
-
         //    return db.rawQuery("select * from " + ProductsContract.ProductsEntry.TABLE_NAME + " where name like '%" + filter + "%'" +" or _id like '%"+ filter + "%'" , null);
 
-          return  db.query(ProductsContract.ProductsEntry.TABLE_NAME, null, "name like ? or _id like ?", new String[] { filter+"%",filter+"%"}, null, null, "_id desc");
+          return  db.query(ProductsContract.ProductsEntry.TABLE_NAME, null, "name like ? or _id like ?", new String[] {"%"+filter+"%",filter+"%"}, null, null, "_id desc");
         return db.query(ProductsContract.ProductsEntry.TABLE_NAME, null, null, null, null, null, "_id desc");
     }
 
@@ -715,22 +714,7 @@ String        query = "SELECT orderstosuppliersitems._id, rownumber, orderstosup
         }else return null;
 
     }
-    /*
-    public int getOrderTypeByOrderId (long orderId)
 
-    {
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        Cursor cursor= db.rawQuery("select ordertype from orderstosuppliers where _id="+orderId,null);
-        if (cursor!=null && cursor.getCount()>0)
-        {   cursor.moveToFirst();
-            return cursor.getInt(0);
-
-        }
-        return -1;
-
-    }
-*/
 
     /*
     Получить код товара по Id, -1 если не найден

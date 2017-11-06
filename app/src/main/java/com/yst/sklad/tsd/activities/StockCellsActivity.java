@@ -1,6 +1,8 @@
 package com.yst.sklad.tsd.activities;
 
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.support.v4.app.LoaderManager;
@@ -22,6 +24,8 @@ import com.yst.sklad.tsd.R;
 import com.yst.sklad.tsd.data.ProductsContract;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
 import com.yst.sklad.tsd.dialogs.AlertSuccess;
+import com.yst.sklad.tsd.services.ProductsDownloadIntentService;
+import com.yst.sklad.tsd.services.StockCellsDownloadIntentService;
 import com.yst.sklad.tsd.services.TextReaderFromHttp;
 import com.yst.sklad.tsd.services.UtilsConnectivityService;
 
@@ -36,8 +40,10 @@ public class StockCellsActivity extends AppCompatActivity implements LoaderManag
 
    SimpleCursorAdapter mAdapter=null;
     ListView lvData =null;
-    private static final String stringUrlStoragesAndCells="http://yst.ru/data/Stores.txt";
+
     private static final String TAG = "StockCellsActivity";
+    private static final String stringUrlStoragesAndCells="http://yst.ru/data/Stores.txt";
+    private static final int REQUEST_CODE = 0;
 
 
     ProductsDbHelper mDbHelper;
@@ -68,7 +74,7 @@ public class StockCellsActivity extends AppCompatActivity implements LoaderManag
         return  TextReaderFromHttp.readTextArrayFromUrl(url);
     }
 
-
+/*
     private class DownloadAndImportStockCells extends AsyncTask<String, Integer, Long> {
         ProgressDialog pDialog;
 
@@ -158,7 +164,7 @@ public class StockCellsActivity extends AppCompatActivity implements LoaderManag
         }
 
     }
-
+*/
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String[] projection=null,selectionArgs=null;
@@ -236,8 +242,9 @@ public class StockCellsActivity extends AppCompatActivity implements LoaderManag
         switch (item.getItemId()) {
             case R.id.refresh:
                 if (new UtilsConnectivityService(this).checkConnectivity())
-                 new DownloadAndImportStockCells().execute(stringUrlStoragesAndCells);
-                getSupportLoaderManager().getLoader(0).forceLoad();
+                    importAllStockCells();
+         //        new DownloadAndImportStockCells().execute(stringUrlStoragesAndCells);
+           //     getSupportLoaderManager().getLoader(0).forceLoad();
 
 
         }
@@ -248,4 +255,32 @@ public class StockCellsActivity extends AppCompatActivity implements LoaderManag
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Log.d(TAG, String.valueOf(id));
     }
+
+    /*
+    Старт сервиса импорт ячеек и складов
+     */
+    private void importAllStockCells() {
+        PendingIntent pendingIntent = createPendingResult(REQUEST_CODE, new Intent(), 0);
+        Intent intent = new Intent(this, StockCellsDownloadIntentService.class);
+        intent.putExtra(StockCellsDownloadIntentService.PENDING_RESULT, pendingIntent); // pendingIntent - передается в IntentService
+        intent.putExtra("url", stringUrlStoragesAndCells);
+        startService(intent);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode==REQUEST_CODE && resultCode==StockCellsDownloadIntentService.RESULT_CODE)
+        {
+            int result = data.getIntExtra(StockCellsDownloadIntentService.RESULT, -1);
+
+            String message=String.format("Ячейки в количестве %1$s успешно загружены",result);
+            String title =getString(R.string.downloadcomplete);
+            AlertSuccess.show(StockCellsActivity.this, title, message);
+            getSupportLoaderManager().restartLoader(0, null, this);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+
 }
