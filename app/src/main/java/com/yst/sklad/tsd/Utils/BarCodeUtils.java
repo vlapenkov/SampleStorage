@@ -1,4 +1,4 @@
-package com.yst.sklad.tsd.services;
+package com.yst.sklad.tsd.Utils;
 
 import com.yst.sklad.tsd.data.ProductsDbHelper;
 
@@ -33,11 +33,19 @@ public class BarCodeUtils {
      */
     public static int getProductIdFromBarCode(String barCode)
     {
-        if (barCode==null||barCode.length()!=12) return 0;
 
-        String str_id=barCode.substring(4, 11);
+        String str_id="";
+        if (barCode==null || (barCode.length()!=12 && barCode.length()!=13)) return 0;
 
-        str_id=trimLeadingZeroes(str_id);
+
+        if (barCode.length()==12) {
+            str_id=barCode.substring(4, 11);
+            str_id=trimLeadingZeroes(str_id);
+        }
+
+        if (barCode.length()==13) str_id=barCode.substring(5, 12);
+
+
 
         if (!isInteger(str_id)) return 0;
         return Integer.parseInt(str_id);

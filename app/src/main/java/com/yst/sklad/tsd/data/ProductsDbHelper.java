@@ -129,18 +129,28 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
                     ");";
 
 
+    private static ProductsDbHelper sInstance;
+    public static synchronized ProductsDbHelper getInstance(Context context) {
 
+        // Use the application context, which will ensure that you
+        // don't accidentally leak an Activity's context.
+        // See this article for more information: http://bit.ly/6LRzfx
+        if (sInstance == null) {
+            sInstance = new ProductsDbHelper(context.getApplicationContext());
+        }
+        return sInstance;
+    }
 
     public ProductsDbHelper(Context context)
     {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
-
+/*
     public ProductsDbHelper(Context context, int version)
     {
         super(context, DATABASE_NAME, null, version);
     }
-
+*/
 
 
     @Override
@@ -555,6 +565,8 @@ return true;
     Ищет товар по штрихкоду сперва в таблице товаров, затем в таблице штрихкодов (в те штрихкоды, если у товара их несколько)
      */
     public Product getProductByBarCode(String barcode){
+
+        if (barcode.length()==12) barcode="0"+barcode;
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor res =  db.rawQuery("select * from " + ProductsContract.ProductsEntry.TABLE_NAME + " where barcode=" + barcode, null);

@@ -1,10 +1,8 @@
 package com.yst.sklad.tsd.activities;
 
-import android.app.DialogFragment;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Debug;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -21,7 +19,7 @@ import com.yst.sklad.tsd.R;
 import com.yst.sklad.tsd.data.Product;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
 import com.yst.sklad.tsd.dialogs.YesNoDialogFragment;
-import com.yst.sklad.tsd.services.YesNoInterface;
+import com.yst.sklad.tsd.Utils.YesNoInterface;
 
 /*
 Список считанных ячеек и количество  для контрентного заказа и товара

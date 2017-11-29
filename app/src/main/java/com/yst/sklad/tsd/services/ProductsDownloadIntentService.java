@@ -6,12 +6,11 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
+import com.yst.sklad.tsd.Utils.BarCodeUtils;
+import com.yst.sklad.tsd.Utils.TextReaderFromHttp;
 import com.yst.sklad.tsd.data.ProductsContract;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
-
-import java.io.IOException;
 
 /**
  * Created by lapenkov on 03.11.2017.

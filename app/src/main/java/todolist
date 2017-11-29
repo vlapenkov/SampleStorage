@@ -26,3 +26,7 @@
 1. Вываливается с ошибкой при загрузке заданий - закрываю курсор в getStorageOfCell
 
 https://stackoverflow.com/questions/21219039/android-database-cursorwindowallocationexception-when-moving-a-cursor
+
+06.11.17
+1. Загрузка ячеек через bulk insert в сервисе +
+2. Загрузка товаров через bulk insert в сервисе +

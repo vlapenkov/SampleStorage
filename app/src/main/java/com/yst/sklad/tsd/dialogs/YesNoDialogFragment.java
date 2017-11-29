@@ -1,15 +1,11 @@
 package com.yst.sklad.tsd.dialogs;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Bundle;
-import android.widget.EditText;
 
 import com.yst.sklad.tsd.R;
-import com.yst.sklad.tsd.services.YesNoInterface;
+import com.yst.sklad.tsd.Utils.YesNoInterface;
 
 /**
  * Created by lapenkov on 16.06.2016.

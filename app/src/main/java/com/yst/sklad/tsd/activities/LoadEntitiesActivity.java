@@ -15,7 +15,7 @@ import android.widget.ProgressBar;
 import com.yst.sklad.tsd.R;
 import com.yst.sklad.tsd.data.ProductsContract;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
-import com.yst.sklad.tsd.services.TextReaderFromHttp;
+import com.yst.sklad.tsd.Utils.TextReaderFromHttp;
 
 import java.io.IOException;
 

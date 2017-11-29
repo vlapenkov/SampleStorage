@@ -14,7 +14,6 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,7 +24,7 @@ import com.yst.sklad.tsd.R;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
 import com.yst.sklad.tsd.data.ShipmentItem;
 import com.yst.sklad.tsd.services.SoapCallToWebService;
-import com.yst.sklad.tsd.services.TextReaderFromHttp;
+import com.yst.sklad.tsd.Utils.TextReaderFromHttp;
 
 import java.io.InputStream;
 

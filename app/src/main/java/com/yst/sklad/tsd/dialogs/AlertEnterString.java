@@ -7,7 +7,7 @@ import android.widget.EditText;
 
 import com.yst.sklad.tsd.R;
 //import com.yst.sklad;
-import com.yst.sklad.tsd.services.YesNoInterface;
+import com.yst.sklad.tsd.Utils.YesNoInterface;
 
 /**
  * Created by lapenkov on 11.07.2017.

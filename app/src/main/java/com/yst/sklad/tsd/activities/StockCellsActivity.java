@@ -1,10 +1,8 @@
 package com.yst.sklad.tsd.activities;
 
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -21,17 +19,13 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.yst.sklad.tsd.R;
-import com.yst.sklad.tsd.data.ProductsContract;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
 import com.yst.sklad.tsd.dialogs.AlertSuccess;
-import com.yst.sklad.tsd.services.ProductsDownloadIntentService;
 import com.yst.sklad.tsd.services.StockCellsDownloadIntentService;
-import com.yst.sklad.tsd.services.TextReaderFromHttp;
+import com.yst.sklad.tsd.Utils.TextReaderFromHttp;
 import com.yst.sklad.tsd.services.UtilsConnectivityService;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /*
 Список ячеек (складов) скаждый склад если в нем нет ячеек кодируется в ячейку
@@ -74,97 +68,6 @@ public class StockCellsActivity extends AppCompatActivity implements LoaderManag
         return  TextReaderFromHttp.readTextArrayFromUrl(url);
     }
 
-/*
-    private class DownloadAndImportStockCells extends AsyncTask<String, Integer, Long> {
-        ProgressDialog pDialog;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            pDialog = new ProgressDialog(StockCellsActivity.this);
-            pDialog.setProgress(0);
-            pDialog.setMax(100);
-
-            pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            pDialog.setMessage(getString(R.string.stockcells_are_being_downloaded));
-            pDialog.show();
-        }
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            pDialog.setProgress(values[0]);
-        }
-
-        @Override
-        protected void onPostExecute(Long aLong) {
-            super.onPostExecute(aLong);
-            //pDialog.setProgress(100);
-            pDialog.dismiss();
-            String message = getResources().getString(R.string.cells_sucсessfully_downloaded);
-            String title =getResources().getString(R.string.downloadcomplete);
-            AlertSuccess.show(StockCellsActivity.this,title,message);
-            //      getLoaderManager().getLoader(0).forceLoad();
-            RefreshList();
-
-        }
-
-
-
-        @Override
-        protected Long doInBackground(String... urls) {
-            String[] lines;
-            ProductsDbHelper dbHelper;
-            // params comes from the execute() call: params[0] is the url.
-            try {
-                String result =  downloadUrl(urls[0]);
-
-                dbHelper = new ProductsDbHelper(getBaseContext());
-
-                // обязательно очищаем все таблицы из-за внешних ключей
-                dbHelper.clearTable(ProductsContract.ShipmentsItemEntry.TABLE_NAME);
-                dbHelper.clearTable(ProductsContract.ShipmentsEntry.TABLE_NAME);
-                dbHelper.clearTable(ProductsContract.StorageEntry.TABLE_NAME);
-                dbHelper.clearTable(ProductsContract.StockCellEntry.TABLE_NAME);
-
-                List<String> listofstorages = new ArrayList<String>() ;
-                lines=   result.split(System.getProperty("line.separator"));
-
-                int counter=0;
-                for (String line:lines
-                        ) {
-                    counter++;
-                    if (counter==1) { continue;}
-
-                    if (counter%10==0)
-                        publishProgress((int) ((counter / (float) lines.length) * 100));
-                    String[] arr=line.split(";");
-
-                    String storage = arr[0];
-                    String cellname = arr[1];
-                    String barcode = arr[3];
-
-                    // add storege
-                    if (!listofstorages.contains(storage))
-                    {
-                        listofstorages.add(storage);
-                        dbHelper.addStorage(storage);
-                    }
-                    // add stockcell
-                    dbHelper.addStockCell(barcode,cellname,storage);
-
-
-                }
-
-            } catch (IOException e) {
-                return (long)-1;
-            }finally {
-
-            }
-            return (long)lines.length;
-        }
-
-    }
-*/
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String[] projection=null,selectionArgs=null;

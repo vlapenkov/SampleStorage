@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * Created by user on 09.06.2016.
  */
-public final class SoapCallToWebService extends Service{
+public final class SoapCallToWebService {
     public static final String  ResultOk ="Ok.";
     public static final String StringServiceUrl="http://37.1.84.50:8080/YST/ws/ServiceTransfer";
 private static HashMap<String,String> mHeaders = new HashMap<>();
@@ -37,34 +37,6 @@ private static HashMap<String,String> mHeaders = new HashMap<>();
 
     }
 
-    public static String getStringFromInputStream(InputStream is) {
-
-        BufferedReader br = null;
-        StringBuilder sb = new StringBuilder();
-
-        String line;
-        try {
-
-            br = new BufferedReader(new InputStreamReader(is));
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        return sb.toString();
-
-    }
 
 
 /*
@@ -219,9 +191,5 @@ return SendDataTo1SService(xmlstring,"http://37.1.84.50:8080/ServiceTransfer/Cha
     return SendDataTo1SService(xmlstring, "http://37.1.84.50:8080/ServiceTransfer/ChangeOrderOfArrival");
     }
 
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
+
 }

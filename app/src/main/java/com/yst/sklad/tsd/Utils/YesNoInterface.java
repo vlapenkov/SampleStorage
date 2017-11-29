@@ -1,4 +1,4 @@
-package com.yst.sklad.tsd.services;
+package com.yst.sklad.tsd.Utils;
 
 /**
  * Created by lapenkov on 14.07.2017.

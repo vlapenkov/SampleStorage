@@ -1,27 +1,21 @@
 package com.yst.sklad.tsd.dialogs;
 
-import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.yst.sklad.tsd.R;
 import com.yst.sklad.tsd.services.SoapCallToWebService;
-import com.yst.sklad.tsd.services.XMLDOMParser;
+import com.yst.sklad.tsd.Utils.XMLDOMParser;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

@@ -1,4 +1,4 @@
-package com.yst.sklad.tsd.services;
+package com.yst.sklad.tsd.Utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;

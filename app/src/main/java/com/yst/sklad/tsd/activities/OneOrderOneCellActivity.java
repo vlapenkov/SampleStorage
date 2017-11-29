@@ -1,6 +1,5 @@
 package com.yst.sklad.tsd.activities;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
 import android.text.Editable;
@@ -17,7 +16,7 @@ import com.yst.sklad.tsd.data.ArrivalItem;
 import com.yst.sklad.tsd.data.OrderToSupplierItem;
 import com.yst.sklad.tsd.data.Product;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
-import com.yst.sklad.tsd.services.BarCodeUtils;
+import com.yst.sklad.tsd.Utils.BarCodeUtils;
 
 import java.io.Serializable;
 
@@ -88,14 +87,7 @@ public class OneOrderOneCellActivity extends BaseScanActivity {
 
 
         RefreshProductTexts(CurrentProductId,true);
-        //String productName = mDbHelper.getProductById(mShipmentItem.ProductId).Name;
-  //      Product product =mDbHelper.getProductById(CurrentProductId);
 
-   //     String productName = product!=null?product.Name:"";
-   //     String productArticle = product!=null?product.Article:"";
-
-//        TextView tvRowNumber  = (TextView) findViewById(R.id.tv_RowNumber);
-    //  EditText tvProductId = (EditText) findViewById(R.id.tv_ProductId);
 
 
         TextView tv_CellName = (TextView) findViewById(R.id.tv_Storage);
@@ -137,11 +129,12 @@ public class OneOrderOneCellActivity extends BaseScanActivity {
         int productId=0;
         try {
            productId= Integer.parseInt(etProductId.getText().toString());
-           Product product = mDbHelper.getProductById(productId);
+
 
              cell= et_Cell.getText().toString();
 
             /*
+              Product product = mDbHelper.getProductById(productId);
             if ( product==null)
             {
                errorMessage= "Отсутствует товар с данным кодом"; etProductId.requestFocus();
@@ -206,14 +199,23 @@ public class OneOrderOneCellActivity extends BaseScanActivity {
        1. Обработка считывания для сканера
         */
     @Override
-    public void onBarcodeScanned(String mBarcode) {
+    public void onBarcodeScanned(String barcode) {
+        processBarcode(barcode);
 
+    }
+
+    /*
+    Обработка при считывании штрихкода
+
+     */
+    private void processBarcode(String barcode)
+    {
         String cellRead="";
         EditText et_Cell = (EditText) findViewById(R.id.et_Cell);
 
-        String contents=mBarcode;
+        String contents=barcode;
 
-        Log.d(TAG + "/scanned result: ", mBarcode);
+        Log.d(TAG + "/scanned result: ", barcode);
 
 
         int productId = BarCodeUtils.getProductIdFromBarCode(contents);
@@ -243,11 +245,7 @@ public class OneOrderOneCellActivity extends BaseScanActivity {
             tv_CellName.setText(mDbHelper.getNameOfCell(cellRead));
             //   Toast.makeText(OneShipmentItemActivity.this,R.string.cell_read, Toast.LENGTH_LONG).show();
         }
-
-
     }
-
-
 
     public void scanBarCode(View v)
     {
@@ -262,17 +260,18 @@ public class OneOrderOneCellActivity extends BaseScanActivity {
 
         public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 
-        String cellRead="";
+       /* String cellRead="";
         String nameOfProduct = "";
         TextView tvProductName = (TextView)findViewById(R.id.tvProductName);
-        EditText et_Cell = (EditText) findViewById(R.id.et_Cell);
+        EditText et_Cell = (EditText) findViewById(R.id.et_Cell); */
 
 //retrieve scan result
         ZxingOrientResult scanningResult = ZxingOrient.parseActivityResult(requestCode, resultCode, intent);
         if (scanningResult != null) {
 
             String contents= scanningResult.getContents(); if (contents==null) return;
-
+            processBarcode(contents);
+/*
             boolean productIsFound = false;
             int productId = BarCodeUtils.getProductIdFromBarCode(contents);
             Product productFound = null;
@@ -302,7 +301,7 @@ public class OneOrderOneCellActivity extends BaseScanActivity {
                 tv_CellName.setText(mDbHelper.getNameOfCell(cellRead));
              //   Toast.makeText(OneShipmentItemActivity.this,R.string.cell_read, Toast.LENGTH_LONG).show();
             }
-
+*/
 
         }
     }

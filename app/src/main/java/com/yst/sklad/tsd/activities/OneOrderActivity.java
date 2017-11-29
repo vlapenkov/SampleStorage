@@ -1,6 +1,5 @@
 package com.yst.sklad.tsd.activities;
 
-import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
@@ -24,9 +23,9 @@ import com.yst.sklad.tsd.data.ArrivalItem;
 import com.yst.sklad.tsd.data.OrderToSupplier;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
 import com.yst.sklad.tsd.dialogs.YesNoDialogFragment;
-import com.yst.sklad.tsd.services.YesNoInterface;
+import com.yst.sklad.tsd.Utils.YesNoInterface;
 import com.yst.sklad.tsd.services.SoapCallToWebService;
-import com.yst.sklad.tsd.services.TextReaderFromHttp;
+import com.yst.sklad.tsd.Utils.TextReaderFromHttp;
 
 import java.io.InputStream;
 

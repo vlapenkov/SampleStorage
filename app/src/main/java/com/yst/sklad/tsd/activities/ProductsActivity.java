@@ -1,7 +1,6 @@
 package com.yst.sklad.tsd.activities;
 
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -13,7 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,12 +23,8 @@ import com.yst.sklad.tsd.adapters.ProductsCursorAdapter;
 import com.yst.sklad.tsd.data.ProductsContract;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
 import com.yst.sklad.tsd.dialogs.AlertSuccess;
-import com.yst.sklad.tsd.services.BarCodeUtils;
 import com.yst.sklad.tsd.services.ProductsDownloadIntentService;
-import com.yst.sklad.tsd.services.TextReaderFromHttp;
 import com.yst.sklad.tsd.services.UtilsConnectivityService;
-
-import java.io.IOException;
 
 /*Форма списка товаров*/
 
@@ -198,107 +192,6 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    /*
-    private class DownloadAndImportProducts extends AsyncTask<String, Integer, Long> {
-
-        ProgressDialog pDialog;
-
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            pDialog = new ProgressDialog(ProductsActivity.this);
-            pDialog.setProgress(0);
-            pDialog.setMax(100);
-
-            pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            pDialog.setMessage("Loading products ...");
-            pDialog.show();
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            pDialog.setProgress(values[0]);
-
-        }
-
-        @Override
-        protected void onPostExecute(Long aLong) {
-            super.onPostExecute(aLong);
-            //pDialog.setProgress(100);
-            pDialog.dismiss();
-            String format = getString(R.string.products_sucсessfully_downloaded);
-            String message=String.format(format,aLong);
-            String title =getString(R.string.downloadcomplete);
-            AlertSuccess.show(ProductsActivity.this, title, message);
-
-            RefreshList();
-
-        }
-
-        @Override
-        protected Long doInBackground(String... params) {
-            String[] lines;
-            ProductsDbHelper dbHelper;
-
-            String result = null;
-            try {
-                result = downloadUrl(params[0]);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            dbHelper = new ProductsDbHelper(getBaseContext());
-///
-      //      List<Integer> productIdsInDb=dbHelper.getProductIds();
-          //  dbHelper.clearTable(ProductsContract.ProductsEntry.TABLE_NAME);
-
-            lines=   result.split(System.getProperty("line.separator"));
-
-            dbHelper.clearTable(ProductsContract.ProductsEntry.TABLE_NAME);
-            dbHelper.clearTable(ProductsContract.ProductBarcodesEntry.TABLE_NAME);
-
-            int counter=0;
-            for (String line:lines ){
-                counter++;
-                if (counter==1) { continue;}
-
-                if (counter%10==0) publishProgress((int) ((counter / (float) lines.length) * 100));
-                String[] arr=line.split(";");
-
-          //      Log.d(TAG +"/import",arr[0]);
-                int id  = Integer.parseInt(arr[0]);
-
-            //    if(productIdsInDb.contains(id)) continue;
-
-                String name = arr[1];
-                String barcodes = arr[2];
-
-             String firstBarcode=   BarCodeUtils.importAdditionalBarcodesToDb(id,barcodes,dbHelper);
-            //    String[] arraybarcodes = barcodes.split("\\|");
-            //    String barcode = (arraybarcodes.length>0) ? arraybarcodes[0]  :"";
-
-                int productType = Integer.parseInt(arr[3]);
-                String article = arr[4];
-                dbHelper.addProduct(id,name,firstBarcode,"",productType,article);
-
-
-            }
-            return (long)lines.length;
-        }
-
-    }
-
-    private void RefreshList() {
-        getSupportLoaderManager().restartLoader(0, null, this);
-
-    }
-
-
-
-
-*/
     /*
     Удаляет все товары
      */
