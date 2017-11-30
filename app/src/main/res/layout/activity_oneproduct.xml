@@ -78,12 +78,12 @@
             android:onClick="showPicture"
             android:layout_weight="1"
             />
-        <!--<Button android:layout_height="60dp"
+        <Button android:layout_height="60dp"
             android:id="@+id/btnOKAndToNext"
             android:layout_width="0dp"
             android:text="@string/doOKAndToNext"
-            android:onClick="doOKAndToNext"
-            android:layout_weight="1"/> -->
+            android:onClick="checkBarcode"
+            android:layout_weight="1"/>
     </LinearLayout>
 
 </LinearLayout>

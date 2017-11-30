@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.yst.sklad.tsd.R;
 import com.yst.sklad.tsd.data.Product;
@@ -17,8 +18,8 @@ import com.yst.sklad.tsd.services.UtilsConnectivityService;
 * */
 public class OneProductActivity extends AppCompatActivity {
 
-    //ProductsDbHelper dbhelper;
-
+    ProductsDbHelper dbhelper;
+    TextView tvBarCode;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,13 +28,13 @@ public class OneProductActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String productId = intent.getStringExtra(ProductsActivity.PRODUCT_ID_MESSAGE);
 
-        ProductsDbHelper dbhelper = new ProductsDbHelper(this);
+         dbhelper = new ProductsDbHelper(this);
 
         Product product = dbhelper.getProductById(Integer.parseInt(productId));
 
         TextView tvId = (TextView) findViewById(R.id.tv_Id);
         TextView tvName = (TextView) findViewById(R.id.tvName);
-        TextView tvBarCode = (TextView) findViewById(R.id.tvBarCode);
+         tvBarCode = (TextView) findViewById(R.id.tvBarCode);
         TextView tvProductType = (TextView) findViewById(R.id.tvProductType);
         TextView tvArticle = (TextView) findViewById(R.id.tv_Article);
 
@@ -55,16 +56,23 @@ public class OneProductActivity extends AppCompatActivity {
 
     }
 
-    public void showPicture (View v)
-    {
+    public void showPicture (View v) {
         if (new UtilsConnectivityService(OneProductActivity.this).checkConnectivity()) {
-        TextView tvId = (TextView) findViewById(R.id.tv_Id);
-        ProductPictureDialog pDialog = new ProductPictureDialog();
-        Bundle bundle = new Bundle();
-        bundle.putString("productId", tvId.getText().toString());
-        pDialog.setArguments(bundle);
-        pDialog.show(getFragmentManager(), "Заголовок");
+            TextView tvId = (TextView) findViewById(R.id.tv_Id);
+            ProductPictureDialog pDialog = new ProductPictureDialog();
+            Bundle bundle = new Bundle();
+            bundle.putString("productId", tvId.getText().toString());
+            pDialog.setArguments(bundle);
+            pDialog.show(getFragmentManager(), "Заголовок");
+        }
     }
+    public void checkBarcode (View v)
+    {
+      Product  productFound = dbhelper.getProductByBarCode(tvBarCode.getText().toString());
+        if (productFound!=null)
+        {
+            Toast.makeText(this,"товар найден по штрихкоду",Toast.LENGTH_LONG).show();
+        }
     }
 
 

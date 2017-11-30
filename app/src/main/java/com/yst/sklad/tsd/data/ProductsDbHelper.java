@@ -569,13 +569,14 @@ return true;
         if (barcode.length()==12) barcode="0"+barcode;
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor res =  db.rawQuery("select * from " + ProductsContract.ProductsEntry.TABLE_NAME + " where barcode=" + barcode, null);
+        Cursor res =  db.rawQuery("select * from " + ProductsContract.ProductsEntry.TABLE_NAME + " where barcode='" + barcode+"'", null);
+     //   Cursor res =  db.query(ProductsContract.ProductsEntry.TABLE_NAME, null, "barcode", barcode, null, null, "_id desc");
         if (res!=null && res.getCount()>0)
         {   res.moveToFirst();     return Product.fromCursor(res);
         }else
         {
 
-             res =  db.rawQuery("select productid from " + ProductsContract.ProductBarcodesEntry.TABLE_NAME + " where barcode=" + barcode, null);
+             res =  db.rawQuery("select productid from " + ProductsContract.ProductBarcodesEntry.TABLE_NAME + " where barcode='" + barcode+"'", null);
             if (res!=null && res.getCount()>0)
             {   res.moveToFirst();
                int productId= res.getInt(0);

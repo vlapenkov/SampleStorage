@@ -31,6 +31,7 @@
         android:linksClickable="false"
         android:autoLink="all"
         android:text="productId"
+        android:onClick="onClickProductid"
         android:textColor="@color/contents_text"/>
 
     <TextView

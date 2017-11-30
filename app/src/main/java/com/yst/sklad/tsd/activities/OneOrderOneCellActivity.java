@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.yst.sklad.tsd.MainApplication;
 import com.yst.sklad.tsd.R;
 import com.yst.sklad.tsd.data.ArrivalItem;
 import com.yst.sklad.tsd.data.OrderToSupplierItem;
@@ -66,7 +67,7 @@ public class OneOrderOneCellActivity extends BaseScanActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_one_order_one_cell);
 
-        mDbHelper = new ProductsDbHelper(this);
+        mDbHelper = ((MainApplication)getApplication()).getDatabaseHelper();
 
         Intent intent = getIntent();
 
@@ -218,11 +219,11 @@ public class OneOrderOneCellActivity extends BaseScanActivity {
         Log.d(TAG + "/scanned result: ", barcode);
 
 
-        int productId = BarCodeUtils.getProductIdFromBarCode(contents);
-        Product productFound = null;
 
+        Product productFound = null;
+        int productId=0;
         //RefreshProductTexts(productId)
-        if (productId==0) {
+       if (productId==0) {
             productFound = mDbHelper.getProductByBarCode(contents);
             if (productFound!=null) productId=productFound.Id;
         }
