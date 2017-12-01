@@ -483,7 +483,7 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
         return true;
 
     }
-
+/*
     public boolean addStorage ( String id)
     {
         try {
@@ -516,7 +516,7 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
         return true;
 
     }
-
+*/
 
     public boolean updateShipmentItem(int cellid , String cell, int quantity )
     {

@@ -36,6 +36,8 @@ import com.yst.sklad.tsd.dialogs.AlertSuccess;
 import com.yst.sklad.tsd.Utils.ShipmentsDownloadHelper;
 import com.yst.sklad.tsd.services.UtilsConnectivityService;
 
+import java.lang.ref.WeakReference;
+
 /*
 Список заданий на отгрузку
  *  */
@@ -144,7 +146,7 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
         switch (item.getItemId()) {
             case R.id.import_shipments:
             { if (new UtilsConnectivityService(ShipmentsActivity.this).checkConnectivity()) {
-                new DownloadAndImportShipments().execute(StringUrlShipments);
+                new DownloadAndImportShipments(this).execute(StringUrlShipments);
                 getSupportLoaderManager().getLoader(0).forceLoad();
             }
 
@@ -291,57 +293,13 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
         startActivity(intent);
     }
 
-    private void RefreshList() {
+    public void RefreshList() {
         getSupportLoaderManager().restartLoader(0, null, this);
 
     }
-/*
-    public void doPositiveClick() {
-        Log.i(TAG, "Positive click");
-    }
-    */
 
-    private class DownloadAndImportShipments extends AsyncTask<String, Integer, Long> {
-        ProgressDialog pDialog;
-        private boolean mNewShipmentsWasAdded = false;
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
 
-        }
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            pDialog = new ProgressDialog(ShipmentsActivity.this);
-
-            pDialog.setMessage(getString(R.string.shipments_are_being_downloaded));
-            pDialog.show();
-
-        }
-
-        @Override
-        protected void onPostExecute(Long aLong) {
-            super.onPostExecute(aLong);
-            pDialog.dismiss();
-            if (mNewShipmentsWasAdded)
-            {String text = getString(R.string.newShipmentsWereAdded);
-                String title =getString(R.string.downloadcomplete);
-                AlertSuccess.show(ShipmentsActivity.this, title, text);
-                //alertView(title,text);
-            }
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-            if (drawer.isDrawerOpen(GravityCompat.START))   drawer.closeDrawer(GravityCompat.START);
-            RefreshList();
-        }
-        @Override
-        protected Long doInBackground(String... params) {
-            ShipmentsDownloadHelper.createDocuments(ShipmentsActivity.this);
-
-            return null;
-
-        }
-    }
 
 /*
 * class removes all shipments
@@ -363,4 +321,75 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
         getSupportLoaderManager().getLoader(0).forceLoad();
     }
 }
+
+}
+
+ class DownloadAndImportShipments extends AsyncTask<String, Integer, Long> {
+
+    ProgressDialog pDialog;
+    private boolean mNewShipmentsWasAdded = false;
+    private WeakReference<ShipmentsActivity> activity;
+
+
+    @Override
+    protected void onProgressUpdate(Integer... values) {
+        super.onProgressUpdate(values);
+
+    }
+
+    //  private MainActivity activity;
+
+    public DownloadAndImportShipments(ShipmentsActivity activity)
+    {
+        this.activity = new WeakReference<>( activity);
+
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+     /*   pDialog = new ProgressDialog(activity.get());
+        pDialog.setMessage(this.activity.get().getString(R.string.shipments_are_being_downloaded));
+        pDialog.show(); */
+
+    }
+
+    @Override
+    protected void onPostExecute(Long aLong) {
+        super.onPostExecute(aLong);
+
+     //   if (mNewShipmentsWasAdded)
+
+
+
+            //alertView(title,text);
+
+       /* DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START))   drawer.closeDrawer(GravityCompat.START); */
+
+        if(this.activity != null) {
+            ShipmentsActivity main = this.activity.get();
+            if(main != null)
+            {
+                main.RefreshList();
+
+  //              pDialog.dismiss();
+           /* if ( mNewShipmentsWasAdded) {
+
+                String text = main.getString(R.string.newShipmentsWereAdded);
+
+                String title =main.getString(R.string.downloadcomplete);
+                AlertSuccess.show(main, title, text);
+
+                main.RefreshList();
+            }*/
+            }
+    }}
+    @Override
+    protected Long doInBackground(String... params) {
+        ShipmentsDownloadHelper.createDocuments(activity.get());
+
+        return null;
+
+    }
 }

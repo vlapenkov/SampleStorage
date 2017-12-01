@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.yst.sklad.tsd.MainApplication;
 import com.yst.sklad.tsd.R;
+import com.yst.sklad.tsd.Utils.DeviceHelper;
 import com.yst.sklad.tsd.data.Product;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
 import com.yst.sklad.tsd.data.ShipmentItem;
@@ -54,7 +55,7 @@ public class OneShipmentItemActivity extends BaseScanActivity /* implements View
 
         //  { если SMART DROID то скрываем кнопку SCAN
         Button btnScanBarCode = (Button) findViewById(R.id.btnScanBarCode);
-        if (android.os.Build.MANUFACTURER.compareToIgnoreCase("pitech")==0)   btnScanBarCode.setVisibility(View.INVISIBLE);
+        if (DeviceHelper.getTypeOfHardware()==1) btnScanBarCode.setVisibility(View.INVISIBLE);
         // }
 
          tvRowNumber  = (TextView) findViewById(R.id.tv_RowNumber);

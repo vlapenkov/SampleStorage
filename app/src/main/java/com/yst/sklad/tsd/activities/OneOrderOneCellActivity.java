@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.yst.sklad.tsd.MainApplication;
 import com.yst.sklad.tsd.R;
+import com.yst.sklad.tsd.Utils.DeviceHelper;
 import com.yst.sklad.tsd.data.ArrivalItem;
 import com.yst.sklad.tsd.data.OrderToSupplierItem;
 import com.yst.sklad.tsd.data.Product;
@@ -79,7 +80,7 @@ public class OneOrderOneCellActivity extends BaseScanActivity {
 
         //  { если SMART DROID то скрываем кнопку SCAN
         Button btnScanBarCode = (Button) findViewById(R.id.btnScanBarCode);
-        if (android.os.Build.MANUFACTURER.compareToIgnoreCase("pitech")==0)   btnScanBarCode.setVisibility(View.INVISIBLE);
+        if (DeviceHelper.getTypeOfHardware()==1)   btnScanBarCode.setVisibility(View.INVISIBLE);
         // }
         CurrentOrderId = (long)intent.getSerializableExtra(OneOrderActivity.ORDER_ID_MESSAGE);
         //CurrentProductId =
