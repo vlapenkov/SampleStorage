@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.yst.sklad.tsd.MainApplication;
 import com.yst.sklad.tsd.R;
+import com.yst.sklad.tsd.Utils.Constants;
 import com.yst.sklad.tsd.Utils.DeviceHelper;
 import com.yst.sklad.tsd.data.ArrivalItem;
 import com.yst.sklad.tsd.data.OrderToSupplierItem;
@@ -38,7 +39,7 @@ public class OneOrderOneCellActivity extends BaseScanActivity {
 
 
     public static String TAG="OneOrderOneCellActivity";
-    public static int INITIALPRODUCTID=9000001;
+
     long  CurrentOrderId ;
     Integer CurrentProductId ;
 
@@ -91,15 +92,7 @@ public class OneOrderOneCellActivity extends BaseScanActivity {
         RefreshProductTexts(CurrentProductId,true);
 
 
-
-        TextView tv_CellName = (TextView) findViewById(R.id.tv_Storage);
         etQuantity= (EditText) findViewById(R.id.et_QuantityFact);
-        TextView tv_QuantityPlan = (TextView) findViewById(R.id.tv_QuantityPlan);
-
-        TextView tv_RestCaption = (TextView) findViewById(R.id.tv_RestCaption);
-        TextView tv_Rest = (TextView) findViewById(R.id.tv_Rest);
-
-
 
         etProductId.addTextChangedListener(new TextWatcher() {
             @Override
@@ -144,7 +137,7 @@ public class OneOrderOneCellActivity extends BaseScanActivity {
             }
 */
 
-            if (productId<INITIALPRODUCTID)
+            if (productId< Constants.INITIAL_PRODUCT_ID)
             {
                 errorMessage= "Отсутствует товар с данным кодом"; etProductId.requestFocus();
 
@@ -262,10 +255,6 @@ public class OneOrderOneCellActivity extends BaseScanActivity {
 
         public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 
-       /* String cellRead="";
-        String nameOfProduct = "";
-        TextView tvProductName = (TextView)findViewById(R.id.tvProductName);
-        EditText et_Cell = (EditText) findViewById(R.id.et_Cell); */
 
 //retrieve scan result
         ZxingOrientResult scanningResult = ZxingOrient.parseActivityResult(requestCode, resultCode, intent);
@@ -273,37 +262,7 @@ public class OneOrderOneCellActivity extends BaseScanActivity {
 
             String contents= scanningResult.getContents(); if (contents==null) return;
             processBarcode(contents);
-/*
-            boolean productIsFound = false;
-            int productId = BarCodeUtils.getProductIdFromBarCode(contents);
-            Product productFound = null;
 
-
-            //RefreshProductTexts(productId)
-            if (productId==0) {
-                productFound = mDbHelper.getProductByBarCode(contents);
-                if (productFound!=null) productId=productFound.Id;
-            }
-            if (productId>0)
-            {
-                RefreshProductTexts(productId,true);
-
-            }
-
-
-
-            //  это ячейка
-            if (productId==0 && contents!=null &&contents.length()==8) { cellRead =BarCodeUtils.getCellFromBarCode(contents);}
-
-            Log.d(TAG + "/product", String.valueOf(productId));
-            Log.d(TAG + "/cell", cellRead);
-            if (!cellRead.isEmpty()) {
-                et_Cell.setText(cellRead);
-                TextView tv_CellName = (TextView) findViewById(R.id.tv_Storage);
-                tv_CellName.setText(mDbHelper.getNameOfCell(cellRead));
-             //   Toast.makeText(OneShipmentItemActivity.this,R.string.cell_read, Toast.LENGTH_LONG).show();
-            }
-*/
 
         }
     }
