@@ -29,6 +29,7 @@ import android.widget.TextView;
 
 import com.yst.sklad.tsd.MainApplication;
 import com.yst.sklad.tsd.R;
+import com.yst.sklad.tsd.Utils.Constants;
 import com.yst.sklad.tsd.adapters.ShipmentsCursorAdapter;
 import com.yst.sklad.tsd.data.ProductsContract;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
@@ -44,16 +45,26 @@ import java.lang.ref.WeakReference;
 
 public class ShipmentsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, SearchView.OnQueryTextListener,AdapterView.OnItemClickListener,NavigationView.OnNavigationItemSelectedListener {
 
-
+   public ProgressDialog pDialog;
     ShipmentsCursorAdapter mAdapter=null;
     ListView lvData =null;
 
     private static final String TAG = "ShipmentsActivity";
     public static String SHIPMENT_ID_MESSAGE="shipmentID";
-    public static final String StringUrlShipments="http://37.1.84.50:8080/YST/ws/ServiceTransfer";
+
 
     ProductsDbHelper mDbHelper;
     String mCurFilter;
+
+
+    @Override
+    protected void onDestroy() {
+        Log.d(TAG,"OnDestroy");
+        if (pDialog!=null && pDialog.isShowing())
+        pDialog.dismiss();
+        super.onDestroy();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,13 +84,8 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
         // { добавляем номер версии в навигационное меню
 
-        PackageInfo pInfo = null;
-        try {
-            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        String version = pInfo.versionName;
+
+        String version = ((MainApplication)getApplication()).getVersionName();
 
         TextView tv_app=(TextView) navigationView.getHeaderView(0).findViewById(R.id.app_name);
         tv_app.setText( tv_app.getText() +" "+version);
@@ -108,7 +114,8 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
        lvData.setOnItemClickListener(this);
         this.setTitle(R.string.shipments);
 
-
+        pDialog = new ProgressDialog(this);
+        pDialog.setMessage(getString(R.string.shipments_are_being_downloaded));
 
         getSupportLoaderManager().initLoader(0, null, this);
     }
@@ -146,7 +153,8 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
         switch (item.getItemId()) {
             case R.id.import_shipments:
             { if (new UtilsConnectivityService(ShipmentsActivity.this).checkConnectivity()) {
-                new DownloadAndImportShipments(this).execute(StringUrlShipments);
+                pDialog.show();
+                new DownloadAndImportShipmentsTask(this).execute(/*Constants.StringUrlShipments*/);
                 getSupportLoaderManager().getLoader(0).forceLoad();
             }
 
@@ -159,7 +167,7 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which){
                             case DialogInterface.BUTTON_POSITIVE:
-                                new ClearAllShipments().execute();
+                                new ClearAllShipmentsTask().execute();
                                 break;
                         }
                     }
@@ -298,13 +306,64 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
     }
 
+    /*
+    Загрузка заданий из веб-сервиса
+     */
+    private class DownloadAndImportShipmentsTask extends AsyncTask<Void, Void, Integer> {
 
+
+        private WeakReference<ShipmentsActivity> activity;
+
+
+        public DownloadAndImportShipmentsTask(ShipmentsActivity activity)
+        {
+            this.activity = new WeakReference<>( activity);
+
+        }
+
+        @Override
+        protected Integer doInBackground(Void... params) {
+        int counter=    ShipmentsDownloadHelper.createDocuments(activity.get());
+
+         return counter;
+        }
+/*
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+*/
+        @Override
+        protected void onPostExecute(Integer result) {
+            super.onPostExecute(result);
+
+
+       /* DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START))   drawer.closeDrawer(GravityCompat.START); */
+
+            if(this.activity != null) {
+                ShipmentsActivity main = this.activity.get();
+                if(main != null)
+                {
+                    main.pDialog.dismiss();
+                    String text = main.getString(R.string.newShipmentsWereAdded);
+                    text = text + result;
+                    String title =main.getString(R.string.downloadcomplete);
+                    AlertSuccess.show(main, title, text);
+                    main.RefreshList();
+
+
+                }
+            }}
+
+    }
 
 
 /*
 * class removes all shipments
 * */
-    private class ClearAllShipments extends AsyncTask<Void, Void, Void> {
+    private class ClearAllShipmentsTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
             mDbHelper.clearTable(ProductsContract.ShipmentsItemEntry.TABLE_NAME);
@@ -324,72 +383,4 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
 }
 
- class DownloadAndImportShipments extends AsyncTask<String, Integer, Long> {
 
-    ProgressDialog pDialog;
-    private boolean mNewShipmentsWasAdded = false;
-    private WeakReference<ShipmentsActivity> activity;
-
-
-    @Override
-    protected void onProgressUpdate(Integer... values) {
-        super.onProgressUpdate(values);
-
-    }
-
-    //  private MainActivity activity;
-
-    public DownloadAndImportShipments(ShipmentsActivity activity)
-    {
-        this.activity = new WeakReference<>( activity);
-
-    }
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-     /*   pDialog = new ProgressDialog(activity.get());
-        pDialog.setMessage(this.activity.get().getString(R.string.shipments_are_being_downloaded));
-        pDialog.show(); */
-
-    }
-
-    @Override
-    protected void onPostExecute(Long aLong) {
-        super.onPostExecute(aLong);
-
-     //   if (mNewShipmentsWasAdded)
-
-
-
-            //alertView(title,text);
-
-       /* DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START))   drawer.closeDrawer(GravityCompat.START); */
-
-        if(this.activity != null) {
-            ShipmentsActivity main = this.activity.get();
-            if(main != null)
-            {
-                main.RefreshList();
-
-  //              pDialog.dismiss();
-           /* if ( mNewShipmentsWasAdded) {
-
-                String text = main.getString(R.string.newShipmentsWereAdded);
-
-                String title =main.getString(R.string.downloadcomplete);
-                AlertSuccess.show(main, title, text);
-
-                main.RefreshList();
-            }*/
-            }
-    }}
-    @Override
-    protected Long doInBackground(String... params) {
-        ShipmentsDownloadHelper.createDocuments(activity.get());
-
-        return null;
-
-    }
-}
