@@ -203,7 +203,6 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-           // getSupportLoaderManager().getLoader(0).forceLoad();
             RefreshList();
         }
     }

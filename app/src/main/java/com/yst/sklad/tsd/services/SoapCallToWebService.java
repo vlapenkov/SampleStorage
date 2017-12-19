@@ -3,8 +3,11 @@ package com.yst.sklad.tsd.services;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.provider.SyncStateContract;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
+import com.yst.sklad.tsd.Utils.Constants;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,7 +26,9 @@ import java.util.Map;
  */
 public final class SoapCallToWebService {
     public static final String  ResultOk ="Ok.";
-    public static final String StringServiceUrl="http://37.1.84.50:8080/YST/ws/ServiceTransfer";
+    public static final String StringServiceUrl=Constants.STRING_URL_SHIPMENTS;
+
+
 private static HashMap<String,String> mHeaders = new HashMap<>();
 
     static {

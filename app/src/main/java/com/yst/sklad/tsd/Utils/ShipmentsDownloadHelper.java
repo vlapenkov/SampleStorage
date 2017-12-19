@@ -33,8 +33,10 @@ public final  class ShipmentsDownloadHelper {
     public static final Uri CONTENT_URI = AppDataProvider.CONTENTURI_SHIPMENTS;
     private static final String TAG = "ShipmentsDownloadHelper";
 
-    public static void createDocuments(Context context)
+
+    public static int createDocuments(Context context)
     {
+int counter=0;
 
     ProductsDbHelper   dbHelper = ((MainApplication)context.getApplicationContext()).getDatabaseHelper();
 
@@ -98,6 +100,7 @@ public final  class ShipmentsDownloadHelper {
                 }}
             if (hasItems)
             {listOfShipments.add(shipmentToAdd);
+                counter++;
                 Log.d(TAG+ "/shipment added", shipmentToAdd.toString());
                 Log.d(TAG +"/shipmentitems added", listOfShipmentItems.toString());
             }
@@ -136,5 +139,6 @@ public final  class ShipmentsDownloadHelper {
 
 
         }
+        return counter;
     }
 }

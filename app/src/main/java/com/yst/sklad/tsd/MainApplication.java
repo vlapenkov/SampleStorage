@@ -1,6 +1,9 @@
 package com.yst.sklad.tsd;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 
 import com.yst.sklad.tsd.data.ProductsDbHelper;
 
@@ -29,5 +32,18 @@ public class MainApplication extends Application {
 
     public static ProductsDbHelper getDatabaseHelper() {
         return mDbHelper;
+    }
+
+    public  String getVersionName()
+    {
+
+        PackageInfo pInfo = null;
+        try {
+
+            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return pInfo.versionName;
     }
 }

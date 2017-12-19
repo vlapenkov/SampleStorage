@@ -10,6 +10,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 public class DeviceHelper {
@@ -21,4 +24,6 @@ public class DeviceHelper {
       else
         return 0;
     }
+
+
 }
