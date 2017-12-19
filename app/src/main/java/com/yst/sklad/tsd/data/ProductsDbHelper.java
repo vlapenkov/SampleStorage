@@ -7,6 +7,7 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Debug;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -420,22 +421,12 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
     }
 
 
-
-    public boolean addShipment ( Shipment shipment)
-    {
-        try {
-            SQLiteDatabase db = this.getWritableDatabase();
-            ContentValues cv = new ContentValues();
+    public ContentValues prepareShipment(Shipment shipment)
+    {        ContentValues cv = new ContentValues();
             cv.put(ProductsContract.ShipmentsEntry._ID, shipment.Id);
             cv.put(ProductsContract.ShipmentsEntry.COLUMN_DATE, shipment.DateOfShipment);
             cv.put(ProductsContract.ShipmentsEntry.COLUMN_CLIENT, shipment.Client);
-            //cv.put(ProductsContract.ShipmentsEntry.COLUMN_COMMENTS, shipment.comments);
-            db.insert(ProductsContract.ShipmentsEntry.TABLE_NAME, null, cv);
-        }
-        catch (Exception e) {return false;}
-
-        return true;
-
+            return cv;
     }
 
     public boolean addShipmentItem ( ShipmentItem shipmentItem)
@@ -459,7 +450,6 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
         }
 
         return true;
-
     }
 
     public boolean addProduct ( int id, String name,String barcode,String comments,int productType,String article )
@@ -483,40 +473,7 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
         return true;
 
     }
-/*
-    public boolean addStorage ( String id)
-    {
-        try {
-            SQLiteDatabase db = this.getWritableDatabase();
-            ContentValues cv = new ContentValues();
-            cv.put(ProductsContract.StorageEntry._ID, id);
 
-            db.insert(ProductsContract.StorageEntry.TABLE_NAME, null, cv);
-        }
-        catch (Exception e) {return false;}
-
-        return true;
-    }
-
-    // id = barcode
-    public boolean addStockCell (String id , String name, String storageid )
-    {
-        try {
-            SQLiteDatabase db = this.getWritableDatabase();
-            ContentValues cv = new ContentValues();
-            cv.put(ProductsContract.StockCellEntry._ID, id);
-            cv.put(ProductsContract.StockCellEntry.COLUMN_NAME, name);
-            //cv.put(ProductsContract.ProductsEntry.COLUMN_GUID, guid);
-            cv.put(ProductsContract.StockCellEntry.COLUMN_STORAGEID, storageid);
-
-            db.insert(ProductsContract.StockCellEntry.TABLE_NAME, null, cv);
-        }
-        catch (Exception e) {return false;}
-
-        return true;
-
-    }
-*/
 
     public boolean updateShipmentItem(int cellid , String cell, int quantity )
     {
@@ -791,7 +748,7 @@ String        query = "SELECT orderstosuppliersitems._id, rownumber, orderstosup
         return "";
     }
 
-    public Cursor getShipments(String filter) {
+    public Cursor getShipments(@Nullable String filter) {
 
         Cursor cursor =  null;
         SQLiteDatabase db = this.getReadableDatabase();
@@ -815,7 +772,12 @@ String        query = "SELECT orderstosuppliersitems._id, rownumber, orderstosup
 
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String sql_select ="select shipmentitems._id, shipmentitems.rownumber, shipmentitems.productid,IFNULL(shipmentitems.stockcellfact,shipmentitems.stockcell) stockcell, shipmentitems.quantityfact, shipmentitems.queue queue, IFNULL(products.name,'---') as productname, IFNULL(stockcells.storageid,'---') storageid from shipmentitems  left outer join products on shipmentitems.productid=products._id" +
+        String sql_select ="select shipmentitems._id, shipmentitems.rownumber, shipmentitems.productid," +
+                "IFNULL(shipmentitems.stockcellfact,shipmentitems.stockcell) stockcell, " +
+                "shipmentitems.quantityfact, shipmentitems.queue queue, " +
+                "IFNULL(products.name,'---') as productname, " +
+                "IFNULL(stockcells.storageid,'---') storageid from shipmentitems  " +
+                "left outer join products on shipmentitems.productid=products._id" +
                 "  left join stockcells on shipmentitems.stockcell=stockcells._id  where shipmentitems.shipmentid="+shipmentId +" order by shipmentitems._id";
        //     Cursor cur = db.query(ProductsContract.ShipmentsItemEntry.TABLE_NAME, null,"shipmentid = ?", new String[] { shipmentId}, null, null, null);
 

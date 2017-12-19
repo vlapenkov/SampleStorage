@@ -8,12 +8,12 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
+        android:name=".MainApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:name=".MainApplication">
+        android:theme="@style/AppTheme">
         <activity
             android:name=".activities.ProductsActivity"
             android:label="@string/Products">
@@ -24,12 +24,23 @@
         <activity
             android:name=".activities.ShipmentsActivity"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
+          <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+    <!--    <activity
+            android:name=".activities.ShipmentsTestsActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity> -->
+
         <activity android:name=".activities.OneProductActivity" />
         <activity android:name=".activities.OneShipmentActivity" />
         <activity android:name=".activities.MyPreferencesActivity" />
@@ -54,8 +65,21 @@
             -->
         </activity>
         <activity android:name=".activities.OneOrderOneCellActivity" />
-        <service android:name=".services.ProductsDownloadIntentService" android:exported="false"/>
-        <service android:name=".services.StockCellsDownloadIntentService" android:exported="false"/>
+
+        <service
+            android:name=".services.ProductsDownloadIntentService"
+            android:exported="false" />
+        <service
+            android:name=".services.StockCellsDownloadIntentService"
+            android:exported="false" />
+
+        <provider
+            android:name=".data.AppDataProvider"
+            android:authorities="com.yst.sklad.tsd"
+            android:exported="true"
+            android:readPermission="ccom.yst.sklad.tsd.READ_DATABASE"
+            android:writePermission="com.yst.sklad.tsd.WRITE_DATABASE" />
+
     </application>
 
 </manifest>

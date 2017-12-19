@@ -10,14 +10,6 @@ import android.provider.BaseColumns;
  */
 public class ProductsContract {
 
-    public static final String CONTENT_AUTHORITY = "com.example.user.sample1";
-
-    // Use CONTENT_AUTHORITY to create the base of all URI's which apps will use to contact
-    // the content provider.
-    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
-
-
-
     public static final String PATH_PRODUCTS = "products";
     public static final String PATH_SHIPMENTS = "shipments";
     public static final String PATH_SHIPMENTITEMS = "shipmentitems";
@@ -28,14 +20,6 @@ public class ProductsContract {
      */
 
     public static final class ProductsEntry implements BaseColumns {
-
-        public static final Uri CONTENT_URI =
-                BASE_CONTENT_URI.buildUpon().appendPath(PATH_PRODUCTS).build();
-
-        public static final String CONTENT_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_PRODUCTS;
-        public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_PRODUCTS;
 
         // Table name
         public static final String TABLE_NAME = "products";
@@ -48,11 +32,6 @@ public class ProductsContract {
         public static final String COLUMN_ARTICLE = "artilce";
          public static final String COLUMN_COMMENTS = "comments";
 
-
-
-        public static Uri buildLocationUri(long id) {
-            return ContentUris.withAppendedId(CONTENT_URI, id);
-        }
     }
 
     /*
@@ -71,17 +50,8 @@ public class ProductsContract {
         Задание на отгрузку
      */
     public static final class ShipmentsEntry implements BaseColumns {
-
-        public static final Uri CONTENT_URI =
-                BASE_CONTENT_URI.buildUpon().appendPath(PATH_SHIPMENTS).build();
-
-        public static final String CONTENT_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_SHIPMENTS;
-        public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_SHIPMENTS;
-
-        // Table name
-        public static final String TABLE_NAME = PATH_SHIPMENTS;
+  // Table name
+        public static final String TABLE_NAME = "shipments";
 
 
         public static final String COLUMN_DATE = "dateofshipment";
@@ -98,17 +68,8 @@ public class ProductsContract {
         Строка задания на отгрузку
      */
     public static final class ShipmentsItemEntry implements BaseColumns {
-
-        public static final Uri CONTENT_URI =
-                BASE_CONTENT_URI.buildUpon().appendPath(PATH_SHIPMENTITEMS).build();
-
-        public static final String CONTENT_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_SHIPMENTITEMS;
-        public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_SHIPMENTITEMS;
-
         // Table name
-        public static final String TABLE_NAME = PATH_SHIPMENTITEMS;
+        public static final String TABLE_NAME = "shipmentitems";
 
 
         public static final String COLUMN_SHIPMENTID = "shipmentid";

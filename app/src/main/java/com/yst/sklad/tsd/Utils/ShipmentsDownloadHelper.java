@@ -1,11 +1,14 @@
 package com.yst.sklad.tsd.Utils;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.yst.sklad.tsd.MainApplication;
+import com.yst.sklad.tsd.data.AppDataProvider;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
 import com.yst.sklad.tsd.data.Shipment;
 import com.yst.sklad.tsd.data.ShipmentItem;
@@ -27,6 +30,7 @@ import java.util.Set;
 
 public final  class ShipmentsDownloadHelper {
 
+    public static final Uri CONTENT_URI = AppDataProvider.CONTENTURI_SHIPMENTS;
     private static final String TAG = "ShipmentsDownloadHelper";
 
     public static void createDocuments(Context context)
@@ -107,8 +111,12 @@ public final  class ShipmentsDownloadHelper {
         for (Shipment shipment : listOfShipments)
         {
             if (!dbHelper.checkIfShipmentExists(shipment.Id))
-            {    dbHelper.addShipment(shipment);
-                mNewShipmentsWasAdded=true; }
+            {
+
+         ContentValues cv=  dbHelper.prepareShipment(shipment);
+                Uri newUri = context.getContentResolver().insert(CONTENT_URI, cv);
+                mNewShipmentsWasAdded=true;
+        }
 
         }
 
@@ -121,7 +129,11 @@ public final  class ShipmentsDownloadHelper {
                 //&& !dbHelper.checkIfShipmentItemsExistByShipmentAndRow(shipmentItem.ShipmentId,shipmentItem.RowNumber)
                     )
 
-                dbHelper.addShipmentItem(shipmentItem);
+                    dbHelper.addShipmentItem(shipmentItem);
+
+
+
+
 
         }
     }

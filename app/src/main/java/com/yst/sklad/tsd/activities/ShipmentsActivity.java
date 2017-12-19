@@ -49,8 +49,8 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
     ListView lvData =null;
 
     private static final String TAG = "ShipmentsActivity";
-    public static String SHIPMENT_ID_MESSAGE="shipmentID";
-    public static final String StringUrlShipments="http://37.1.84.50:8080/YST/ws/ServiceTransfer";
+    public static final String SHIPMENT_ID_MESSAGE="SHIPMENT_ID_MESSAGE";
+
 
     ProductsDbHelper mDbHelper;
     String mCurFilter;
@@ -146,7 +146,7 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
         switch (item.getItemId()) {
             case R.id.import_shipments:
             { if (new UtilsConnectivityService(ShipmentsActivity.this).checkConnectivity()) {
-                new DownloadAndImportShipments(this).execute(StringUrlShipments);
+                new DownloadAndImportShipments(this).execute();
                 getSupportLoaderManager().getLoader(0).forceLoad();
             }
 
@@ -324,7 +324,7 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
 }
 
- class DownloadAndImportShipments extends AsyncTask<String, Integer, Long> {
+ class DownloadAndImportShipments extends AsyncTask<Void, Integer, Long> {
 
     ProgressDialog pDialog;
     private boolean mNewShipmentsWasAdded = false;
@@ -345,7 +345,14 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
     }
 
-    @Override
+     @Override
+     protected Long doInBackground(Void... params) {
+         ShipmentsDownloadHelper.createDocuments(activity.get());
+
+         return null;
+     }
+
+     @Override
     protected void onPreExecute() {
         super.onPreExecute();
      /*   pDialog = new ProgressDialog(activity.get());
@@ -359,9 +366,6 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
         super.onPostExecute(aLong);
 
      //   if (mNewShipmentsWasAdded)
-
-
-
             //alertView(title,text);
 
        /* DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -385,11 +389,5 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
             }*/
             }
     }}
-    @Override
-    protected Long doInBackground(String... params) {
-        ShipmentsDownloadHelper.createDocuments(activity.get());
 
-        return null;
-
-    }
 }
