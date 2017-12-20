@@ -39,7 +39,7 @@ import com.yst.sklad.tsd.services.UtilsConnectivityService;
 import java.lang.ref.WeakReference;
 
 /*
-Список заданий на отгрузку 12
+Список заданий на отгрузку 123
  *  */
 
 public class ShipmentsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, SearchView.OnQueryTextListener,AdapterView.OnItemClickListener,NavigationView.OnNavigationItemSelectedListener {
