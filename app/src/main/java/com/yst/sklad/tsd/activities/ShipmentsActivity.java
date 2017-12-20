@@ -43,7 +43,7 @@ import java.lang.ref.WeakReference;
 
 public class ShipmentsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, SearchView.OnQueryTextListener,AdapterView.OnItemClickListener,NavigationView.OnNavigationItemSelectedListener {
 
-
+    ProgressDialog pDialog=null;
     ShipmentsCursorAdapter mAdapter=null;
     ListView lvData =null;
 
@@ -150,8 +150,12 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
         switch (item.getItemId()) {
             case R.id.import_shipments:
             { if (ConnectivityHelper.checkConnectivity()) {
+
+                pDialog = new ProgressDialog(this);
+                pDialog.setMessage(getString(R.string.shipments_are_being_downloaded));
+                pDialog.show();
                 new DownloadAndImportShipments(this).execute();
-                getSupportLoaderManager().getLoader(0).forceLoad();
+             //   getSupportLoaderManager().getLoader(0).forceLoad();
             }
 
                 return true;}
@@ -300,9 +304,12 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
         super.onDestroy();
     }
 
+    /*
+    Надо сделать intent вместо aasyncTask
+     */
     private    class DownloadAndImportShipments extends AsyncTask<Void, Integer, Long> {
 
-        ProgressDialog pDialog;
+
         private boolean mNewShipmentsWasAdded = false;
         private WeakReference<ShipmentsActivity> activity;
 
@@ -331,10 +338,6 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-   /*    pDialog = new ProgressDialog(activity.get());
-        pDialog.setMessage(this.activity.get().getString(R.string.shipments_are_being_downloaded));
-        pDialog.show(); */
-
         }
 
         @Override
@@ -349,8 +352,9 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
             if(this.activity != null) {
                 ShipmentsActivity main = this.activity.get();
-                if(main != null)
+                if(main != null && main.pDialog!=null)
                 {
+                main.pDialog.dismiss();
                 // main.RefreshList();
 
               //                    pDialog.dismiss();
