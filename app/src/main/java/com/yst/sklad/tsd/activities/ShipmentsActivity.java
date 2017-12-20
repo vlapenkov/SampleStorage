@@ -350,7 +350,7 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
                 ShipmentsActivity main = this.activity.get();
                 if(main != null)
                 {
-                    main.RefreshList();
+                  main.RefreshList();
 
                     //              pDialog.dismiss();
            /* if ( mNewShipmentsWasAdded) {
