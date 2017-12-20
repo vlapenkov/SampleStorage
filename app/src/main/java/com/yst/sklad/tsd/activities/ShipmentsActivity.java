@@ -73,13 +73,16 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
         // { добавляем номер версии в навигационное меню
 
+        /*
         PackageInfo pInfo = null;
         try {
             pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
-        }
-        String version = pInfo.versionName;
+        }*/
+
+        String version = ((MainApplication)getApplication()).getVersionName();
+        //pInfo.versionName;
 
         TextView tv_app=(TextView) navigationView.getHeaderView(0).findViewById(R.id.app_name);
         tv_app.setText( tv_app.getText() +" "+version);

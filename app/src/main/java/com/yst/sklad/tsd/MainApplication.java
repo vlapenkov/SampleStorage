@@ -40,7 +40,7 @@ public class MainApplication extends Application {
         PackageInfo pInfo = null;
         try {
 
-            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            pInfo = getApplicationContext().getPackageManager().getPackageInfo(getPackageName(), 0);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
