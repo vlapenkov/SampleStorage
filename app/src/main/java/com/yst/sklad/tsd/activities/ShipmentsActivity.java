@@ -299,6 +299,73 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
     }
 
 
+    private    class DownloadAndImportShipments extends AsyncTask<Void, Integer, Long> {
+
+        ProgressDialog pDialog;
+        private boolean mNewShipmentsWasAdded = false;
+        private WeakReference<ShipmentsActivity> activity;
+
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+
+        }
+
+        //  private MainActivity activity;
+
+        public DownloadAndImportShipments(ShipmentsActivity activity)
+        {
+            this.activity = new WeakReference<>( activity);
+
+        }
+
+        @Override
+        protected Long doInBackground(Void... params) {
+            ShipmentsDownloadHelper.createDocuments(activity.get());
+
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+     /*   pDialog = new ProgressDialog(activity.get());
+        pDialog.setMessage(this.activity.get().getString(R.string.shipments_are_being_downloaded));
+        pDialog.show(); */
+
+        }
+
+        @Override
+        protected void onPostExecute(Long aLong) {
+            super.onPostExecute(aLong);
+
+            //   if (mNewShipmentsWasAdded)
+            //alertView(title,text);
+
+       /* DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START))   drawer.closeDrawer(GravityCompat.START); */
+
+            if(this.activity != null) {
+                ShipmentsActivity main = this.activity.get();
+                if(main != null)
+                {
+                    main.RefreshList();
+
+                    //              pDialog.dismiss();
+           /* if ( mNewShipmentsWasAdded) {
+
+                String text = main.getString(R.string.newShipmentsWereAdded);
+
+                String title =main.getString(R.string.downloadcomplete);
+                AlertSuccess.show(main, title, text);
+
+                main.RefreshList();
+            }*/
+                }
+            }}
+
+    }
 
 
 /*
@@ -324,70 +391,3 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
 }
 
- class DownloadAndImportShipments extends AsyncTask<Void, Integer, Long> {
-
-    ProgressDialog pDialog;
-    private boolean mNewShipmentsWasAdded = false;
-    private WeakReference<ShipmentsActivity> activity;
-
-
-    @Override
-    protected void onProgressUpdate(Integer... values) {
-        super.onProgressUpdate(values);
-
-    }
-
-    //  private MainActivity activity;
-
-    public DownloadAndImportShipments(ShipmentsActivity activity)
-    {
-        this.activity = new WeakReference<>( activity);
-
-    }
-
-     @Override
-     protected Long doInBackground(Void... params) {
-         ShipmentsDownloadHelper.createDocuments(activity.get());
-
-         return null;
-     }
-
-     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-     /*   pDialog = new ProgressDialog(activity.get());
-        pDialog.setMessage(this.activity.get().getString(R.string.shipments_are_being_downloaded));
-        pDialog.show(); */
-
-    }
-
-    @Override
-    protected void onPostExecute(Long aLong) {
-        super.onPostExecute(aLong);
-
-     //   if (mNewShipmentsWasAdded)
-            //alertView(title,text);
-
-       /* DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START))   drawer.closeDrawer(GravityCompat.START); */
-
-        if(this.activity != null) {
-            ShipmentsActivity main = this.activity.get();
-            if(main != null)
-            {
-                main.RefreshList();
-
-  //              pDialog.dismiss();
-           /* if ( mNewShipmentsWasAdded) {
-
-                String text = main.getString(R.string.newShipmentsWereAdded);
-
-                String title =main.getString(R.string.downloadcomplete);
-                AlertSuccess.show(main, title, text);
-
-                main.RefreshList();
-            }*/
-            }
-    }}
-
-}
