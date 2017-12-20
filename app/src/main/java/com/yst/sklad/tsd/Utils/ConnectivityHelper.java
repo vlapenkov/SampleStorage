@@ -1,4 +1,4 @@
-package com.yst.sklad.tsd.services;
+package com.yst.sklad.tsd.Utils;
 
 import android.app.Application;
 import android.content.Context;
@@ -11,7 +11,7 @@ import com.yst.sklad.tsd.MainApplication;
 /**
  * Created by user on 13.06.2016.
  */
-public class UtilsConnectivityService {
+public class ConnectivityHelper {
 
 
     /**

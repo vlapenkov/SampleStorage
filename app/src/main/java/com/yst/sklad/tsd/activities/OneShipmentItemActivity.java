@@ -3,7 +3,6 @@ package com.yst.sklad.tsd.activities;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,7 +18,7 @@ import com.yst.sklad.tsd.data.ShipmentItem;
 import com.yst.sklad.tsd.dialogs.ProductOnRestsDialog;
 import com.yst.sklad.tsd.dialogs.ProductPictureDialog;
 import com.yst.sklad.tsd.Utils.BarCodeUtils;
-import com.yst.sklad.tsd.services.UtilsConnectivityService;
+import com.yst.sklad.tsd.Utils.ConnectivityHelper;
 
 import me.sudar.zxingorient.ZxingOrient;
 import me.sudar.zxingorient.ZxingOrientResult;
@@ -197,7 +196,7 @@ public class OneShipmentItemActivity extends BaseScanActivity /* implements View
 
     public void onClickProductid(View v) {
 
-        if ( UtilsConnectivityService.checkConnectivity()) {
+        if ( ConnectivityHelper.checkConnectivity()) {
             TextView tvId = (TextView) findViewById(R.id.tv_ProductId);
             ProductPictureDialog pDialog = new ProductPictureDialog();
             Bundle bundle = new Bundle();
@@ -210,7 +209,7 @@ public class OneShipmentItemActivity extends BaseScanActivity /* implements View
 
 
     public void showProductOnStocks(View v) {
-        if (UtilsConnectivityService.checkConnectivity()) {
+        if (ConnectivityHelper.checkConnectivity()) {
             TextView tvId = (TextView) findViewById(R.id.tv_ProductId);
             String productId = tvId.getText().toString();
             ProductOnRestsDialog pDialog = new ProductOnRestsDialog();

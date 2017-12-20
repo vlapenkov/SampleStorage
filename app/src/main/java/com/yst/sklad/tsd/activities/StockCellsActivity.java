@@ -24,7 +24,7 @@ import com.yst.sklad.tsd.data.ProductsDbHelper;
 import com.yst.sklad.tsd.dialogs.AlertSuccess;
 import com.yst.sklad.tsd.services.StockCellsDownloadIntentService;
 import com.yst.sklad.tsd.Utils.TextReaderFromHttp;
-import com.yst.sklad.tsd.services.UtilsConnectivityService;
+import com.yst.sklad.tsd.Utils.ConnectivityHelper;
 
 import java.io.IOException;
 
@@ -37,7 +37,7 @@ public class StockCellsActivity extends AppCompatActivity implements LoaderManag
     ListView lvData =null;
 
     private static final String TAG = "StockCellsActivity";
-    private static final String stringUrlStoragesAndCells= Constants.STRING_URL_STORAGESANDCELLS;
+  //  private static final String stringUrlStoragesAndCells= Constants.STRING_URL_STORAGESANDCELLS;
     private static final int REQUEST_CODE = 0;
 
 
@@ -145,7 +145,7 @@ public class StockCellsActivity extends AppCompatActivity implements LoaderManag
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.refresh:
-                if (UtilsConnectivityService.checkConnectivity())
+                if (ConnectivityHelper.checkConnectivity())
                     importAllStockCells();
          //        new DownloadAndImportStockCells().execute(stringUrlStoragesAndCells);
            //     getSupportLoaderManager().getLoader(0).forceLoad();
@@ -167,7 +167,7 @@ public class StockCellsActivity extends AppCompatActivity implements LoaderManag
         PendingIntent pendingIntent = createPendingResult(REQUEST_CODE, new Intent(), 0);
         Intent intent = new Intent(this, StockCellsDownloadIntentService.class);
         intent.putExtra(StockCellsDownloadIntentService.PENDING_RESULT, pendingIntent); // pendingIntent - передается в IntentService
-        intent.putExtra("url", stringUrlStoragesAndCells);
+        intent.putExtra("url", Constants.STRING_URL_STORAGESANDCELLS);
         startService(intent);
     }
 

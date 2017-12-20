@@ -11,7 +11,7 @@ import com.yst.sklad.tsd.R;
 import com.yst.sklad.tsd.data.Product;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
 import com.yst.sklad.tsd.dialogs.ProductPictureDialog;
-import com.yst.sklad.tsd.services.UtilsConnectivityService;
+import com.yst.sklad.tsd.Utils.ConnectivityHelper;
 
 /*
 * Форма одного товара из списка товаров
@@ -57,7 +57,7 @@ public class OneProductActivity extends AppCompatActivity {
     }
 
     public void showPicture (View v) {
-        if ( UtilsConnectivityService.checkConnectivity()) {
+        if ( ConnectivityHelper.checkConnectivity()) {
             TextView tvId = (TextView) findViewById(R.id.tv_Id);
             ProductPictureDialog pDialog = new ProductPictureDialog();
             Bundle bundle = new Bundle();

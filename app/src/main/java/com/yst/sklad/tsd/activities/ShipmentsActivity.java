@@ -3,9 +3,8 @@ package com.yst.sklad.tsd.activities;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -30,11 +29,11 @@ import android.widget.TextView;
 import com.yst.sklad.tsd.MainApplication;
 import com.yst.sklad.tsd.R;
 import com.yst.sklad.tsd.adapters.ShipmentsCursorAdapter;
+import com.yst.sklad.tsd.data.AppDataProvider;
 import com.yst.sklad.tsd.data.ProductsContract;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
-import com.yst.sklad.tsd.dialogs.AlertSuccess;
 import com.yst.sklad.tsd.Utils.ShipmentsDownloadHelper;
-import com.yst.sklad.tsd.services.UtilsConnectivityService;
+import com.yst.sklad.tsd.Utils.ConnectivityHelper;
 
 import java.lang.ref.WeakReference;
 
@@ -50,6 +49,7 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
     private static final String TAG = "ShipmentsActivity";
     public static final String SHIPMENT_ID_MESSAGE="SHIPMENT_ID_MESSAGE";
+    public static final Uri CONTENT_URI = AppDataProvider.CONTENTURI_SHIPMENTS;
 
 
     ProductsDbHelper mDbHelper;
@@ -116,6 +116,7 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
         getSupportLoaderManager().initLoader(0, null, this);
     }
 
+    /*
     @Override
     protected void onRestart() {
 
@@ -123,7 +124,7 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
             getSupportLoaderManager().restartLoader(0, null, this);
 
 
-    }
+    }*/
 
     @Override
     public void onBackPressed() {
@@ -148,7 +149,7 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.import_shipments:
-            { if (UtilsConnectivityService.checkConnectivity()) {
+            { if (ConnectivityHelper.checkConnectivity()) {
                 new DownloadAndImportShipments(this).execute();
                 getSupportLoaderManager().getLoader(0).forceLoad();
             }
@@ -241,17 +242,8 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
     }
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String[] projection=null,selectionArgs=null;
-        String selection=null , sortOrder=null;
-        return new CursorLoader( getApplicationContext(), null, projection, selection,selectionArgs,sortOrder )
-        {
-            @Override
-            public Cursor loadInBackground()
-            {
-                return mDbHelper.getShipments(mCurFilter);
 
-            }
-        };
+        return new CursorLoader(this,CONTENT_URI,null,null,null,null);
     }
 
     @Override
@@ -295,12 +287,18 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
         startActivity(intent);
     }
-
+/*
     public void RefreshList() {
         getSupportLoaderManager().restartLoader(0, null, this);
 
     }
+    */
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 
     private    class DownloadAndImportShipments extends AsyncTask<Void, Integer, Long> {
 
@@ -333,7 +331,7 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-     /*   pDialog = new ProgressDialog(activity.get());
+   /*    pDialog = new ProgressDialog(activity.get());
         pDialog.setMessage(this.activity.get().getString(R.string.shipments_are_being_downloaded));
         pDialog.show(); */
 
@@ -353,9 +351,9 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
                 ShipmentsActivity main = this.activity.get();
                 if(main != null)
                 {
-                  main.RefreshList();
+                // main.RefreshList();
 
-                    //              pDialog.dismiss();
+              //                    pDialog.dismiss();
            /* if ( mNewShipmentsWasAdded) {
 
                 String text = main.getString(R.string.newShipmentsWereAdded);

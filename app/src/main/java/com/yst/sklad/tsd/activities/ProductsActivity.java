@@ -19,12 +19,13 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.yst.sklad.tsd.R;
+import com.yst.sklad.tsd.Utils.Constants;
 import com.yst.sklad.tsd.adapters.ProductsCursorAdapter;
 import com.yst.sklad.tsd.data.ProductsContract;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
 import com.yst.sklad.tsd.dialogs.AlertSuccess;
 import com.yst.sklad.tsd.services.ProductsDownloadIntentService;
-import com.yst.sklad.tsd.services.UtilsConnectivityService;
+import com.yst.sklad.tsd.Utils.ConnectivityHelper;
 
 /*Форма списка товаров*/
 
@@ -33,7 +34,7 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
     private static final String TAG = "ProductsActivity";
     ProductsCursorAdapter mAdapter=null;
     ListView lvData =null;
-    private static final String stringUrlProducts="http://yst.ru/data/Products.txt";
+ //   private static final String stringUrlProducts="http://yst.ru/data/Products.txt";
 
     public static String PRODUCT_ID_MESSAGE="productID";
     ProductsDbHelper mDbHelper;
@@ -84,7 +85,7 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.refresh:
-            { if (UtilsConnectivityService.checkConnectivity())
+            { if (ConnectivityHelper.checkConnectivity())
                 importAllProducts();
 
                 break;
@@ -169,7 +170,7 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
 
         Intent intent = new Intent(this, ProductsDownloadIntentService.class);
         intent.putExtra(ProductsDownloadIntentService.PENDING_RESULT, pendingIntent); // pendingIntent - передается в IntentService
-        intent.putExtra("url", stringUrlProducts);
+        intent.putExtra("url", Constants.STRING_URL_PRODUCTS);
         startService(intent);
 
 

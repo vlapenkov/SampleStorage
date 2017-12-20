@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.yst.sklad.tsd.MainApplication;
 import com.yst.sklad.tsd.R;
 import com.yst.sklad.tsd.data.ProductsContract;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
@@ -23,7 +24,7 @@ import com.yst.sklad.tsd.dialogs.AlertEnterString;
 import com.yst.sklad.tsd.dialogs.AlertSuccess;
 import com.yst.sklad.tsd.Utils.OrderDownloadHelper;
 import com.yst.sklad.tsd.Utils.YesNoInterface;
-import com.yst.sklad.tsd.services.UtilsConnectivityService;
+import com.yst.sklad.tsd.Utils.ConnectivityHelper;
 
 /*
 Заказы поставщикам и перемещения (для поступлений)
@@ -43,7 +44,7 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_orders);
 
-        mDbHelper = new ProductsDbHelper(this);
+        mDbHelper = ((MainApplication)getApplication()).getDatabaseHelper();
         lvData = (ListView) findViewById(R.id.lvData);
 
 
@@ -73,7 +74,7 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
         if  (orderNumber!=null && !orderNumber.isEmpty())
         {
 
-            if (UtilsConnectivityService.checkConnectivity()) {
+            if (ConnectivityHelper.checkConnectivity()) {
                 new DownloadAndImportOrders().execute(orderNumber);
 
         }

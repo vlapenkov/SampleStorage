@@ -45,8 +45,6 @@
         <activity android:name=".activities.OneShipmentActivity" />
         <activity android:name=".activities.MyPreferencesActivity" />
 
-        <service android:name=".services.SimpleIntentService" />
-
         <activity
             android:name=".activities.StockCellsActivity"
             android:label="@string/stockcells" />
