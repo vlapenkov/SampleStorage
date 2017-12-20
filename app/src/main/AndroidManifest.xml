@@ -47,7 +47,6 @@
 
         <service android:name=".services.SimpleIntentService" />
 
-        <activity android:name=".activities.LoadEntitiesActivity" />
         <activity
             android:name=".activities.StockCellsActivity"
             android:label="@string/stockcells" />

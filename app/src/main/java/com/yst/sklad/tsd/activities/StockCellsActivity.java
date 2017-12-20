@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.yst.sklad.tsd.R;
+import com.yst.sklad.tsd.Utils.Constants;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
 import com.yst.sklad.tsd.dialogs.AlertSuccess;
 import com.yst.sklad.tsd.services.StockCellsDownloadIntentService;
@@ -36,7 +37,7 @@ public class StockCellsActivity extends AppCompatActivity implements LoaderManag
     ListView lvData =null;
 
     private static final String TAG = "StockCellsActivity";
-    private static final String stringUrlStoragesAndCells="http://yst.ru/data/Stores.txt";
+    private static final String stringUrlStoragesAndCells= Constants.STRING_URL_STORAGESANDCELLS;
     private static final int REQUEST_CODE = 0;
 
 
@@ -144,7 +145,7 @@ public class StockCellsActivity extends AppCompatActivity implements LoaderManag
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.refresh:
-                if (new UtilsConnectivityService(this).checkConnectivity())
+                if (UtilsConnectivityService.checkConnectivity())
                     importAllStockCells();
          //        new DownloadAndImportStockCells().execute(stringUrlStoragesAndCells);
            //     getSupportLoaderManager().getLoader(0).forceLoad();

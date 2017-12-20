@@ -73,7 +73,7 @@ public class OrdersActivity extends AppCompatActivity  implements LoaderManager.
         if  (orderNumber!=null && !orderNumber.isEmpty())
         {
 
-            if (new UtilsConnectivityService(OrdersActivity.this).checkConnectivity()) {
+            if (UtilsConnectivityService.checkConnectivity()) {
                 new DownloadAndImportOrders().execute(orderNumber);
 
         }

@@ -57,7 +57,7 @@ public class OneProductActivity extends AppCompatActivity {
     }
 
     public void showPicture (View v) {
-        if (new UtilsConnectivityService(OneProductActivity.this).checkConnectivity()) {
+        if ( UtilsConnectivityService.checkConnectivity()) {
             TextView tvId = (TextView) findViewById(R.id.tv_Id);
             ProductPictureDialog pDialog = new ProductPictureDialog();
             Bundle bundle = new Bundle();

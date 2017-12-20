@@ -148,7 +148,7 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.import_shipments:
-            { if (new UtilsConnectivityService(ShipmentsActivity.this).checkConnectivity()) {
+            { if (UtilsConnectivityService.checkConnectivity()) {
                 new DownloadAndImportShipments(this).execute();
                 getSupportLoaderManager().getLoader(0).forceLoad();
             }

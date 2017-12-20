@@ -84,7 +84,7 @@ public class ProductsActivity extends AppCompatActivity   implements LoaderManag
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.refresh:
-            { if (new UtilsConnectivityService(ProductsActivity.this).checkConnectivity())
+            { if (UtilsConnectivityService.checkConnectivity())
                 importAllProducts();
 
                 break;

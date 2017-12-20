@@ -182,10 +182,6 @@ public class OneShipmentItemActivity extends BaseScanActivity /* implements View
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 
-   /*     String cellRead="";
-        String nameOfProduct = "";
-        TextView tvProductName = (TextView)findViewById(R.id.tvProductName);
-        EditText et_Cell = (EditText) findViewById(R.id.et_Cell); */
 
 //retrieve scan result
         ZxingOrientResult scanningResult = ZxingOrient.parseActivityResult(requestCode, resultCode, intent);
@@ -194,42 +190,14 @@ public class OneShipmentItemActivity extends BaseScanActivity /* implements View
             String contents= scanningResult.getContents(); if (contents==null) return;
 
             processBarcode(contents);
-       /*     boolean productIsFound = false;
-            int productId = BarCodeUtils.getProductIdFromBarCode(contents);
-            Product productFound = null;
 
-            if (productId==0) {
-                productFound = mDbHelper.getProductByBarCode(contents);
-                if (productFound!=null) productId=productFound.Id;
-            }
-
-
-
-            //  это ячейка
-                if (productId==0 && contents!=null &&contents.length()==8) { cellRead =BarCodeUtils.getCellFromBarCode(contents);}
-            else //  это товар
-                {
-                if (productId!=mShipmentItem.ProductId) Toast.makeText(OneShipmentItemActivity.this,R.string.products_shouldbe_equal, Toast.LENGTH_LONG).show();
-                else //productId==mShipmentItem.ProductId
-                {Toast.makeText(OneShipmentItemActivity.this,R.string.product_read, Toast.LENGTH_LONG).show();}
-
-            }
-            Log.d(TAG + "/product", String.valueOf(productId));
-            Log.d(TAG + "/cell", cellRead);
-            if (!cellRead.isEmpty()) {
-                et_Cell.setText(cellRead);
-                TextView tv_CellName = (TextView) findViewById(R.id.tv_Storage);
-                tv_CellName.setText(mDbHelper.getNameOfCell(cellRead));
-                Toast.makeText(OneShipmentItemActivity.this,R.string.cell_read, Toast.LENGTH_LONG).show();
-            }
-*/
 
         }
     }
 
     public void onClickProductid(View v) {
 
-        if (new UtilsConnectivityService(OneShipmentItemActivity.this).checkConnectivity()) {
+        if ( UtilsConnectivityService.checkConnectivity()) {
             TextView tvId = (TextView) findViewById(R.id.tv_ProductId);
             ProductPictureDialog pDialog = new ProductPictureDialog();
             Bundle bundle = new Bundle();
@@ -238,21 +206,11 @@ public class OneShipmentItemActivity extends BaseScanActivity /* implements View
             pDialog.show(getFragmentManager(), "Заголовок");
         }
     }
-  /*  @Override
-    public void onClick(View v) {
 
-        if (new UtilsConnectivityService(OneShipmentItemActivity.this).checkConnectivity()) {
-            TextView tvId = (TextView) findViewById(R.id.tv_ProductId);
-            ProductPictureDialog pDialog = new ProductPictureDialog();
-            Bundle bundle = new Bundle();
-            bundle.putString("productId", tvId.getText().toString());
-            pDialog.setArguments(bundle);
-            pDialog.show(getFragmentManager(), "Заголовок");
-    } */
 
 
     public void showProductOnStocks(View v) {
-        if (new UtilsConnectivityService(OneShipmentItemActivity.this).checkConnectivity()) {
+        if (UtilsConnectivityService.checkConnectivity()) {
             TextView tvId = (TextView) findViewById(R.id.tv_ProductId);
             String productId = tvId.getText().toString();
             ProductOnRestsDialog pDialog = new ProductOnRestsDialog();

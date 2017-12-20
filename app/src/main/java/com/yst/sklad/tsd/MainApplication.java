@@ -13,26 +13,26 @@ import com.yst.sklad.tsd.data.ProductsDbHelper;
 
 public class MainApplication extends Application {
 
-    /**
-     * see NotePad tutorial for an example implementation of DataDbAdapter
-     */
     private static ProductsDbHelper mDbHelper;
+    private static Context sContext;
 
-    /**
-     * Called when the application is starting, before any other
-     * application objects have been created. Implementations
-     * should be as quick as possible...
-     */
     @Override
     public void onCreate() {
         super.onCreate();
         mDbHelper = new ProductsDbHelper(this);
+        sContext=   getApplicationContext();
      //   mDbHelper.open();
     }
 
     public static ProductsDbHelper getDatabaseHelper() {
         return mDbHelper;
     }
+    public static Context getContext() {
+        return sContext;
+    }
+
+   //public  Context getApplication() {return getApplication();}
+
 
     public  String getVersionName()
     {
