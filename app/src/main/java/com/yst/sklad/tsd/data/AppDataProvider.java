@@ -14,6 +14,7 @@ import com.yst.sklad.tsd.MainApplication;
 
 /**
  * Created by user on 19.12.2017.
+ *
  */
 public class AppDataProvider  extends ContentProvider {
     ProductsDbHelper helper;
