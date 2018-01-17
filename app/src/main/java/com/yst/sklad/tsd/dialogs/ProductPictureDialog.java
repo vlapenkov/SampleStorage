@@ -27,14 +27,12 @@ public class ProductPictureDialog extends DialogFragment implements View.OnClick
     Bitmap bitmap;
     String mProductId ;
     ImageView mImg;
-String mUrlPrefix ="http://terminal.yst.ru/customforpartners/productpicture.ashx?productid=";
+    String mUrlPrefix ="http://terminal.yst.ru/customforpartners/productpicture.ashx?productid=";
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         getDialog().setTitle(R.string.picture_of_product);
         View v = inflater.inflate(R.layout.dialog_picture, null);
         mProductId = getArguments().getString("productId");
-
         return v;
     }
 

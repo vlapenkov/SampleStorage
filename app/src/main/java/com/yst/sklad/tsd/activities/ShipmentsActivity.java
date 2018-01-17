@@ -73,14 +73,6 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
         // { добавляем номер версии в навигационное меню
 
-        /*
-        PackageInfo pInfo = null;
-        try {
-            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }*/
-
         String version = ((MainApplication)getApplication()).getVersionName();
         //pInfo.versionName;
 
@@ -204,6 +196,13 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
             case R.id.orders: {
 
                 Intent intent = new Intent(this, OrdersActivity.class);
+
+                startActivity(intent);
+                return true;
+            }
+            case R.id.productwithcount:
+            {
+                Intent intent = new Intent(this, ListOfProductsWithCountActivity.class);
 
                 startActivity(intent);
                 return true;

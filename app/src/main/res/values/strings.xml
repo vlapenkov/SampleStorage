@@ -76,6 +76,7 @@
     <string name="btnScanBarCode">Scan</string>
     <string name="btnShowProductOnStocks">показать на складах</string>
     <string name="doOKAndToNext">OK</string>
+    <string name="doCancel">Отмена</string>
     <string name="refresh">Загрузить</string>
     <string name="loadtodatabase">Загрузить</string>
     <string name="stockcells">Ячейки</string>
@@ -122,4 +123,5 @@
     <string name="deleteOrder">Удалить заказ?</string>
     <string name="deleteRow">Удалить строку?</string>
     <string name="title_activity_shipments_tests">ShipmentsTests</string>
+    <string name="title_activity_one_product_with_count">OneProductWithCountActivity</string>
 </resources>

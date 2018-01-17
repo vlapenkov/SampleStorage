@@ -20,7 +20,7 @@ import java.util.List;
 public class ProductsDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 19;
+    private static final int DATABASE_VERSION = 20;
 
     static final String DATABASE_NAME = "products.db";
 
@@ -129,6 +129,13 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
                     ProductsContract.ArrivalItemsEntry.COLUMN_STOCKCELL_FACT+ "  text " +
                     ");";
 
+    private static final String SQL_CREATE_PRODUCT_WITH_COUNT_TABLE =
+            "create table " + ProductsContract.ProductWithCountEntry.TABLE_NAME + "(" +
+                    ProductsContract.ProductWithCountEntry._ID + " integer primary key autoincrement, " +
+                    ProductsContract.ProductWithCountEntry.COLUMN_PRODUCTID+ "  integer,  " +
+                    ProductsContract.ProductWithCountEntry.COLUMN_COUNT_FACT+ "  integer " +
+                    ");";
+
 
     private static ProductsDbHelper sInstance;
     public static synchronized ProductsDbHelper getInstance(Context context) {
@@ -171,6 +178,7 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
             db.execSQL(SQL_CREATE_ORDERTOSUPPLIER_ITEMS_TABLE);
             db.execSQL(SQL_CREATE_ARRIVAL_ITEMS_TABLE);
             db.execSQL(SQL_CREATE_PRODUCT_BARCODES);
+            db.execSQL(SQL_CREATE_PRODUCT_WITH_COUNT_TABLE);
 
         //    initializeData(db);
         } catch (Exception e)
@@ -209,6 +217,7 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_DROPTABLE_IFEXISTS + ProductsContract.OrdersToSupplierItemEntry.TABLE_NAME);
         db.execSQL(SQL_DROPTABLE_IFEXISTS + ProductsContract.OrdersToSupplierEntry.TABLE_NAME);
         db.execSQL(SQL_DROPTABLE_IFEXISTS + ProductsContract.ProductBarcodesEntry.TABLE_NAME);
+        db.execSQL(SQL_DROPTABLE_IFEXISTS + ProductsContract.ProductWithCountEntry.TABLE_NAME);
 
 
     }
@@ -625,6 +634,7 @@ return true;
     }
 
 
+
     /*
     Получить строки заказов
      */
@@ -748,6 +758,7 @@ String        query = "SELECT orderstosuppliersitems._id, rownumber, orderstosup
         return "";
     }
 
+
     public Cursor getShipments(@Nullable String filter) {
 
         Cursor cursor =  null;
@@ -766,6 +777,7 @@ String        query = "SELECT orderstosuppliersitems._id, rownumber, orderstosup
         //Cursor res =  db.rawQuery( "select _id, name, storageid from " + ProductsContract.StockCellEntry.TABLE_NAME+ " inner join "+ProductsContract.StorageEntry.TABLE_NAME +" on stockcells.storageid= storages._id", null );
 
     }
+
 
     public Cursor getShipmentItems(String shipmentId) {
 
@@ -830,4 +842,65 @@ String        query = "SELECT orderstosuppliersitems._id, rownumber, orderstosup
         else
             return 0;
     }
+
+
+    public ProductWithCount getProductWithCount(long id) {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql_select = "select productwithcountitems._id,productwithcountitems.productid, IFNULL(products.name,'---') as productname," +
+                "quantityfact from productwithcountitems" +
+                " left outer join products on productwithcountitems.productid=products._id" +
+                " where productwithcountitems._id=" + id;
+        Cursor cursor = db.rawQuery(sql_select, null);
+        if (cursor != null && cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            return ProductWithCount.fromCursor(cursor);
+
+        }
+        throw new NullPointerException("No ProductWithCount item found with id="+id);
+    }
+
+
+
+    public Cursor getProductsWithCoount()
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql_select="select productwithcountitems._id,productwithcountitems.productid, IFNULL(products.name,'---') as productname," +
+                "quantityfact from productwithcountitems"+
+                " left outer join products on productwithcountitems.productid=products._id";
+        return  db.rawQuery( sql_select, null);
+    }
+
+    public int getSumOfQuantityFromProductWithCount()
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor= db.rawQuery("SELECT sum(quantityfact) quantityfact from " + ProductsContract.ProductWithCountEntry.TABLE_NAME , null);
+
+        if (cursor!=null && cursor.getCount()>0)
+        { cursor.moveToFirst();
+            return cursor.getInt(0); }
+        return 0;
+    }
+
+    public ProductWithCount checkIfProductWithCountExists ( int productId)
+    {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String whereCond= ProductsContract.ProductWithCountEntry.COLUMN_PRODUCTID +"="+productId;
+        Cursor res= db.query(ProductsContract.ProductWithCountEntry.TABLE_NAME, null, whereCond, null, null, null, null);
+        //Cursor res =  db.rawQuery( "select * from " + ProductsContract.ProductWithCountEntry.TABLE_NAME+ " where productid='+productId+"'", null );
+        if (res!=null && res.getCount()>0)
+        {
+            res.moveToFirst();
+           return ProductWithCount.fromCursor(res);
+          //  Integer id = res.getInt(res.getColumnIndexOrThrow(ProductsContract.ProductWithCountEntry._ID));
+         //   res.close();
+
+
+        }
+        return null;
+
+    }
+
 }

@@ -156,5 +156,19 @@ public class ProductsContract {
 
     }
 
+/*
+   Простая таблица для сканирования productId, count
+ */
+    public static final class ProductWithCountEntry implements BaseColumns {
+
+        // Table name
+        public static final String TABLE_NAME = "productwithcountitems";
+
+        public static final String COLUMN_PRODUCTID = "productid";
+        public static final String COLUMN_COUNT_FACT = "quantityfact";
+
+
+    }
+
 
 }

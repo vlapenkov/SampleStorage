@@ -21,10 +21,9 @@
             android:id="@+id/orders"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="@string/ordersToSuppliers" />
-        <!--<item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" /> -->
+        <item
+            android:id="@+id/productwithcount"
+            android:title="ProductsWithCount" />
         <item
             android:id="@+id/toProducts"
             android:icon="@drawable/ic_menu_share"
