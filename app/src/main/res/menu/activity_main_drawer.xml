@@ -23,7 +23,9 @@
             android:title="@string/ordersToSuppliers" />
         <item
             android:id="@+id/productwithcount"
-            android:title="ProductsWithCount" />
+            android:title="@string/productswithcounts"
+            android:icon="@drawable/ic_menu_gallery"
+            />
         <item
             android:id="@+id/toProducts"
             android:icon="@drawable/ic_menu_share"

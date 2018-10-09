@@ -97,6 +97,7 @@
     <string name="products_are_being_downloaded">Идет загрузка товаров ...</string>
     <string name="stockcells_are_being_downloaded">Идет загрузка ячеек и складов ...</string>
     <string name="clear">Очистить</string>
+    <string name="clear_all_strings">Очистить все строки?</string>
     <string name="summary_selected_storages">Загрузка заданий только по выбранным складам</string>
     <string name="filter_selected_storages">Отбор по выбранным складам</string>
     <string name="yourName">Ваше имя</string>
@@ -124,4 +125,6 @@
     <string name="deleteRow">Удалить строку?</string>
     <string name="title_activity_shipments_tests">ShipmentsTests</string>
     <string name="title_activity_one_product_with_count">OneProductWithCountActivity</string>
+    <string name="productswithcounts">Товары с остатками</string>
+    <string name="urltoproductphoto">http://terminal.yst.ru/customforpartners/productphoto.ashx?productid=</string>
 </resources>

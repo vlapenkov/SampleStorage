@@ -30,6 +30,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!--<activity
+            android:name=".activities.ShipmentsTestsActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>-->
         <activity android:name=".activities.ListOfProductsWithCountActivity"/>
         <activity android:name=".activities.ProductWithCountActivity"/>
 
@@ -69,7 +78,7 @@
             android:readPermission="ccom.yst.sklad.tsd.READ_DATABASE"
             android:writePermission="com.yst.sklad.tsd.WRITE_DATABASE" />
 
-        <activity android:name=".activities.ProductWithCountActivity"></activity>
+
     </application>
 
 </manifest>

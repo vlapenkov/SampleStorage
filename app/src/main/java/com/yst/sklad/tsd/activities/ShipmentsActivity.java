@@ -109,6 +109,10 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
     }
 
     /*
+    * Поскольку получение данных работает через ContentProvider+Loader, то можно было обойтись без нее, но
+      * т.к. при нажатии кнопки BACK должна проставляться галка после считывания - лучше использовать так
+    */
+
     @Override
     protected void onRestart() {
 
@@ -116,7 +120,7 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
             getSupportLoaderManager().restartLoader(0, null, this);
 
 
-    }*/
+    }
 
     @Override
     public void onBackPressed() {

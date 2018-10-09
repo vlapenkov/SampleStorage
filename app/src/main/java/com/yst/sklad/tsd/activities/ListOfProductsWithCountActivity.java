@@ -1,9 +1,11 @@
 package com.yst.sklad.tsd.activities;
 
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -19,18 +21,26 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.yst.sklad.tsd.MainApplication;
 import com.yst.sklad.tsd.R;
 import com.yst.sklad.tsd.Utils.ConnectivityHelper;
+import com.yst.sklad.tsd.Utils.TextReaderFromHttp;
+import com.yst.sklad.tsd.Utils.YesNoInterface;
 import com.yst.sklad.tsd.data.AppDataProvider;
+import com.yst.sklad.tsd.data.ArrivalItem;
 import com.yst.sklad.tsd.data.ProductWithCount;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
+import com.yst.sklad.tsd.dialogs.YesNoDialogFragment;
+import com.yst.sklad.tsd.services.SoapCallToWebService;
+
+import java.io.InputStream;
 
 /*
 Активность для считывания товаров и количества и переноса их в 1С как перемещение
  */
-public class ListOfProductsWithCountActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
+public class ListOfProductsWithCountActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener, YesNoInterface {
 
     private SimpleCursorAdapter mAdapter;
     private TextView tv_Totals;
@@ -67,7 +77,7 @@ public class ListOfProductsWithCountActivity extends AppCompatActivity implement
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.oneorder_menu, menu);
 
         return true;
     }
@@ -77,17 +87,26 @@ public class ListOfProductsWithCountActivity extends AppCompatActivity implement
         switch (item.getItemId()) {
             case R.id.uploadto1s:
             {
+                if (ConnectivityHelper.checkConnectivity()) {
+                    new SendMovementTo1S().execute();
 
+                }
                 break;
             }
             case R.id.clear: {
 
+                YesNoDialogFragment.show(this,getString(R.string.clear_all_strings),null);
             }
 
         }
         return true;
     }
 
+private void deleteAllItems()
+{
+    Uri uri = CONTENT_URI;
+    int cnt = getContentResolver().delete(uri, null, null);
+}
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
@@ -97,7 +116,12 @@ public class ListOfProductsWithCountActivity extends AppCompatActivity implement
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         mAdapter.swapCursor(cursor);
-       tv_Totals.setText(""+ mDbHelper.getSumOfQuantityFromProductWithCount());
+        runOnUiThread(new Runnable() {
+            public void run() {
+                tv_Totals.setText(""+ mDbHelper.getSumOfQuantityFromProductWithCount());
+            }
+        });
+
        // tv_Totals.setText();
 
     }
@@ -126,15 +150,7 @@ public class ListOfProductsWithCountActivity extends AppCompatActivity implement
 
     }
 
-    public void Delete(View v) {
-       /* Uri uri = ContentUris.withAppendedId(CONTENT_URI, 123);
-        int cnt = getContentResolver().delete(uri, null, null); */
 
-        Uri uri = CONTENT_URI;
-        int cnt = getContentResolver().delete(uri, null, null);
-
-
-    }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -154,5 +170,57 @@ public class ListOfProductsWithCountActivity extends AppCompatActivity implement
 
     }
 
+    @Override
+    public void ProcessIfYes(Object[] params) {
+        deleteAllItems();
+    }
 
+
+    private class SendMovementTo1S extends AsyncTask<String,Void,String> {
+        ProgressDialog pDialog;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(ListOfProductsWithCountActivity.this);
+
+            pDialog.setMessage(getString(R.string.shipment_is_being_uploaded));
+            pDialog.show();
+
+        }
+
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            pDialog.dismiss();
+            // Проверка что веб-сервис отработал без ошибок
+            if (s!=null && s.contains(SoapCallToWebService.ResultOk)) {
+                int numberStart = s.indexOf(SoapCallToWebService.ResultOk) + 3;
+                String number1S = s.substring(numberStart, numberStart + 8); // строка - номер поступления который вернул 1С
+                Toast.makeText(ListOfProductsWithCountActivity.this, getString(R.string.orderWasUploaded) + " №" + number1S, Toast.LENGTH_LONG).show();
+            }
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            StringBuffer chaine = new StringBuffer("");
+          // Cursor cursor1=mDbHelper.getProductsWithCoount();
+            Cursor cursor=getContentResolver().query(CONTENT_URI,null,null,null,null);
+
+            if (cursor!=null && cursor.getCount()>0)
+                cursor.moveToFirst();
+            do{
+
+                ProductWithCount pwC =ProductWithCount.fromCursor(cursor);
+                chaine.append(pwC.toXML()); }
+            while (cursor.moveToNext());
+
+            InputStream stream = SoapCallToWebService.sendAndCreateMoveGoods(chaine.toString());
+
+            if (stream!=null) {
+                String result = TextReaderFromHttp.GetStringFromStream(stream);
+                return result;
+        }
+        return null;
+    }}
 }

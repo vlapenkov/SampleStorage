@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.yst.sklad.tsd.R;
+import com.yst.sklad.tsd.Utils.ConnectivityHelper;
 import com.yst.sklad.tsd.data.ArrivalItem;
 import com.yst.sklad.tsd.data.OrderToSupplier;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
@@ -94,14 +95,15 @@ public class OneOrderActivity extends AppCompatActivity  implements LoaderManage
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.uploadto1s: {
-                new SendOrder().execute(); break;
+                if (ConnectivityHelper.checkConnectivity()) {
+                new SendOrder().execute();
              //   getSupportLoaderManager().getLoader(0).forceLoad();
+            }
+                break;
             }
             case R.id.clear: {
                 YesNoDialogFragment.show(this,getString(R.string.deleteOrder),null);
-          /*      DialogFragment newFragment = YesNoDialogFragment.newInstance(
-                        R.string.deleteOrder,null);
-                newFragment.show(getFragmentManager(), "dialog"); */
+
             }
         }
 
@@ -234,8 +236,8 @@ public class OneOrderActivity extends AppCompatActivity  implements LoaderManage
 
            int orderType = mCurrentOrder.OrderType; //mDbHelper.getOrderTypeByOrderId(mCurrentOrderId);
 
-            SoapCallToWebService service= new SoapCallToWebService();
-            InputStream stream = service.sendOrder(mCurrentOrder.NumberIn1S,orderType, chaine.toString());
+
+            InputStream stream = SoapCallToWebService.sendOrder(mCurrentOrder.NumberIn1S,orderType, chaine.toString());
 
 
             if (stream!=null) { String result = TextReaderFromHttp.GetStringFromStream(stream);

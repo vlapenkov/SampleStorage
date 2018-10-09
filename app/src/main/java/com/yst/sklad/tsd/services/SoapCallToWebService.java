@@ -196,5 +196,29 @@ return SendDataTo1SService(xmlstring,"http://37.1.84.50:8080/ServiceTransfer/Cha
     return SendDataTo1SService(xmlstring, "http://37.1.84.50:8080/ServiceTransfer/ChangeOrderOfArrival");
     }
 
+    public final static InputStream  sendAndCreateMoveGoods(String innerStr)
+    {
+        String xmlstring= "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ser=\"http://37.1.84.50:8080/ServiceTransfer\" xmlns:tran=\"http://37.1.84.50:8080/TransferArrival\">\n" +
+                "   <soapenv:Header/>\n" +
+                "   <soapenv:Body>\n" +
+                 "<ser:CreateMoveGoods>\n"+
+                 "<ser:ArrayOfCells>\n"+
+                 innerStr+
+                "</ser:ArrayOfCells></ser:CreateMoveGoods></soapenv:Body></soapenv:Envelope>";
+        return SendDataTo1SService(xmlstring, "http://37.1.84.50:8080/ServiceTransfer/CreateMoveGoods");
+            /*
+            <tran:Cell>
+               <tran:productid>9178725</tran:productid>
+               <tran:stockcell></tran:stockcell>
+               <tran:quantityfact>4</tran:quantityfact>
+            </tran:Cell>
+             <tran:Cell>
+               <tran:productid>9199906</tran:productid>
+               <tran:stockcell></tran:stockcell>
+               <tran:quantityfact>18</tran:quantityfact>
+            </tran:Cell>
+            */
+
+    }
 
 }

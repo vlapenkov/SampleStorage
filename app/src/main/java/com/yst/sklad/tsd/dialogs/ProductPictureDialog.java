@@ -1,5 +1,6 @@
 package com.yst.sklad.tsd.dialogs;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
@@ -27,7 +28,11 @@ public class ProductPictureDialog extends DialogFragment implements View.OnClick
     Bitmap bitmap;
     String mProductId ;
     ImageView mImg;
-    String mUrlPrefix ="http://terminal.yst.ru/customforpartners/productpicture.ashx?productid=";
+    String mUrlPrefix; //= getResources().getString(R.string.urltoproductphoto);//="http://terminal.yst.ru/customforpartners/productphoto.ashx?productid=";
+
+
+
+
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         getDialog().setTitle(R.string.picture_of_product);
@@ -37,9 +42,17 @@ public class ProductPictureDialog extends DialogFragment implements View.OnClick
     }
 
 
+
+
     public void onClick(View v) {
 
         dismiss();
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mUrlPrefix= getResources().getString(R.string.urltoproductphoto);
     }
 
     public void onDismiss(DialogInterface dialog) {

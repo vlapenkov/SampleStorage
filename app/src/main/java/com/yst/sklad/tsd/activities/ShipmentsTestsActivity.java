@@ -20,6 +20,8 @@ import android.support.v4.content.CursorLoader;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 
+import java.util.Random;
+
 /*
 Тестовая активность для примера реализации CRUD  c контентпровайдером
  */
@@ -32,7 +34,7 @@ public class ShipmentsTestsActivity extends AppCompatActivity implements LoaderM
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_storage_entries);
+        setContentView(R.layout.activity_shipments_tests);
 
         mAdapter = new SimpleCursorAdapter(this,
                 R.layout.orderitem_item,  null,
@@ -66,7 +68,10 @@ public class ShipmentsTestsActivity extends AppCompatActivity implements LoaderM
 
     public void Insert(View v) {
         ContentValues cv = new ContentValues();
-        cv.put("_id", "123");
+        Random ran = new Random();
+        int id = ran.nextInt(100) ;
+
+        cv.put("_id", id +"");
         cv.put("client", "Vasya");
         cv.put("numberin1s", "Vasya");
 
@@ -80,6 +85,7 @@ public class ShipmentsTestsActivity extends AppCompatActivity implements LoaderM
 
         Uri uri = CONTENT_URI;
         int cnt = getContentResolver().delete(uri, null, null);
+
 
 
     }

@@ -42,6 +42,7 @@ public class ProductWithCountActivity extends BaseScanActivity {
         tvProductCaption =(TextView) findViewById(R.id.tv_ProductCaption) ;
         tvProductId =(EditText) findViewById(R.id.tv_ProductId) ;
         etQuantityFact =(EditText) findViewById(R.id.et_QuantityFact) ;
+        btnOKAndToNext =(Button) findViewById(R.id.btnOKAndToNext);
 
         mDbHelper = ((MainApplication)getApplication()).getDatabaseHelper();
 
@@ -78,12 +79,16 @@ if (!mToCreate) {
 
     @Override
     public void onBarcodeScanned(String mBarcode) {
-
+        if (!mToCreate)
+        {Toast.makeText(this,"Вы редактируете количество товара, не нужно считывать товар! ",Toast.LENGTH_LONG).show();
+            return;}
+        // для режима добавления товара
         int newProductId=BarCodeUtils.getProductIdFromBarCode(mBarcode);
 
         tvProductId.setText("" +newProductId);
         if (newProductId>0)
         RefreshProductTexts(newProductId);
+        btnOKAndToNext.requestFocus();
     }
 
     public void doOKAndToNext(View view) {
