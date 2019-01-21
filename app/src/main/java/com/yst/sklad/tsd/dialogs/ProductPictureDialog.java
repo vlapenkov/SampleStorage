@@ -30,7 +30,7 @@ public class ProductPictureDialog extends DialogFragment implements View.OnClick
     ImageView mImg;
     String mUrlPrefix; //= getResources().getString(R.string.urltoproductphoto);//="http://terminal.yst.ru/customforpartners/productphoto.ashx?productid=";
 
-
+//https://terminal.yst.ru/customforpartners/ProductPhoto?productid=9299068
 
 
 

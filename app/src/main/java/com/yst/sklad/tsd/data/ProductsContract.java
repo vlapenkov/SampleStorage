@@ -171,4 +171,48 @@ public class ProductsContract {
     }
 
 
+/*
+Внутренее перемещение с товарами
+ */
+    public static final class TransferOfProductsInternalEntry implements BaseColumns {
+
+        // Table name
+        public static final String TABLE_NAME = "transferofproductsinternal";
+
+        public static final String COLUMN_PRODUCTID = "productid";
+        public static final String COLUMN_STOCKCELLFROM = "stockcellfrom";
+        public static final String COLUMN_STOCKCELLTO = "stockcellto";
+        public static final String COLUMN_COUNT_FACT = "quantity";
+
+    }
+
+
+    /*
+Перемещение с товарами
+ */
+    public static final class TransferOfProductsEntry implements BaseColumns {
+
+        // Table name
+        public static final String TABLE_NAME = "transferofproducts";
+
+        public static final String COLUMN_PRODUCTID = "productid";
+        public static final String COLUMN_STOCKCELL = "stockcell";
+        public static final String COLUMN_COUNT_FACT = "quantity";
+
+    }
+
+    /*
+Инвентаризация
+*/
+    public static final class Inventory implements BaseColumns {
+
+        // Table name
+        public static final String TABLE_NAME = "inventory";
+
+        public static final String COLUMN_PRODUCTID = "productid";
+        public static final String COLUMN_STOCKCELLFROM = "stockcell";
+        public static final String COLUMN_COUNT_FACT = "quantity";
+
+    }
+
 }

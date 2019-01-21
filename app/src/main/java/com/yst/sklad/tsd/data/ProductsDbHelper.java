@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.List;
 
 /**
@@ -20,7 +21,7 @@ import java.util.List;
 public class ProductsDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 20;
+    private static final int DATABASE_VERSION = 21;
 
     static final String DATABASE_NAME = "products.db";
 
@@ -137,6 +138,33 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
                     ");";
 
 
+    private static final String SQL_CREATE_TRANSFEROFPRODUCTSINTERNAL_TABLE =
+            "create table " + ProductsContract.TransferOfProductsInternalEntry.TABLE_NAME + "(" +
+                    ProductsContract.TransferOfProductsInternalEntry._ID + " integer primary key autoincrement, " +
+                    ProductsContract.TransferOfProductsInternalEntry.COLUMN_PRODUCTID+ "  integer,  " +
+                    ProductsContract.TransferOfProductsInternalEntry.COLUMN_STOCKCELLFROM+ "  text,  " +
+                    ProductsContract.TransferOfProductsInternalEntry.COLUMN_STOCKCELLTO+ "  text,  " +
+                    ProductsContract.TransferOfProductsInternalEntry.COLUMN_COUNT_FACT+ "  integer " +
+                    ");";
+
+    private static final String SQL_CREATE_TRANSFEROFPRODUCTS_TABLE =
+            "create table " + ProductsContract.TransferOfProductsEntry.TABLE_NAME + "(" +
+                    ProductsContract.TransferOfProductsEntry._ID + " integer primary key autoincrement, " +
+                    ProductsContract.TransferOfProductsEntry.COLUMN_PRODUCTID+ "  integer,  " +
+                    ProductsContract.TransferOfProductsEntry.COLUMN_STOCKCELL+ "  text,  " +
+                    ProductsContract.TransferOfProductsEntry.COLUMN_COUNT_FACT+ "  integer " +
+                    ");";
+
+    private static final String SQL_CREATE_Inventory_TABLE =
+            "create table " + ProductsContract.Inventory.TABLE_NAME + "(" +
+                    ProductsContract.Inventory._ID + " integer primary key autoincrement, " +
+                    ProductsContract.Inventory.COLUMN_PRODUCTID+ "  integer,  " +
+                    ProductsContract.Inventory.COLUMN_STOCKCELLFROM+ "  text,  " +
+                    ProductsContract.Inventory.COLUMN_COUNT_FACT+ "  integer " +
+                    ");";
+
+
+
     private static ProductsDbHelper sInstance;
     public static synchronized ProductsDbHelper getInstance(Context context) {
 
@@ -180,6 +208,11 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
             db.execSQL(SQL_CREATE_PRODUCT_BARCODES);
             db.execSQL(SQL_CREATE_PRODUCT_WITH_COUNT_TABLE);
 
+            // --- перемещения и инвентаризация
+            db.execSQL(SQL_CREATE_TRANSFEROFPRODUCTSINTERNAL_TABLE);
+            db.execSQL(SQL_CREATE_TRANSFEROFPRODUCTS_TABLE);
+            db.execSQL(SQL_CREATE_Inventory_TABLE);
+
         //    initializeData(db);
         } catch (Exception e)
         {
@@ -212,12 +245,19 @@ public class ProductsDbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_DROPTABLE_IFEXISTS+ProductsContract.ShipmentsItemEntry.TABLE_NAME);
         db.execSQL(SQL_DROPTABLE_IFEXISTS+ProductsContract.StorageEntry.TABLE_NAME);
         db.execSQL(SQL_DROPTABLE_IFEXISTS + ProductsContract.StockCellEntry.TABLE_NAME);
+
         // --- таблицы для поступлений
         db.execSQL(SQL_DROPTABLE_IFEXISTS + ProductsContract.ArrivalItemsEntry.TABLE_NAME);
         db.execSQL(SQL_DROPTABLE_IFEXISTS + ProductsContract.OrdersToSupplierItemEntry.TABLE_NAME);
         db.execSQL(SQL_DROPTABLE_IFEXISTS + ProductsContract.OrdersToSupplierEntry.TABLE_NAME);
         db.execSQL(SQL_DROPTABLE_IFEXISTS + ProductsContract.ProductBarcodesEntry.TABLE_NAME);
         db.execSQL(SQL_DROPTABLE_IFEXISTS + ProductsContract.ProductWithCountEntry.TABLE_NAME);
+
+        // --- перемещения и инвентаризация
+
+        db.execSQL(SQL_DROPTABLE_IFEXISTS + ProductsContract.TransferOfProductsInternalEntry.TABLE_NAME);
+        db.execSQL(SQL_DROPTABLE_IFEXISTS + ProductsContract.TransferOfProductsEntry.TABLE_NAME);
+        db.execSQL(SQL_DROPTABLE_IFEXISTS + ProductsContract.Inventory.TABLE_NAME);
 
 
     }
@@ -869,6 +909,32 @@ String        query = "SELECT orderstosuppliersitems._id, rownumber, orderstosup
                 "quantityfact from productwithcountitems"+
                 " left outer join products on productwithcountitems.productid=products._id";
         return  db.rawQuery( sql_select, null);
+    }
+
+
+    public Cursor getInventoryItems()
+    {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql_select="select inventory._id,inventory.productid, inventory.stockcell, inventory.quantity, IFNULL(products.name,'---') as productname" +
+                " from inventory"+
+                " left outer join products on inventory.productid=products._id";
+        return  db.rawQuery( sql_select, null);
+    }
+
+    public String getInventoryItemsCount()
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql_select="select count(inventory._id) count,  sum(inventory.quantity) sum from inventory";
+        Cursor cursor=  db.rawQuery( sql_select, null);
+
+        if (cursor!=null && cursor.getCount()>0) {
+            cursor.moveToFirst();
+            int count= cursor.getInt(0);
+            int sum = cursor.getInt(1);
+            return ""+count+"/"+sum;
+        }
+        return "0";
     }
 
     public int getSumOfQuantityFromProductWithCount()

@@ -116,6 +116,8 @@
     <string name="delete_shipment_after_upload">Удалять задание после выгрузки в 1С</string>
     <string name="summary_delete_shipment_after_upload">После нажатия кнопки \'Выгрузить\' задание будет автоматически удалено из терминала</string>
     <string name="ordersToSuppliers">Заказы поставщикам</string>
+    <string name="transfers">Перемещения</string>
+    <string name="transfersInternal">Перемещения внутренние</string>
     <string name="itemsInOrder">Товары в заказе</string>
     <string name="itemsInCells">Товар по ячейкам в заказе</string>
     <string name="ProductCode">Код товара</string>
@@ -126,5 +128,6 @@
     <string name="title_activity_shipments_tests">ShipmentsTests</string>
     <string name="title_activity_one_product_with_count">OneProductWithCountActivity</string>
     <string name="productswithcounts">Товары с остатками</string>
-    <string name="urltoproductphoto">http://terminal.yst.ru/customforpartners/productphoto.ashx?productid=</string>
+    <string name="urltoproductphoto">https://terminal.yst.ru/customforpartners/productphoto?productid=</string>
+    <string name="inventory">Инвентаризация</string>
 </resources>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.yst.sklad.tsd.activities.OneInventoryItemActivity">
+
+
+    <TextView
+        android:id="@+id/tv_ProductName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:layout_marginBottom="20px"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/ll_cellIdFields"
+        android:layout_below="@id/tv_ProductName">
+
+        <TextView
+            android:id="@+id/tv_CellCaption"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="@string/cell"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/et_Cell"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:inputType="number"
+            android:textSize="16sp" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/ProductIdFields"
+        android:layout_below="@id/ll_cellIdFields">
+
+        <TextView
+            android:id="@+id/tv_ProductCaption"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="@string/ProductCode"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/et_ProductId"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:inputType="number"
+            android:textSize="16sp" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/cellQuantity"
+        android:layout_below="@id/ProductIdFields">
+        <TextView
+            android:id="@+id/tv_QuantityCaption"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/Quantity"
+            android:layout_weight="2"
+            android:textSize="16sp"/>
+        <EditText
+            android:id="@+id/et_QuantityFact"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:inputType="phone"
+            android:layout_weight="3"
+            android:textSize="16sp"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/linButtons"
+        android:layout_marginTop="50dp"
+        android:layout_below="@id/cellQuantity">
+
+        <Button android:layout_height="60dp"
+            android:id="@+id/btnOKAndToNext"
+            android:layout_width="0dp"
+            android:text="@string/doOKAndToNext"
+            android:onClick="doOKAndToNext"
+            android:layout_weight="1"/>
+        <Button android:layout_height="60dp"
+            android:id="@+id/cancel"
+            android:layout_width="0dp"
+            android:text="@string/doCancel"
+            android:onClick="doCancel"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+</RelativeLayout>

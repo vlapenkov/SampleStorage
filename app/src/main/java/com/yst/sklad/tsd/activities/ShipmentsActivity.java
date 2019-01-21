@@ -34,6 +34,7 @@ import com.yst.sklad.tsd.data.ProductsContract;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
 import com.yst.sklad.tsd.Utils.ShipmentsDownloadHelper;
 import com.yst.sklad.tsd.Utils.ConnectivityHelper;
+import com.yst.sklad.tsd.services.DownloadAndImportShipments;
 
 import java.lang.ref.WeakReference;
 
@@ -113,6 +114,9 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
       * т.к. при нажатии кнопки BACK должна проставляться галка после считывания - лучше использовать так
     */
 
+
+
+
     @Override
     protected void onRestart() {
 
@@ -147,9 +151,6 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
             case R.id.import_shipments:
             { if (ConnectivityHelper.checkConnectivity()) {
 
-                pDialog = new ProgressDialog(this);
-                pDialog.setMessage(getString(R.string.shipments_are_being_downloaded));
-                pDialog.show();
                 new DownloadAndImportShipments(this).execute();
              //   getSupportLoaderManager().getLoader(0).forceLoad();
             }
@@ -204,7 +205,14 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
                 startActivity(intent);
                 return true;
             }
-            case R.id.productwithcount:
+            case R.id.inventory: {
+
+                Intent intent = new Intent(this, InventoryActivity.class);
+
+                startActivity(intent);
+                return true;
+            }
+          case R.id.transfer:
             {
                 Intent intent = new Intent(this, ListOfProductsWithCountActivity.class);
 
@@ -307,73 +315,8 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
         super.onDestroy();
     }
 
-    /*
-    Надо сделать intent вместо aasyncTask
-     */
-    private    class DownloadAndImportShipments extends AsyncTask<Void, Integer, Long> {
 
 
-        private boolean mNewShipmentsWasAdded = false;
-        private WeakReference<ShipmentsActivity> activity;
-
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-
-        }
-
-        //  private MainActivity activity;
-
-        public DownloadAndImportShipments(ShipmentsActivity activity)
-        {
-            this.activity = new WeakReference<>( activity);
-
-        }
-
-        @Override
-        protected Long doInBackground(Void... params) {
-            ShipmentsDownloadHelper.createDocuments(activity.get());
-
-            return null;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(Long aLong) {
-            super.onPostExecute(aLong);
-
-            //   if (mNewShipmentsWasAdded)
-            //alertView(title,text);
-
-       /* DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START))   drawer.closeDrawer(GravityCompat.START); */
-
-            if(this.activity != null) {
-                ShipmentsActivity main = this.activity.get();
-                if(main != null && main.pDialog!=null)
-                {
-                main.pDialog.dismiss();
-                // main.RefreshList();
-
-              //                    pDialog.dismiss();
-           /* if ( mNewShipmentsWasAdded) {
-
-                String text = main.getString(R.string.newShipmentsWereAdded);
-
-                String title =main.getString(R.string.downloadcomplete);
-                AlertSuccess.show(main, title, text);
-
-                main.RefreshList();
-            }*/
-                }
-            }}
-
-    }
 
 
 /*

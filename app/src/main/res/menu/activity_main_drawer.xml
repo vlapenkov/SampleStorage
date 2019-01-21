@@ -3,12 +3,15 @@
 
     <group android:checkableBehavior="single"
         android:id="@+id/firstmenugroup"
+
         >
 
         <item
             android:id="@+id/shipments"
             android:icon="@drawable/ic_menu_download"
-            android:title="@string/shipments" />
+            android:title="@string/shipments"
+
+            />
         <!--<item
             android:id="@+id/import_shipments"
             android:icon="@drawable/ic_menu_download"
@@ -21,25 +24,42 @@
             android:id="@+id/orders"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="@string/ordersToSuppliers" />
-        <item
+  <!--      <item
             android:id="@+id/productwithcount"
             android:title="@string/productswithcounts"
             android:icon="@drawable/ic_menu_gallery"
-            />
+            /> -->
+
         <item
-            android:id="@+id/toProducts"
+            android:id="@+id/transfer"
+            android:icon="@drawable/ic_chevron_right_black_24dp"
+            android:title="@string/transfers" />
+
+        <item
+            android:id="@+id/transferInternal"
+            android:icon="@drawable/ic_chevron_right_black_24dp"
+            android:title="@string/transfersInternal" />
+        <item
+            android:id="@+id/inventory"
             android:icon="@drawable/ic_menu_share"
+            android:title="@string/inventory" />
+    </group>
+    <group android:checkableBehavior="single"
+        android:id="@+id/thirdmenugroup">
+      <item
+            android:id="@+id/toProducts"
+            android:icon="@drawable/tire"
             android:title="@string/Products" />
         <item
             android:id="@+id/toStockCells"
-            android:icon="@drawable/ic_menu_send"
+            android:icon="@drawable/ic_grid_on_black_24dp"
             android:title="@string/stockcells" />
 
         <item
             android:id="@+id/toPreferences"
             android:icon="@drawable/ic_menu_manage"
             android:title="@string/toPreferences" />
-    </group>
+   </group>
     <group android:checkableBehavior="single"
         android:id="@+id/secondmenugroup">
         <item
@@ -47,8 +67,8 @@
             android:icon="@drawable/ic_exit"
             android:title="@string/exit" />
     </group>
-<!--
-    <item android:title="@string/dictionaries">
+
+   <!-- <item android:title="@string/dictionaries">
         <menu>
             <item
                 android:id="@+id/toProducts"
@@ -59,6 +79,6 @@
                 android:icon="@drawable/ic_menu_send"
                 android:title="@string/stockcells" />
         </menu>
-    </item>
--->
+    </item> -->
+
 </menu>
