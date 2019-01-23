@@ -911,7 +911,7 @@ String        query = "SELECT orderstosuppliersitems._id, rownumber, orderstosup
         return  db.rawQuery( sql_select, null);
     }
 
-
+    // строки инвентаризации
     public Cursor getInventoryItems()
     {
 
@@ -922,10 +922,22 @@ String        query = "SELECT orderstosuppliersitems._id, rownumber, orderstosup
         return  db.rawQuery( sql_select, null);
     }
 
-    public String getInventoryItemsCount()
+    // строки внутреннего перемещения
+    public Cursor getInternalTransferItems()
+    {
+
+        //ProductsContract.TransferOfProductsInternalEntry.TABLE_NAME
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql_select="select transfer._id,transfer.productid, stockcellfrom, stockcellto, quantity, IFNULL(products.name,'---') as productname" +
+                " from transferofproductsinternal as transfer"+
+                " left outer join products on transfer.productid=products._id";
+        return  db.rawQuery( sql_select, null);
+    }
+
+    public String getItemsCount(String tableName)
     {
         SQLiteDatabase db = this.getReadableDatabase();
-        String sql_select="select count(inventory._id) count,  sum(inventory.quantity) sum from inventory";
+        String sql_select="select count(_id) count,  sum(quantity) sum from "+tableName;
         Cursor cursor=  db.rawQuery( sql_select, null);
 
         if (cursor!=null && cursor.getCount()>0) {

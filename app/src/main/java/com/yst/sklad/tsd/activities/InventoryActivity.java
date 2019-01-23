@@ -30,8 +30,11 @@ import com.yst.sklad.tsd.R;
 import com.yst.sklad.tsd.Utils.BarCodeUtils;
 import com.yst.sklad.tsd.Utils.ConnectivityHelper;
 import com.yst.sklad.tsd.Utils.TextReaderFromHttp;
+import com.yst.sklad.tsd.Utils.YesNoInterface;
 import com.yst.sklad.tsd.data.AppDataProvider;
+import com.yst.sklad.tsd.data.ArrivalItem;
 import com.yst.sklad.tsd.data.CellWithProductWithCount;
+import com.yst.sklad.tsd.data.DeleteItemDto;
 import com.yst.sklad.tsd.data.Product;
 import com.yst.sklad.tsd.data.ProductWithCount;
 import com.yst.sklad.tsd.data.ProductsContract;
@@ -41,7 +44,10 @@ import com.yst.sklad.tsd.services.SoapCallToWebService;
 
 import java.io.InputStream;
 
-public class InventoryActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener  {
+public class InventoryActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,
+        AdapterView.OnItemClickListener,
+        AdapterView.OnItemSelectedListener, YesNoInterface {
+
 
     private SimpleCursorAdapter mAdapter;
     private TextView tv_Totals;
@@ -51,6 +57,7 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
     public static final String INFO_MESSAGE="INFO_MESSAGE";
     public static final String MESSAGE_TO_CREATE="TO_CREATE";
     ListView lvData;
+    Long mItemSelected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +85,7 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
         lvData = (ListView) findViewById(R.id.lvData);
         lvData.setAdapter(mAdapter);
         lvData.setOnItemClickListener(this);
+        lvData.setOnItemSelectedListener(this);
         getSupportLoaderManager().initLoader(0, null, this);
 
 
@@ -98,24 +106,28 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
             case R.id.uploadto1s:
             {
                 if (ConnectivityHelper.checkConnectivity()) {
+                    new InventoryActivity.SendInventory().execute("68");
                  //   new ListOfProductsWithCountActivity.SendMovementTo1S().execute();
 
                 }
                 break;
             }
             case R.id.clear: {
+                DeleteItemDto[] params =  {new DeleteItemDto (null,true)};
+                YesNoDialogFragment.show(this,getString(R.string.clear_all_strings),params  );
 
-                YesNoDialogFragment.show(this,getString(R.string.clear_all_strings),null);
+            }
             }
 
-        }
+
         return true;
     }
 
     public void Delete(View v)
     {
-        Uri uri = CONTENT_URI;
-        int cnt = getContentResolver().delete(uri, null, null);
+        DeleteItemDto[] params =  {new DeleteItemDto (mItemSelected,false)};
+        YesNoDialogFragment.show(this,getString(R.string.deleteRow),params);
+
     }
 
     @Override
@@ -129,7 +141,7 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
         mAdapter.swapCursor(cursor);
         runOnUiThread(new Runnable() {
             public void run() {
-                tv_Totals.setText(""+ mDbHelper.getInventoryItemsCount());
+                tv_Totals.setText(""+ mDbHelper.getItemsCount("inventory"));
             }
         });
 
@@ -180,7 +192,94 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
     }
 
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        mItemSelected=id;
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+   //     mItemSelected=null;
+    }
+
+    @Override
+    public void ProcessIfYes(Object[] params) {
+        DeleteItemDto item= (DeleteItemDto)params[0];
+
+        if (item.mDeleteAll) {
+            Uri uri = CONTENT_URI;
+            int cnt = getContentResolver().delete(uri, null, null);
+        }
+        else
+
+        {
+
+                Uri uri = ContentUris.withAppendedId(CONTENT_URI, item.mItem);
+                int cnt = getContentResolver().delete(uri, null, null);
+
+        }
+
+    }
 
 
+    /*
+Отправить поступление/перемещение  в 1С
+ */
+    private class SendInventory extends AsyncTask<String,Void,String> {
 
+        ProgressDialog pDialog;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(InventoryActivity.this);
+
+            pDialog.setMessage(getString(R.string.shipment_is_being_uploaded));
+            pDialog.show();
+
+        }
+
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            pDialog.dismiss();
+
+
+            // Проверка что веб-сервис отработал без ошибок
+            if (s!=null && s.contains(SoapCallToWebService.ResultOk)) {
+
+                Toast.makeText(InventoryActivity.this, getString(R.string.orderWasUploaded), Toast.LENGTH_LONG).show();
+
+
+            }else
+                Toast.makeText(InventoryActivity.this, "Ошибка! Поступление/перемещение не было выгружено", Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            StringBuffer chaine = new StringBuffer("");
+            Cursor cursor =mDbHelper.getReadableDatabase().query(ProductsContract.Inventory.TABLE_NAME, null, null, null, null, null, null);
+
+
+            if (cursor!=null && cursor.getCount()>0)
+                cursor.moveToFirst();
+            do{
+
+                CellWithProductWithCount item =CellWithProductWithCount.fromCursor(cursor);
+                chaine.append(item.toXML()); }
+            while (cursor.moveToNext());
+
+
+        //    int orderType = mCurrentOrder.OrderType; //mDbHelper.getOrderTypeByOrderId(mCurrentOrderId);
+            String numberIn1S=params[0].toString();
+
+            InputStream stream = SoapCallToWebService.sendInventory(numberIn1S, chaine.toString());
+
+
+            if (stream!=null) { String result = TextReaderFromHttp.GetStringFromStream(stream);
+
+                return result;}
+            return null;
+        }
+    }
 }

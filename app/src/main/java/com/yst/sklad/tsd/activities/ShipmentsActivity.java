@@ -212,6 +212,14 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
                 startActivity(intent);
                 return true;
             }
+            case R.id.transferInternal: {
+
+                Intent intent = new Intent(this, InternalTransferActivity.class);
+
+                startActivity(intent);
+                return true;
+            }
+
           case R.id.transfer:
             {
                 Intent intent = new Intent(this, ListOfProductsWithCountActivity.class);

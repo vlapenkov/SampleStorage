@@ -44,7 +44,7 @@
         -->
         <activity android:name=".activities.ListOfProductsWithCountActivity" />
         <activity android:name=".activities.ProductWithCountActivity" />
-        <activity android:name=".activities.InventoryActivity" />
+        <activity android:name=".activities.InventoryActivity" android:label="Инвентаризация" />
         <activity android:name=".activities.OneProductActivity" />
         <activity android:name=".activities.OneShipmentActivity" />
         <activity android:name=".activities.MyPreferencesActivity" />
@@ -80,7 +80,9 @@
             android:readPermission="ccom.yst.sklad.tsd.READ_DATABASE"
             android:writePermission="com.yst.sklad.tsd.WRITE_DATABASE" />
 
-        <activity android:name=".activities.OneInventoryItemActivity"></activity>
+        <activity android:name=".activities.OneInventoryItemActivity" />
+        <activity android:name=".activities.InternalTransferActivity" android:label="Внутреннее перемещение"></activity>
+        <activity android:name=".activities.OneInternalTransferActivity" />
     </application>
 
 </manifest>

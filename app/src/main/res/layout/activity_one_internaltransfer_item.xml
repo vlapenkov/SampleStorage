@@ -21,42 +21,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:id="@+id/ll_cellIdFields"
-        android:layout_below="@id/tv_ProductName">
-
-        <TextView
-            android:id="@+id/tv_CellCaption"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="@string/cell"
-            android:layout_marginLeft="2dp"
-            android:textSize="16sp" />
-
-        <EditText
-            android:id="@+id/et_Cell"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="4"
-            android:inputType="number"
-            android:textSize="16sp" />
-        <TextView
-            android:id="@+id/tv_cellName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text=""
-            android:textSize="16sp" />
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/ProductIdFields"
-        android:layout_below="@id/ll_cellIdFields">
+        android:layout_below="@id/tv_ProductName"
+        android:id="@+id/ProductIdFields">
 
         <TextView
             android:id="@+id/tv_ProductCaption"
@@ -88,8 +54,76 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:id="@+id/cellQuantity"
+        android:id="@+id/ll_cellFieldsFrom"
         android:layout_below="@id/ProductIdFields">
+
+        <TextView
+            android:id="@+id/tv_CellCaptionFrom"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:layout_weight="2"
+            android:text="Ячейка из"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/et_CellFrom"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:inputType="number"
+            android:textSize="16sp" />
+        <TextView
+            android:id="@+id/tv_cellNameFrom"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text=""
+            android:textSize="16sp" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/ll_cellFieldsTo"
+        android:layout_below="@id/ll_cellFieldsFrom">
+
+        <TextView
+            android:id="@+id/tv_CellCaptionTo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="Ячейка в"
+            android:layout_marginLeft="2dp"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/et_CellTo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:inputType="number"
+            android:textSize="16sp" />
+        <TextView
+            android:id="@+id/tv_cellNameTo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text=""
+            android:textSize="16sp" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/cellQuantity"
+        android:layout_below="@id/ll_cellFieldsTo">
         <TextView
             android:id="@+id/tv_QuantityCaption"
             android:layout_width="0dp"

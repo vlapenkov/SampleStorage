@@ -4,38 +4,38 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.yst.sklad.tsd.MainApplication;
 import com.yst.sklad.tsd.R;
 import com.yst.sklad.tsd.Utils.BarCodeUtils;
 import com.yst.sklad.tsd.data.AppDataProvider;
+import com.yst.sklad.tsd.data.Cell2WithProductWithCount;
 import com.yst.sklad.tsd.data.CellWithProductWithCount;
 import com.yst.sklad.tsd.data.Product;
-import com.yst.sklad.tsd.data.ProductWithCount;
+import com.yst.sklad.tsd.data.ProductsContract;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
-import com.yst.sklad.tsd.data.ShipmentItem;
 
-public class OneInventoryItemActivity extends BaseScanActivity {
-    public static final Uri CONTENT_URI = AppDataProvider.CONTENTURI_INVENTORY;
-    EditText et_Cell,et_ProductId,et_Quantity;
+public class OneInternalTransferActivity extends BaseScanActivity {
+    public static final Uri CONTENT_URI = AppDataProvider.CONTENTURI_INTERNALTRANSFER;
+    EditText et_CellFrom,et_ProductId,et_Quantity;
+    EditText et_CellTo;
     TextView tv_productName, tv_cellName;
     ProductsDbHelper mDbHelper;
 
     Boolean mToCreate ;
-    CellWithProductWithCount mItem;
+    Cell2WithProductWithCount mItem;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_one_inventory_item);
+        setContentView(R.layout.activity_one_internaltransfer_item);
         mDbHelper = ((MainApplication)getApplication()).getDatabaseHelper();
-        et_Cell = (EditText) findViewById(R.id.et_Cell);
+        et_CellFrom = (EditText) findViewById(R.id.et_CellFrom);
+        et_CellTo = (EditText) findViewById(R.id.et_CellTo);
         et_ProductId = (EditText) findViewById(R.id.et_ProductId);
         et_Quantity = (EditText) findViewById(R.id.et_QuantityFact);
         tv_productName = (TextView) findViewById(R.id.tv_ProductName);
@@ -43,12 +43,16 @@ public class OneInventoryItemActivity extends BaseScanActivity {
 
         Bundle bundle = getIntent().getExtras();
         mToCreate=bundle.getBoolean(InventoryActivity.MESSAGE_TO_CREATE,true);
+
+
         if (!mToCreate) {
-            mItem = (CellWithProductWithCount) bundle.getSerializable(ListOfProductsWithCountActivity.INFO_MESSAGE);
+            mItem = (Cell2WithProductWithCount) bundle.getSerializable(InternalTransferActivity.INFO_MESSAGE);
             et_ProductId.setText(""+mItem.ProductId);
             et_ProductId.setEnabled(false);
-            et_Cell.setText(""+mItem.Cell);
-            et_Cell.setEnabled(false);
+            et_CellFrom.setText(""+mItem.Cell);
+            et_CellFrom.setEnabled(false);
+            et_CellTo.setText(""+mItem.CellTo);
+            et_CellTo.setEnabled(false);
             et_Quantity.setText(""+mItem.Quantity);
         }
 
@@ -77,13 +81,21 @@ public class OneInventoryItemActivity extends BaseScanActivity {
         if (productFound != null) {
             tv_productName.setText(productFound.Name);
             et_ProductId.setText(productFound.Id+"");
-            et_Quantity.requestFocus();
+            et_CellFrom.requestFocus();
 
         } else if (barcode != null && barcode.length() == 8) {
-            et_Cell.setText(BarCodeUtils.getCellFromBarCode(barcode));
-           String cellName= mDbHelper.getNameOfCell(barcode);
-            tv_cellName.setText(cellName);
-            et_ProductId.requestFocus();
+
+            if (et_CellFrom.hasFocus()) {
+                et_CellFrom.setText(BarCodeUtils.getCellFromBarCode(barcode));
+                et_CellTo.requestFocus();
+            }
+            else {
+                et_CellTo.setText(BarCodeUtils.getCellFromBarCode(barcode));
+                et_Quantity.requestFocus();
+            }
+           //String cellName= mDbHelper.getNameOfCell(barcode);
+          //  tv_cellName.setText(cellName);
+            //et_ProductId.requestFocus();
 
 
         } else if (barcode != null && barcode.length() > 8)
@@ -100,14 +112,17 @@ public class OneInventoryItemActivity extends BaseScanActivity {
         try
         {
             int productId= Integer.parseInt(et_ProductId.getText().toString());
-            String cell = et_Cell.getText().toString();
+            String cellFrom = et_CellFrom.getText().toString();
+            String cellTo = et_CellTo.getText().toString();
             String textFact = et_Quantity.getText().toString();
             int fact = Integer.parseInt(textFact);
+
 
             ContentValues cv = new ContentValues();
 
             cv.put("productid", productId);
-            cv.put("stockcell", cell);
+            cv.put("stockcellFrom", cellFrom);
+            cv.put("stockcellTo", cellFrom);
             cv.put("quantity", fact);
 
             // если нет то создаем иначе апдейтим
@@ -127,7 +142,7 @@ public class OneInventoryItemActivity extends BaseScanActivity {
         }
 
 
-        {     Intent intent = new Intent(this, OneInventoryItemActivity.class);
+        {     Intent intent = new Intent(this, OneInternalTransferActivity.class);
             Bundle bundle = new Bundle();
             bundle.putBoolean(InventoryActivity.MESSAGE_TO_CREATE,true);
 

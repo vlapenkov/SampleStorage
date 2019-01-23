@@ -206,19 +206,21 @@ return SendDataTo1SService(xmlstring,"http://37.1.84.50:8080/ServiceTransfer/Cha
                  innerStr+
                 "</ser:ArrayOfCells></ser:CreateMoveGoods></soapenv:Body></soapenv:Envelope>";
         return SendDataTo1SService(xmlstring, "http://37.1.84.50:8080/ServiceTransfer/CreateMoveGoods");
-            /*
-            <tran:Cell>
-               <tran:productid>9178725</tran:productid>
-               <tran:stockcell></tran:stockcell>
-               <tran:quantityfact>4</tran:quantityfact>
-            </tran:Cell>
-             <tran:Cell>
-               <tran:productid>9199906</tran:productid>
-               <tran:stockcell></tran:stockcell>
-               <tran:quantityfact>18</tran:quantityfact>
-            </tran:Cell>
-            */
+
 
     }
 
+    /*
+    Отправить инвентаризацию
+     */
+    public static InputStream sendInventory(String numberIn1S, String itemsData) {
+        String xmlstring="<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:ser=\"http://37.1.84.50:8080/ServiceTransfer\" xmlns:tran=\"http://37.1.84.50:8080/TransferArrival\">\n" +
+                "   <soap:Header/>\n" +
+                "   <soap:Body>\n" +
+                "      <ser:ChangeInventory>\n" +
+                "         <ser:Number>"+numberIn1S+"</ser:Number>\n" +
+                "         <ser:ArrayOfCells>"+itemsData+
+                "</ser:ArrayOfCells></ser:ChangeInventory></soap:Body></soap:Envelope>";
+        return SendDataTo1SService(xmlstring, "http://37.1.84.50:8080/ServiceTransfer/ChangeInventory");
+    }
 }

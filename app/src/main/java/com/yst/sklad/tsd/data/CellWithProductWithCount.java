@@ -41,4 +41,14 @@ public class CellWithProductWithCount implements Serializable {
         return new CellWithProductWithCount(id,cell,productid,name,quantity);
 
     }
+
+    public String toXML() {
+        return "<tran:Cell>" +
+                "<tran:productid>"+this.ProductId+"</tran:productid>" +
+                "<tran:stockcell>"+this.Cell +"</tran:stockcell>" +
+                "<tran:quantityfact>"+this.Quantity+"</tran:quantityfact>" +
+                "</tran:Cell>";
+    }
 }
+
+
