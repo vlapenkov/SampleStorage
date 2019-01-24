@@ -2,7 +2,6 @@ package com.yst.sklad.tsd.activities;
 
 import android.app.ProgressDialog;
 import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -13,59 +12,56 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.yst.sklad.tsd.MainApplication;
 import com.yst.sklad.tsd.R;
-import com.yst.sklad.tsd.Utils.BarCodeUtils;
 import com.yst.sklad.tsd.Utils.ConnectivityHelper;
+import com.yst.sklad.tsd.Utils.StringUtils;
 import com.yst.sklad.tsd.Utils.TextReaderFromHttp;
 import com.yst.sklad.tsd.Utils.YesNoInterface;
 import com.yst.sklad.tsd.data.AppDataProvider;
-import com.yst.sklad.tsd.data.ArrivalItem;
+import com.yst.sklad.tsd.data.Cell2WithProductWithCount;
 import com.yst.sklad.tsd.data.CellWithProductWithCount;
 import com.yst.sklad.tsd.data.DeleteItemDto;
-import com.yst.sklad.tsd.data.Product;
-import com.yst.sklad.tsd.data.ProductWithCount;
 import com.yst.sklad.tsd.data.ProductsContract;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
-import com.yst.sklad.tsd.dialogs.AlertEnterString;
 import com.yst.sklad.tsd.dialogs.YesNoDialogFragment;
 import com.yst.sklad.tsd.services.SoapCallToWebService;
 
 import java.io.InputStream;
 
 /*
-Инвентаризация
+ Перемещения
  */
-public class InventoryActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,
-        AdapterView.OnItemClickListener,
-        AdapterView.OnItemSelectedListener, YesNoInterface {
+public class TransferActivity extends AppCompatActivity  implements LoaderManager.LoaderCallbacks<Cursor>,
+ AdapterView.OnItemClickListener,
+        AdapterView.OnItemSelectedListener, YesNoInterface
+{
 
-
+    Long mItemSelected;
     private SimpleCursorAdapter mAdapter;
     private TextView tv_Totals;
     private ProductsDbHelper mDbHelper;
 
-    public static final Uri CONTENT_URI = AppDataProvider.CONTENTURI_INVENTORY;
+   // ProductsContract.TransferOfProductsEntry
+    public static final Uri CONTENT_URI = AppDataProvider.CONTENTURI_TRANSFER;
     public static final String INFO_MESSAGE="INFO_MESSAGE";
     public static final String MESSAGE_TO_CREATE="TO_CREATE";
     ListView lvData;
-    Long mItemSelected;
+  //  Long mItemSelected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //setContentView(R.layout.activity_internal_transfer);
         setContentView(R.layout.activity_listofproducts);
 
         mDbHelper = ((MainApplication)getApplication()).getDatabaseHelper();
@@ -80,6 +76,8 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
         button.requestFocus();
 
 
+
+
         mAdapter = new SimpleCursorAdapter(this,
                 R.layout.inventory_item,  null,
                 new String[] { "productid","stockcell","quantity","productname"},
@@ -89,12 +87,11 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
         lvData = (ListView) findViewById(R.id.lvData);
         lvData.setAdapter(mAdapter);
         lvData.setOnItemClickListener(this);
-        lvData.setOnItemSelectedListener(this);
+      lvData.setOnItemSelectedListener(this);
         getSupportLoaderManager().initLoader(0, null, this);
 
 
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -110,9 +107,8 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
             case R.id.uploadto1s:
             {
                 if (ConnectivityHelper.checkConnectivity()) {
-                    AlertEnterString.show(this,"Введите номер инвентаризации","Номер");
-                 //   new InventoryActivity.SendInventory().execute("68");
-                 //   new ListOfProductsWithCountActivity.SendMovementTo1S().execute();
+                  new  SendTransfer().execute();
+
 
                 }
                 break;
@@ -122,45 +118,35 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
                 YesNoDialogFragment.show(this,getString(R.string.clear_all_strings),params  );
 
             }
-            }
+        }
 
 
         return true;
     }
 
-    public void Delete(View v)
-    {
-        DeleteItemDto[] params =  {new DeleteItemDto (mItemSelected,false)};
-        YesNoDialogFragment.show(this,getString(R.string.deleteRow),params);
-
-    }
-
     @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(this,CONTENT_URI,null,null,null,null);
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        mAdapter.swapCursor(cursor);
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mAdapter.swapCursor(data);
         runOnUiThread(new Runnable() {
             public void run() {
-                tv_Totals.setText(""+ mDbHelper.getItemsCount("inventory"));
+                tv_Totals.setText(""+ mDbHelper.getItemsCount(ProductsContract.TransferOfProductsEntry.TABLE_NAME));
             }
         });
-
-        // tv_Totals.setText();
-
     }
+
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        mAdapter.swapCursor(null);
+
+            mAdapter.swapCursor(null);
     }
 
-    public void Insert(View v) {
-
-        Intent intent= new Intent(this,OneInventoryItemActivity.class);
+    public void Insert(View view) {
+        Intent intent= new Intent(this,OneTransferActivity.class);
 
         Bundle bundle = new Bundle();
         bundle.putBoolean(MESSAGE_TO_CREATE,true);
@@ -168,34 +154,32 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
         intent.putExtras(bundle);
 
         //   intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-
+             startActivity(intent);
     }
 
-
+    public void Delete(View view) {
+        DeleteItemDto[] params =  {new DeleteItemDto (mItemSelected,false)};
+        YesNoDialogFragment.show(this,getString(R.string.deleteRow),params);
+    }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-        Cursor res =  mDbHelper.getReadableDatabase().rawQuery( "select * from " + ProductsContract.Inventory.TABLE_NAME+ " where _id="+id, null );
+        Cursor res =  mDbHelper.getReadableDatabase().rawQuery( "select * from " + ProductsContract.TransferOfProductsEntry.TABLE_NAME+ " where _id="+id, null );
 
         if (res!=null && res.getCount()>0) {
             res.moveToFirst();
-            Intent intent = new Intent(this, OneInventoryItemActivity.class);
+            Intent intent = new Intent(this, OneTransferActivity.class);
 
             Bundle bundle = new Bundle();
             bundle.putBoolean(MESSAGE_TO_CREATE, false);
-           CellWithProductWithCount data= CellWithProductWithCount.fromCursor(res);
+            CellWithProductWithCount data= CellWithProductWithCount.fromCursor(res);
             bundle.putSerializable(INFO_MESSAGE, data);
 
             intent.putExtras(bundle);
 
             //   intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
-        }
-
-    }
-
+    }}
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -204,44 +188,37 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-   //     mItemSelected=null;
+
     }
 
     @Override
     public void ProcessIfYes(Object[] params) {
-        if (params[0] instanceof DeleteItemDto) {
-            DeleteItemDto item = (DeleteItemDto) params[0];
+        DeleteItemDto item= (DeleteItemDto)params[0];
 
-            if (item.mDeleteAll) {
-                Uri uri = CONTENT_URI;
-                int cnt = getContentResolver().delete(uri, null, null);
-            } else
-
-            {
-
-                Uri uri = ContentUris.withAppendedId(CONTENT_URI, item.mItem);
-                int cnt = getContentResolver().delete(uri, null, null);
-
-            }
-        }else
-        {
-            // String from YesNoInterface
-            new InventoryActivity.SendInventory().execute((String) params[0]);
+        if (item.mDeleteAll) {
+            Uri uri = CONTENT_URI;
+            int cnt = getContentResolver().delete(uri, null, null);
         }
+        else
 
+        {
+
+            Uri uri = ContentUris.withAppendedId(CONTENT_URI, item.mItem);
+            int cnt = getContentResolver().delete(uri, null, null);
+
+        }
     }
 
-
     /*
-Отправить поступление/перемещение  в 1С
- */
-    private class SendInventory extends AsyncTask<String,Void,String> {
+   Отправить поступление/перемещение  в 1С
+    */
+    private class SendTransfer extends AsyncTask<String,Void,String> {
 
         ProgressDialog pDialog;
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(InventoryActivity.this);
+            pDialog = new ProgressDialog(TransferActivity.this);
 
             pDialog.setMessage(getString(R.string.shipment_is_being_uploaded));
             pDialog.show();
@@ -258,17 +235,20 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
             // Проверка что веб-сервис отработал без ошибок
             if (s!=null && s.contains(SoapCallToWebService.ResultOk)) {
 
-                Toast.makeText(InventoryActivity.this, "Инвентаризация была выгружена", Toast.LENGTH_LONG).show();
+                String numberIn1s= StringUtils.getNumberFromResponse(s,8);
+                // строка - номер поступления который вернул 1С
+                Toast.makeText(TransferActivity.this, "Перемещение"+" №" +numberIn1s +" было выгружено", Toast.LENGTH_LONG).show();
+             //   Toast.makeText(TransferActivity.this, getString(R.string.orderWasUploaded), Toast.LENGTH_LONG).show();
 
 
             }else
-                Toast.makeText(InventoryActivity.this, "Ошибка! Инвентаризация не была выгружена", Toast.LENGTH_LONG).show();
+                Toast.makeText(TransferActivity.this, "Ошибка! Перемещение не было выгружено", Toast.LENGTH_LONG).show();
         }
 
         @Override
         protected String doInBackground(String... params) {
             StringBuffer chaine = new StringBuffer("");
-            Cursor cursor =mDbHelper.getReadableDatabase().query(ProductsContract.Inventory.TABLE_NAME, null, null, null, null, null, null);
+            Cursor cursor =mDbHelper.getReadableDatabase().query(ProductsContract.TransferOfProductsEntry.TABLE_NAME, null, null, null, null, null, null);
 
 
             if (cursor!=null && cursor.getCount()>0)
@@ -280,10 +260,7 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
             while (cursor.moveToNext());
 
 
-        //    int orderType = mCurrentOrder.OrderType; //mDbHelper.getOrderTypeByOrderId(mCurrentOrderId);
-            String numberIn1S=params[0].toString();
-
-            InputStream stream = SoapCallToWebService.sendInventory(numberIn1S, chaine.toString());
+            InputStream stream = SoapCallToWebService.sendTransfer( chaine.toString());
 
 
             if (stream!=null) { String result = TextReaderFromHttp.GetStringFromStream(stream);
@@ -292,4 +269,8 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
             return null;
         }
     }
+
+
+
+
 }

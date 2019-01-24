@@ -54,6 +54,7 @@ public class OneInternalTransferActivity extends BaseScanActivity {
             et_CellTo.setText(""+mItem.CellTo);
             et_CellTo.setEnabled(false);
             et_Quantity.setText(""+mItem.Quantity);
+            et_Quantity.requestFocus();
         }
 
 
@@ -98,9 +99,10 @@ public class OneInternalTransferActivity extends BaseScanActivity {
             //et_ProductId.requestFocus();
 
 
-        } else if (barcode != null && barcode.length() > 8)
-            et_ProductId.setText(BarCodeUtils.getProductIdFromBarCode(barcode));
-
+        } else if (barcode != null && barcode.length() > 8) {
+            et_ProductId.setText("" + BarCodeUtils.getProductIdFromBarCode(barcode));
+            et_CellFrom.requestFocus();
+        }
 
     }
 

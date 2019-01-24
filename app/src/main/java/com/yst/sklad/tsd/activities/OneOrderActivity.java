@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.yst.sklad.tsd.R;
 import com.yst.sklad.tsd.Utils.ConnectivityHelper;
+import com.yst.sklad.tsd.Utils.StringUtils;
 import com.yst.sklad.tsd.data.ArrivalItem;
 import com.yst.sklad.tsd.data.OrderToSupplier;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
@@ -201,9 +202,9 @@ public class OneOrderActivity extends AppCompatActivity  implements LoaderManage
 
             // Проверка что веб-сервис отработал без ошибок
             if (s!=null && s.contains(SoapCallToWebService.ResultOk)) {
-             int numberStart=s.indexOf(SoapCallToWebService.ResultOk)+3;
-             String number1S=   s.substring(numberStart,numberStart+8); // строка - номер поступления который вернул 1С
-                Toast.makeText(OneOrderActivity.this, getString(R.string.orderWasUploaded)+" №" +number1S, Toast.LENGTH_LONG).show();
+               String numberIn1s= StringUtils.getNumberFromResponse(s,8);
+             // строка - номер поступления который вернул 1С
+                Toast.makeText(OneOrderActivity.this, getString(R.string.orderWasUploaded)+" №" +numberIn1s, Toast.LENGTH_LONG).show();
 
                 // Удалить задание после выгрузки в 1С если такая настрока установлена
                // SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());

@@ -83,6 +83,8 @@
         <activity android:name=".activities.OneInventoryItemActivity" />
         <activity android:name=".activities.InternalTransferActivity" android:label="Внутреннее перемещение"></activity>
         <activity android:name=".activities.OneInternalTransferActivity" />
+        <activity android:name=".activities.TransferActivity" android:label="Перемещение" />
+        <activity android:name=".activities.OneTransferActivity" />
     </application>
 
 </manifest>

@@ -12,8 +12,8 @@ import android.support.annotation.Nullable;
 
 import com.yst.sklad.tsd.MainApplication;
 
-/**
- * Created by user on 19.12.2017.
+/*
+* ContentProvider для всех CRUD операций*
  *
  */
 public class AppDataProvider  extends ContentProvider {
@@ -24,7 +24,7 @@ public class AppDataProvider  extends ContentProvider {
     public static final String PATH_SHIPMENTITEMS = "shipmentitems";
     public static final String PATH_INVENTORY = "inventory";
     public static final String PATH_INTERNALTRANSFER = "internaltransfer";
-    //public static final String PATH_SHIPMENTS = "shipments";
+    public static final String PATH_TRANSFER = "transfer";
 
     public static final Uri CONTENTURI_SHIPMENTS = Uri.parse("content://" + AUTHORITY + "/" + PATH_SHIPMENTS );
     public static final Uri CONTENTURI_SHIPMENTITEMS = Uri.parse("content://" + AUTHORITY + "/" + PATH_SHIPMENTITEMS );
@@ -33,6 +33,7 @@ public class AppDataProvider  extends ContentProvider {
     public static final Uri CONTENTURI_INVENTORY = Uri.parse("content://" + AUTHORITY + "/" + PATH_INVENTORY );
 
     public static final Uri CONTENTURI_INTERNALTRANSFER= Uri.parse("content://" + AUTHORITY + "/" + PATH_INTERNALTRANSFER );
+    public static final Uri CONTENTURI_TRANSFER= Uri.parse("content://" + AUTHORITY + "/" + PATH_TRANSFER );
 
     private static final int SHIPMENTS = 1;
     private static final int SHIPMENT_ID = 2;
@@ -44,6 +45,8 @@ public class AppDataProvider  extends ContentProvider {
     private static final int INVENTORY_ID = 8;
     private static final int INTERNALTRANSFER = 9;
     private static final int INTERNALTRANSFER_ID = 10;
+    private static final int TRANSFER = 11;
+    private static final int TRANSFER_ID = 12;
 
     /*
     С несколькими таблицами uriMatcher должен выглядеть так
@@ -62,6 +65,9 @@ public class AppDataProvider  extends ContentProvider {
 
         uriMatcher.addURI(AUTHORITY,PATH_INTERNALTRANSFER, INTERNALTRANSFER);
         uriMatcher.addURI(AUTHORITY,PATH_INTERNALTRANSFER+ "/#", INTERNALTRANSFER_ID);
+
+        uriMatcher.addURI(AUTHORITY,PATH_TRANSFER, TRANSFER);
+        uriMatcher.addURI(AUTHORITY,PATH_TRANSFER+ "/#", TRANSFER_ID);
 
 
     }
@@ -104,6 +110,12 @@ public class AppDataProvider  extends ContentProvider {
                 cursor= helper.getInternalTransferItems();
                 break;
             }
+
+            case TRANSFER :
+            {
+                cursor= helper.getTransferItems();
+                break;
+            }
             default:
                 throw new IllegalArgumentException("This is an Unknown URI " + uri);
         }
@@ -125,6 +137,8 @@ public class AppDataProvider  extends ContentProvider {
                 return "vnd.android.cursor.dir/inventory";
             case INTERNALTRANSFER:
                 return "vnd.android.cursor.dir/internaltransfer";
+            case TRANSFER:
+                return "vnd.android.cursor.dir/transfer";
             default:
                 throw new IllegalArgumentException("This is an Unknown URI " + uri);
         }
@@ -156,6 +170,10 @@ public class AppDataProvider  extends ContentProvider {
             case INTERNALTRANSFER:
                 id = database.insert(ProductsContract.TransferOfProductsInternalEntry.TABLE_NAME,null,contentValues);
                 contentUri = CONTENTURI_INTERNALTRANSFER;
+                break;
+            case TRANSFER:
+                id = database.insert(ProductsContract.TransferOfProductsEntry.TABLE_NAME,null,contentValues);
+                contentUri = CONTENTURI_TRANSFER;
                 break;
 
             default:
@@ -211,6 +229,17 @@ public class AppDataProvider  extends ContentProvider {
                 break;
             }
 
+            case TRANSFER_ID:
+            { String id = uri.getPathSegments().get(1);
+                database.delete(ProductsContract.TransferOfProductsEntry.TABLE_NAME,"_id=" + id,strings);
+                break;
+            }
+
+            case TRANSFER:
+            {
+                database.delete(ProductsContract.TransferOfProductsEntry.TABLE_NAME,s,strings);
+                break;
+            }
      /*       case SHIPMENTITEMS:
                 delCount =  database.delete(ProductsContract.ShipmentsItemEntry.TABLE_NAME,s,strings);
                 break;
@@ -257,6 +286,12 @@ public class AppDataProvider  extends ContentProvider {
             {
                 String id = uri.getPathSegments().get(1);
                 database.update(ProductsContract.TransferOfProductsInternalEntry.TABLE_NAME,contentValues,"_id=" + id,strings);
+                break;
+            }
+            case TRANSFER_ID :
+            {
+                String id = uri.getPathSegments().get(1);
+                database.update(ProductsContract.TransferOfProductsEntry.TABLE_NAME,contentValues,"_id=" + id,strings);
                 break;
             }
             default:

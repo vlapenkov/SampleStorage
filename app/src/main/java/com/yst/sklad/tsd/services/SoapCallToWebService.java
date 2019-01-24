@@ -223,4 +223,32 @@ return SendDataTo1SService(xmlstring,"http://37.1.84.50:8080/ServiceTransfer/Cha
                 "</ser:ArrayOfCells></ser:ChangeInventory></soap:Body></soap:Envelope>";
         return SendDataTo1SService(xmlstring, "http://37.1.84.50:8080/ServiceTransfer/ChangeInventory");
     }
+
+    /*
+   ООтправить перемещение
+    */
+    public static InputStream sendTransfer( String itemsData) {
+        String xmlstring="<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:ser=\"http://37.1.84.50:8080/ServiceTransfer\" xmlns:tran=\"http://37.1.84.50:8080/TransferArrival\">\n" +
+                "   <soap:Header/>\n" +
+                "   <soap:Body>\n" +
+                "      <ser:CreateMoved>\n" +
+                "         <ser:ArrayOfCells>"+itemsData+
+                "</ser:ArrayOfCells></ser:CreateMoved></soap:Body></soap:Envelope>";
+        return SendDataTo1SService(xmlstring, "http://37.1.84.50:8080/ServiceTransfer/CreateMoved");
+    }
+
+    /*
+   Создать внутреннее перемещение
+    */
+    public static InputStream sendInternalTransfer( String itemsData) {
+        String xmlstring="<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:ser=\"http://37.1.84.50:8080/ServiceTransfer\" xmlns:tran=\"http://37.1.84.50:8080/TransferArrival\">\n" +
+                "   <soap:Header/>\n" +
+                "   <soap:Body>\n" +
+      "<ser:CreateInsideMoved> <ser:ArrayOfCells2>" +itemsData+
+                "</ser:ArrayOfCells2>\n" +
+                "</ser:CreateInsideMoved>\n" +
+                "</soap:Body>\n" +
+                "</soap:Envelope>";
+        return SendDataTo1SService(xmlstring, "http://37.1.84.50:8080/ServiceTransfer/CreateInsideMoved");
+    }
 }

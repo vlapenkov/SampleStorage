@@ -934,6 +934,18 @@ String        query = "SELECT orderstosuppliersitems._id, rownumber, orderstosup
         return  db.rawQuery( sql_select, null);
     }
 
+    // строки  перемещения
+    public Cursor getTransferItems()
+    {
+
+        //ProductsContract.TransferOfProductsEntry.TABLE_NAME
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql_select="select transfer._id,transfer.productid, stockcell, quantity, IFNULL(products.name,'---') as productname" +
+                " from transferofproducts as transfer"+
+                " left outer join products on transfer.productid=products._id";
+        return  db.rawQuery( sql_select, null);
+    }
+
     public String getItemsCount(String tableName)
     {
         SQLiteDatabase db = this.getReadableDatabase();

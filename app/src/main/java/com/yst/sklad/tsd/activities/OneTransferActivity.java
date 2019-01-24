@@ -4,13 +4,11 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.yst.sklad.tsd.MainApplication;
 import com.yst.sklad.tsd.R;
@@ -18,12 +16,10 @@ import com.yst.sklad.tsd.Utils.BarCodeUtils;
 import com.yst.sklad.tsd.data.AppDataProvider;
 import com.yst.sklad.tsd.data.CellWithProductWithCount;
 import com.yst.sklad.tsd.data.Product;
-import com.yst.sklad.tsd.data.ProductWithCount;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
-import com.yst.sklad.tsd.data.ShipmentItem;
 
-public class OneInventoryItemActivity extends BaseScanActivity {
-    public static final Uri CONTENT_URI = AppDataProvider.CONTENTURI_INVENTORY;
+public class OneTransferActivity extends BaseScanActivity {
+    public static final Uri CONTENT_URI = AppDataProvider.CONTENTURI_TRANSFER;
     EditText et_Cell,et_ProductId,et_Quantity;
     TextView tv_productName, tv_cellName;
     ProductsDbHelper mDbHelper;
@@ -42,7 +38,7 @@ public class OneInventoryItemActivity extends BaseScanActivity {
         tv_cellName = (TextView) findViewById(R.id.tv_cellName);
 
         Bundle bundle = getIntent().getExtras();
-        mToCreate=bundle.getBoolean(InventoryActivity.MESSAGE_TO_CREATE,true);
+        mToCreate=bundle.getBoolean(TransferActivity.MESSAGE_TO_CREATE,true);
         if (!mToCreate) {
             mItem = (CellWithProductWithCount) bundle.getSerializable(ListOfProductsWithCountActivity.INFO_MESSAGE);
             et_ProductId.setText(""+mItem.ProductId);
@@ -128,7 +124,7 @@ public class OneInventoryItemActivity extends BaseScanActivity {
         }
 
 
-        {     Intent intent = new Intent(this, OneInventoryItemActivity.class);
+        {     Intent intent = new Intent(this, OneTransferActivity.class);
             Bundle bundle = new Bundle();
             bundle.putBoolean(InventoryActivity.MESSAGE_TO_CREATE,true);
 

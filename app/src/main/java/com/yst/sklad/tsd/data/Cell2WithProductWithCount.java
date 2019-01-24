@@ -33,4 +33,13 @@ public class Cell2WithProductWithCount extends CellWithProductWithCount {
         return new Cell2WithProductWithCount(id,cell,cellTo,productid,name,quantity);
 
     }
+
+    public String toXML() {
+        return "<tran:Cell2>" +
+                "<tran:productid>"+this.ProductId+"</tran:productid>" +
+                "<tran:cell_out>"+this.Cell +"</tran:cell_out>" +
+                "<tran:cell_in>"+this.CellTo +"</tran:cell_in>" +
+                "<tran:quantity>"+this.Quantity+"</tran:quantity>" +
+                "</tran:Cell2>";
+    }
 }

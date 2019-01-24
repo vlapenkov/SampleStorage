@@ -222,7 +222,7 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
 
           case R.id.transfer:
             {
-                Intent intent = new Intent(this, ListOfProductsWithCountActivity.class);
+                Intent intent = new Intent(this, TransferActivity.class);
 
                 startActivity(intent);
                 return true;
