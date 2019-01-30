@@ -234,7 +234,7 @@ public class InternalTransferActivity extends AppCompatActivity  implements Load
             // Проверка что веб-сервис отработал без ошибок
             if (s!=null && s.contains(SoapCallToWebService.ResultOk)) {
 
-                String numberIn1s= StringUtils.getNumberFromResponse(s,8);
+                String numberIn1s= StringUtils.getNumberFromResponse(s,3,8);
                 // строка - номер поступления который вернул 1С
                 Toast.makeText(InternalTransferActivity.this, "Внутреннее перемещение №" +numberIn1s+" было выгружено", Toast.LENGTH_LONG).show();
 

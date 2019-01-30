@@ -235,7 +235,7 @@ public class TransferActivity extends AppCompatActivity  implements LoaderManage
             // Проверка что веб-сервис отработал без ошибок
             if (s!=null && s.contains(SoapCallToWebService.ResultOk)) {
 
-                String numberIn1s= StringUtils.getNumberFromResponse(s,8);
+                String numberIn1s= StringUtils.getNumberFromResponse(s,4,8);
                 // строка - номер поступления который вернул 1С
                 Toast.makeText(TransferActivity.this, "Перемещение"+" №" +numberIn1s +" было выгружено", Toast.LENGTH_LONG).show();
              //   Toast.makeText(TransferActivity.this, getString(R.string.orderWasUploaded), Toast.LENGTH_LONG).show();

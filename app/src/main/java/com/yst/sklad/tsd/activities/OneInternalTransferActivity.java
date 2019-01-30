@@ -124,7 +124,7 @@ public class OneInternalTransferActivity extends BaseScanActivity {
 
             cv.put("productid", productId);
             cv.put("stockcellFrom", cellFrom);
-            cv.put("stockcellTo", cellFrom);
+            cv.put("stockcellTo", cellTo);
             cv.put("quantity", fact);
 
             // если нет то создаем иначе апдейтим

@@ -34,7 +34,7 @@ public class ShipmentsTestsActivity extends AppCompatActivity implements LoaderM
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_shipments_tests);
+        setContentView(R.layout.activity_internal_transfer);
 
         mAdapter = new SimpleCursorAdapter(this,
                 R.layout.orderitem_item,  null,
@@ -43,8 +43,8 @@ public class ShipmentsTestsActivity extends AppCompatActivity implements LoaderM
                 new int[] { R.id.text1, R.id.text2,R.id.text3 }, 0);
 
         lvData = (ListView) findViewById(R.id.lvData);
-        lvData.setAdapter(mAdapter);
-        getSupportLoaderManager().initLoader(0, null, this);
+     //   lvData.setAdapter(mAdapter);
+      //  getSupportLoaderManager().initLoader(0, null, this);
 
 
     }

@@ -8,9 +8,9 @@ import com.yst.sklad.tsd.services.SoapCallToWebService;
 
 public class StringUtils {
 
-   public static String getNumberFromResponse(String s, int length)
+   public static String getNumberFromResponse(String s, int start, int length)
    {
-       int numberStart=s.indexOf(SoapCallToWebService.ResultOk)+3;
+       int numberStart=s.indexOf(SoapCallToWebService.ResultOk)+start;
        String number1S=   s.substring(numberStart,numberStart+8);
        return number1S;
    }
