@@ -30,6 +30,7 @@ import com.yst.sklad.tsd.MainApplication;
 import com.yst.sklad.tsd.R;
 import com.yst.sklad.tsd.adapters.ShipmentsCursorAdapter;
 import com.yst.sklad.tsd.data.AppDataProvider;
+import com.yst.sklad.tsd.data.ProductWithCount;
 import com.yst.sklad.tsd.data.ProductsContract;
 import com.yst.sklad.tsd.data.ProductsDbHelper;
 import com.yst.sklad.tsd.Utils.ShipmentsDownloadHelper;
@@ -248,6 +249,13 @@ public class ShipmentsActivity extends AppCompatActivity implements LoaderManage
                 startActivity(intent);
 
                 //YesNoDialogFragment.newInstance(R.string.history_title).show(getFragmentManager(), "dialog");
+                return true;
+            }
+            case R.id.productwithcount:
+            {
+                Intent intent = new Intent(this, ListOfProductsWithCountActivity.class);
+
+                startActivity(intent);
                 return true;
             }
 

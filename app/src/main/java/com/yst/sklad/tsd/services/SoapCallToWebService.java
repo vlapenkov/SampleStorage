@@ -34,7 +34,7 @@ private static HashMap<String,String> mHeaders = new HashMap<>();
     static {
         mHeaders.put("Accept-Encoding","gzip,deflate");
         mHeaders.put("Content-Type", "application/soap+xml");
-        mHeaders.put("Host", "37.1.84.50:8080");
+        mHeaders.put("Host", "37.1.84.52:8080");
         mHeaders.put("Connection", "Keep-Alive");
         mHeaders.put("User-Agent","AndroidApp");
         //mHeaders.put("Authorization","Basic Q2xpZW50NTkzMzppMjR4N2U=");

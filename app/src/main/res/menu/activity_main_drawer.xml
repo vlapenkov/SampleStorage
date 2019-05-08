@@ -24,11 +24,11 @@
             android:id="@+id/orders"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="@string/ordersToSuppliers" />
-  <!--      <item
+       <item
             android:id="@+id/productwithcount"
             android:title="@string/productswithcounts"
             android:icon="@drawable/ic_menu_gallery"
-            /> -->
+            />
 
         <item
             android:id="@+id/transfer"
